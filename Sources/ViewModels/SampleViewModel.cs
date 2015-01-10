@@ -13,6 +13,7 @@ namespace Workbench.ViewModels
     public class SampleViewModel
     {
         public double Value { get; set; }
+
         public double Weight { get; set; }
 
         public SampleViewModel()

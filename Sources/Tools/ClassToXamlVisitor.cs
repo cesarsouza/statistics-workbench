@@ -172,9 +172,20 @@ namespace Workbench.Tools
             string text = parse(see.Cref, false);
 
             if (!String.IsNullOrEmpty(see.Content))
-                builder.Append("<Hyperlink NavigateUri=\"" + url + "\">" + see.Content + "</Hyperlink>");
-            else
-                builder.Append("<Hyperlink NavigateUri=\"" + url + "\">" + text + "</Hyperlink>");
+                text = see.Content;
+
+            builder.Append(hyperlink(url, text));
+        }
+
+        public override void VisitAnchor(Anchor anchor)
+        {
+            string url = DistributionManager.GetDocumentationUrl(anchor.Href);
+            string text = parse(anchor.Href, false);
+
+            if (!String.IsNullOrEmpty(anchor.Content))
+                text = anchor.Content;
+
+            builder.Append(hyperlink(url, text));
         }
 
         public override void VisitSeeAlso(SeeAlso seeAlso)
@@ -192,7 +203,10 @@ namespace Workbench.Tools
 
 
 
-
+        private static string hyperlink(string url, string text)
+        {
+            return " <Hyperlink NavigateUri=\"" + url + "\">" + text + "</Hyperlink> ";
+        }
 
         private string parse(string cref, bool full)
         {
