@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using AForge;
-using PropertyChanged;
-using Statistics_Workbench.ViewModels;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.Models
+namespace Workbench.ViewModels
 {
+    using AForge;
+    using PropertyChanged;
+    using System.ComponentModel;
+    using System.Reflection;
+    using Workbench.Tools;
 
     [ImplementPropertyChanged]
-    public class DistributionParameterInfo : INotifyPropertyChanged
+    public class ParameterViewModel : INotifyPropertyChanged
     {
         public string Name { get; private set; }
 
@@ -29,12 +30,12 @@ namespace Statistics_Workbench.Models
         public DistributionViewModel Distribution { get; private set; }
 
         public ParameterInfo Parameter { get; private set; }
-        public DistributionConstructorInfo Owner { get; private set; }
+        public ConstructorViewModel Owner { get; private set; }
 
 
 
-        public static bool TryParse(ParameterInfo parameterInfo, DistributionConstructorInfo owner, 
-            out DistributionParameterInfo distributionParameter)
+        public static bool TryParse(ParameterInfo parameterInfo, ConstructorViewModel owner, 
+            out ParameterViewModel distributionParameter)
         {
             distributionParameter = null;
 
@@ -62,7 +63,7 @@ namespace Statistics_Workbench.Models
             if (isInteger)
                 step = 1;
 
-            distributionParameter = new DistributionParameterInfo()
+            distributionParameter = new ParameterViewModel()
             {
                 Min = min,
                 Max = max,

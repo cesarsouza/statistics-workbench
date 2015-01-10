@@ -1,16 +1,21 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using NuDoq;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.Models
+namespace Workbench.Tools
 {
+    using NuDoq;
+    using System;
+    using System.CodeDom.Compiler;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Reflection;
+    using System.Text;
+    using System.Web;
+
     public class ClassToXamlVisitor : Visitor
     {
         public Dictionary<string, string> Texts { get; set; }

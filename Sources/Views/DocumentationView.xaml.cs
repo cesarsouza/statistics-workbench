@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Statistics_Workbench.Views
+namespace Workbench.Views
 {
     public partial class DocumentationView
     {

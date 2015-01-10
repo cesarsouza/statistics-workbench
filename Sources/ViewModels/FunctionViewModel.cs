@@ -1,20 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Accord.Math;
-using Accord.Statistics.Distributions;
-using Accord.Statistics.Distributions.Univariate;
-using AForge;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Series;
-using PropertyChanged;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.ViewModels
+namespace Workbench.ViewModels
 {
+    using Accord.Math;
+    using Accord.Statistics.Distributions;
+    using Accord.Statistics.Distributions.Univariate;
+    using AForge;
+    using OxyPlot;
+    using OxyPlot.Axes;
+    using OxyPlot.Series;
+    using PropertyChanged;
+    using System;
+    using System.Globalization;
+    using System.Linq;
+
     [ImplementPropertyChanged]
     public class FunctionViewModel
     {
@@ -249,8 +253,11 @@ namespace Statistics_Workbench.ViewModels
             plotModel.Series.Clear();
             plotModel.Axes.Clear();
 
-            var dateAxis = new OxyPlot.Axes.LinearAxis(AxisPosition.Bottom, range.Min, range.Max)
+            var dateAxis = new OxyPlot.Axes.LinearAxis()
             {
+                Position = AxisPosition.Bottom,
+                Minimum = range.Min,
+                Maximum = range.Max,
                 Key = "xAxis",
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
@@ -276,8 +283,11 @@ namespace Statistics_Workbench.ViewModels
             double maxGrace = ymax * 0.1;
             double minGrace = ymin * 0.1;
 
-            var valueAxis = new LinearAxis(AxisPosition.Left, ymin - minGrace, ymax + maxGrace)
+            var valueAxis = new LinearAxis()
             {
+                Position = AxisPosition.Left, 
+                Minimum = ymin - minGrace, 
+                Maximum = ymax + maxGrace,
                 Key = "yAxis",
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,

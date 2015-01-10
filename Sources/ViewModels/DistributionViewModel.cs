@@ -1,22 +1,26 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using Accord.Math;
-using Accord.Statistics.Distributions;
-using Accord.Statistics.Distributions.Fitting;
-using Accord.Statistics.Distributions.Univariate;
-using AForge;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Series;
-using PropertyChanged;
-using Statistics_Workbench.Models;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.ViewModels
+namespace Workbench.ViewModels
 {
+    using Accord.Math;
+    using Accord.Statistics.Distributions;
+    using Accord.Statistics.Distributions.Fitting;
+    using OxyPlot;
+    using PropertyChanged;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Reflection;
+    using System.Threading.Tasks;
+    using Workbench.Tools;
+
     [ImplementPropertyChanged]
     public class DistributionViewModel
     {
@@ -25,12 +29,9 @@ namespace Statistics_Workbench.ViewModels
 
         public IFittingOptions Options { get; private set; }
 
+        public ObservableCollection<ParameterViewModel> Parameters { get; private set; }
 
-        public DistributionInfo Distribution { get; private set; }
-
-        public ObservableCollection<DistributionParameterInfo> Parameters { get; private set; }
-
-        public ObservableCollection<DistributionPropertyInfo> Properties { get; private set; }
+        public ObservableCollection<PropertyViewModel> Properties { get; private set; }
 
 
         public bool CanGenerate { get; private set; }
@@ -41,39 +42,94 @@ namespace Statistics_Workbench.ViewModels
 
         public string ExternalDocUrl { get; private set; }
 
+        public Type Type { get; private set; }
+
+        public ConstructorViewModel Constructor { get; private set; }
+
         public FunctionViewModel Functions { get; private set; }
 
         public PlotModel DensityFunction { get; private set; }
 
         public DistributionViewModel()
         {
-            this.Parameters = new ObservableCollection<DistributionParameterInfo>();
-            this.Properties = new ObservableCollection<DistributionPropertyInfo>();
+            this.Parameters = new ObservableCollection<ParameterViewModel>();
+            this.Properties = new ObservableCollection<PropertyViewModel>();
             this.Functions = new FunctionViewModel();
             
         }
 
-        public DistributionViewModel(MainViewModel parent, DistributionInfo distribution)
-            : this()
+
+
+        public static bool TryParse(Type type, Dictionary<string, string> doc, out DistributionViewModel distribution)
         {
-            this.Distribution = distribution;
-            this.Name = Distribution.Name;
-            this.Parameters = distribution.Constructor.Parameters;
-            this.Properties = distribution.Properties;
-            this.Documentation = distribution.Summary;
-            this.CanGenerate = distribution.CanGenerate;
+            distribution = new DistributionViewModel();
+
+            if (!typeof(IUnivariateDistribution).IsAssignableFrom(type))
+                return false;
+
+            string name = DistributionManager.GetDistributionName(type);
+
+            // Extract all properties with return value of double
+            //
+            var properties = new List<PropertyViewModel>();
+            foreach (PropertyInfo prop in type.GetProperties())
+            {
+                PropertyViewModel property;
+                if (PropertyViewModel.TryParse(prop, distribution, doc, out property))
+                    properties.Add(property);
+            }
+
+            // Extract buildable constructors. A constructor is 
+            // considered buildable if we can extract valid ranges
+            // and default values from all of its parameters
+            //
+            var list = new List<ConstructorViewModel>();
+            foreach (var ctor in type.GetConstructors())
+            {
+                ConstructorViewModel constructor;
+                if (ConstructorViewModel.TryParse(ctor, distribution, out constructor))
+                    list.Add(constructor);
+            }
+
+            if (list.Count == 0)
+                return false;
+
+            // For the time being, just consider the buildable 
+            // constructor with the largest number of parameters.
+            //
+            var main = list.OrderByDescending(x => x.Parameters.Count).First();
+
+
+
+            // Extract some documentation
+            string summary = doc[type.Name];
+
+            distribution.Constructor = main;
+            distribution.Properties = new ObservableCollection<PropertyViewModel>(properties);
+            distribution.Parameters = main.Parameters;
+            distribution.Type = type;
+            distribution.Name = name;
+            distribution.Documentation = summary;
+            distribution.CanGenerate = typeof(ISampleableDistribution<double>).IsAssignableFrom(type);
 
             // Get documentation page from the Accord.NET website
-            this.ExternalDocUrl = DistributionManager.GetDocumentationUrl(distribution.Type);
+            distribution.ExternalDocUrl = DistributionManager.GetDocumentationUrl(distribution.Type);
 
             // Get the constructor parameters and their ranges (if possible)
             foreach (var parameter in distribution.Constructor.Parameters)
-                parameter.PropertyChanged += OnParameterChanged;
+                parameter.PropertyChanged += distribution.OnParameterChanged;
 
-            this.Options = DistributionManager.GetFittingOptions(distribution.Type);
+            distribution.Options = DistributionManager.GetFittingOptions(distribution.Type);
 
 
-            Task.Run((Action)Create);
+            Task.Run((Action)distribution.Create);
+
+            return true;
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
 
         void OnParameterChanged(object sender, PropertyChangedEventArgs e)
@@ -84,7 +140,7 @@ namespace Statistics_Workbench.ViewModels
         public void Create()
         {
             IUnivariateDistribution instance;
-            if (Distribution.Constructor.TryCreate(out instance))
+            if (Constructor.TryCreate(out instance))
             {
                 update(instance);
             }

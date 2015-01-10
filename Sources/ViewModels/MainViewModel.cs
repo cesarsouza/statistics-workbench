@@ -1,34 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
-using System.Dynamic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using Accord.Statistics.Distributions;
-using OxyPlot.Axes;
-using PropertyChanged;
-using Accord.Math;
-using Statistics_Workbench.Models;
-using NuDoq;
-using Accord.Statistics.Distributions.Fitting;
-using Microsoft.Win32;
-using Statistics_Workbench.Formats;
-using System.Data;
-using System.IO;
-using System.Windows.Input;
-using Accord.IO.Csv;
-using System.Windows.Controls;
-using Statistics_Workbench.Framework;
-using Accord.Statistics.Analysis;
-using System.Windows.Data;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.ViewModels
+namespace Workbench.ViewModels
 {
+    using Accord.IO;
+    using Accord.Math;
+    using Accord.Statistics.Analysis;
+    using Accord.Statistics.Distributions;
+    using Accord.Statistics.Distributions.Fitting;
+    using Microsoft.Win32;
+    using PropertyChanged;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Data;
+    using System.IO;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Input;
+    using Workbench.Formats;
+    using Workbench.Framework;
+    using Workbench.Tools;
+
     [ImplementPropertyChanged]
     public class MainViewModel : ViewModelBase
     {
@@ -57,7 +56,7 @@ namespace Statistics_Workbench.ViewModels
         public string LastSavePath { get; set; }
         public IFileFormat LastSaveFormat { get; set; }
 
-        public BindingList<SampleValue> Data { get; private set; }
+        public BindingList<SampleViewModel> Data { get; private set; }
 
         public string Message { get; set; }
         public int Samples { get; set; }
@@ -100,13 +99,10 @@ namespace Statistics_Workbench.ViewModels
 
         public MainViewModel()
         {
-            var distributions = DistributionManager.GetDistributions();
-
             // Create ViewModels for each statistical distribution
-            this.Distributions = new ObservableCollection<DistributionViewModel>();
-            foreach (var distribution in distributions)
-                this.Distributions.Add(new DistributionViewModel(this, distribution));
 
+            var distributions = DistributionManager.GetDistributions();
+            this.Distributions = new ObservableCollection<DistributionViewModel>(distributions);
             this.SelectedDistributionIndex = distributions.Find(x => x.Name == "Normal")[0];
 
             this.NewCommand = new RelayCommand(New_Execute, New_CanExecute);
@@ -118,9 +114,9 @@ namespace Statistics_Workbench.ViewModels
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, Paste_Executed, Paste_CanExecute));
 
             this.IsContinuous = false;
-            this.Data = new BindingList<SampleValue>();
+            this.Data = new BindingList<SampleViewModel>();
             this.Data.ListChanged += Data_ListChanged;
-            this.Data.Add(new SampleValue() { Value = 0, Weight = 1 });
+            this.Data.Add(new SampleViewModel() { Value = 0, Weight = 1 });
 
             this.Analysis = new ObservableCollection<GoodnessOfFit>();
 
@@ -142,7 +138,7 @@ namespace Statistics_Workbench.ViewModels
             LastSaveFormat = null;
             LastSavePath = null;
 
-            Data.Add(new SampleValue() { Value = 0, Weight = 1 });
+            Data.Add(new SampleViewModel() { Value = 0, Weight = 1 });
         }
 
         public bool New_CanExecute(object sender)
@@ -222,7 +218,7 @@ namespace Statistics_Workbench.ViewModels
                 Data.Clear();
                 foreach (double[] row in values)
                 {
-                    var sample = new SampleValue();
+                    var sample = new SampleViewModel();
                     sample.Value = row[0];
                     if (row.Length > 1)
                         sample.Weight = row[1];
@@ -245,13 +241,13 @@ namespace Statistics_Workbench.ViewModels
 
             lines.Reverse();
 
-            int startIndex = Data.IndexOf(CurrentCell.Item as SampleValue);
+            int startIndex = Data.IndexOf(CurrentCell.Item as SampleViewModel);
             if (startIndex == -1)
                 startIndex = Data.Count;
 
             foreach (var line in lines)
             {
-                var sample = new SampleValue();
+                var sample = new SampleViewModel();
 
                 double value;
                 if (!Double.TryParse(line[0], out value))
@@ -330,7 +326,7 @@ namespace Statistics_Workbench.ViewModels
             double[] values = generate.Generate(Samples);
             Data.Clear();
             foreach (var d in values)
-                Data.Add(new SampleValue() { Value = d });
+                Data.Add(new SampleViewModel() { Value = d });
             ShowEditor = true;
             RefreshCommand.Execute(null);
         }

@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.Formats
+namespace Workbench.Formats
 {
+    using System;
+    using System.Data;
+    using System.IO;
+
     public abstract class FileFormatBase : IFileFormat
     {
         public abstract string Extension { get; }

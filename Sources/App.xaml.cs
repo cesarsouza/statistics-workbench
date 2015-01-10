@@ -5,9 +5,9 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Statistics_Workbench.ViewModels;
+using Workbench.ViewModels;
 
-namespace Statistics_Workbench
+namespace Workbench
 {
     public partial class App : Application
     {

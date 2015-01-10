@@ -1,41 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Accord.Statistics.Distributions;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.Models
+namespace Workbench.ViewModels
 {
-    public class DistributionConstructorInfo
+    using Accord.Statistics.Distributions;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Reflection;
+
+    public class ConstructorViewModel
     {
         public ConstructorInfo Constructor { get; private set; }
 
-        public ObservableCollection<DistributionParameterInfo> Parameters { get; private set; }
+        public ObservableCollection<ParameterViewModel> Parameters { get; private set; }
 
         public int Length { get { return Parameters.Count; } }
 
-        public DistributionInfo Owner { get; private set; }
+        public DistributionViewModel Owner { get; private set; }
 
-        public static bool TryParse(ConstructorInfo ctor, DistributionInfo owner,
-            out DistributionConstructorInfo constructor)
+        public static bool TryParse(ConstructorInfo ctor, DistributionViewModel owner,
+            out ConstructorViewModel constructor)
         {
-            constructor = new DistributionConstructorInfo();
+            constructor = new ConstructorViewModel();
 
             ParameterInfo[] info = ctor.GetParameters();
-            var parameters = new DistributionParameterInfo[info.Length];
+            var parameters = new ParameterViewModel[info.Length];
 
             for (int i = 0; i < info.Length; i++)
             {
-                if (!DistributionParameterInfo.TryParse(info[i], constructor, out parameters[i]))
+                if (!ParameterViewModel.TryParse(info[i], constructor, out parameters[i]))
                     return false;
             }
 
             constructor.Owner = owner;
             constructor.Constructor = ctor;
-            constructor.Parameters = new ObservableCollection<DistributionParameterInfo>(parameters);
+            constructor.Parameters = new ObservableCollection<ParameterViewModel>(parameters);
 
             return true;
         }

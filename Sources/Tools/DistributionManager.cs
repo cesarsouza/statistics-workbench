@@ -1,19 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Accord;
-using Accord.Statistics.Distributions;
-using Accord.Statistics.Distributions.Fitting;
-using AForge;
-using NuDoq;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.Models
+namespace Workbench.Tools
 {
+    using Accord;
+    using Accord.Statistics.Distributions;
+    using Accord.Statistics.Distributions.Fitting;
+    using AForge;
+    using NuDoq;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text.RegularExpressions;
+    using System.Threading;
+    using Workbench.ViewModels;
+
     public class DistributionManager
     {
         private static string baseURL = "http://accord-framework.net/docs/html/T_";
@@ -41,7 +50,7 @@ namespace Statistics_Workbench.Models
             return null;
         }
 
-        public static DistributionInfo[] GetDistributions()
+        public static DistributionViewModel[] GetDistributions()
         {
             var baseType = typeof(IUnivariateDistribution);
 
@@ -55,11 +64,11 @@ namespace Statistics_Workbench.Models
                 .Where(p => baseType.IsAssignableFrom(p) && !p.IsAbstract && !p.IsInterface);
 
             // Get only those that can be dynamically built:
-            var buildable = new List<DistributionInfo>();
+            var buildable = new List<DistributionViewModel>();
             foreach (Type type in distributions)
             {
-                DistributionInfo distribution;
-                if (DistributionInfo.TryParse(type, doc, out distribution))
+                DistributionViewModel distribution;
+                if (DistributionViewModel.TryParse(type, doc, out distribution))
                     buildable.Add(distribution);
             }
 
@@ -87,7 +96,7 @@ namespace Statistics_Workbench.Models
         public static string GetDistributionName(Type type)
         {
             // Extract the real distribution name from the class name
-            string name = Tools.ToNormalCase(type.Name);
+            string name = DistributionManager.ToNormalCase(type.Name);
 
             if (name.Contains('`'))
                 name = name.Remove(name.IndexOf("`"));
@@ -101,7 +110,7 @@ namespace Statistics_Workbench.Models
 
         public static string GetParameterName(ParameterInfo parameterInfo)
         {
-            string name = Tools.ToNormalCase(parameterInfo.Name);
+            string name = DistributionManager.ToNormalCase(parameterInfo.Name);
             name = name.Replace("Std ", "Std. ");
             name = name.Replace("Standard", "Std.");
             return name;
@@ -167,6 +176,16 @@ namespace Statistics_Workbench.Models
                 value = range.Max;
 
             return true;
+        }
+
+        public static string ToNormalCase(string name)
+        {
+            var withSpaces = Regex.Replace(name, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1");
+
+            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+            TextInfo textInfo = cultureInfo.TextInfo;
+
+            return textInfo.ToTitleCase(withSpaces);
         }
 
     }

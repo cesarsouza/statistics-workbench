@@ -7,7 +7,7 @@
     <ProjectGuid>{E7F12EB3-4B2D-472F-BD5D-F8FAC4DACEA1}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Statistics_Workbench</RootNamespace>
+    <RootNamespace>Workbench</RootNamespace>
     <AssemblyName>Statistics Workbench</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -57,7 +57,8 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Accord.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -72,23 +73,23 @@
     <Reference Include="Accessibility" />
     <Reference Include="Accord, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Externals\accord-net\Accord.dll</HintPath>
+      <HintPath>..\..\framework\Release\net45\Accord.dll</HintPath>
     </Reference>
     <Reference Include="Accord.IO, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Externals\accord-net\Accord.IO.dll</HintPath>
+      <HintPath>..\..\framework\Release\net45\Accord.IO.dll</HintPath>
     </Reference>
     <Reference Include="Accord.MachineLearning, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Externals\accord-net\Accord.MachineLearning.dll</HintPath>
+      <HintPath>..\..\framework\Release\net45\Accord.MachineLearning.dll</HintPath>
     </Reference>
     <Reference Include="Accord.Math, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Externals\accord-net\Accord.Math.dll</HintPath>
+      <HintPath>..\..\framework\Release\net45\Accord.Math.dll</HintPath>
     </Reference>
     <Reference Include="Accord.Statistics, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Externals\accord-net\Accord.Statistics.dll</HintPath>
+      <HintPath>..\..\framework\Release\net45\Accord.Statistics.dll</HintPath>
     </Reference>
     <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
       <HintPath>..\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
@@ -191,7 +192,7 @@
       <DependentUpon>XamlFrame.xaml</DependentUpon>
     </Compile>
     <Compile Include="Formats\BinFileFormat.cs" />
-    <Compile Include="Formats\FormatCollection.cs" />
+    <Compile Include="Formats\Base\FormatCollection.cs" />
     <Compile Include="Formats\XlsFileFormat.cs" />
     <Compile Include="Formats\XlsxFileFormat.cs" />
     <Compile Include="Formats\XmlFileFormat.cs" />
@@ -202,15 +203,13 @@
     <Compile Include="Formats\Base\IFileFormat.cs" />
     <Compile Include="Framework\AttachedProperties.cs" />
     <Compile Include="Framework\ViewModelBase.cs" />
-    <Compile Include="Models\DistributionParameterInfo.cs" />
-    <Compile Include="Models\DistributionConstructorInfo.cs" />
-    <Compile Include="Models\DistributionInfo.cs" />
-    <Compile Include="Models\DistributionManager.cs" />
-    <Compile Include="Models\DistributionPropertyInfo.cs" />
-    <Compile Include="Models\ClassToXamlVisitor.cs" />
-    <Compile Include="Models\SampleValue.cs" />
+    <Compile Include="ViewModels\ParameterViewModel.cs" />
+    <Compile Include="ViewModels\ConstructorViewModel.cs" />
+    <Compile Include="Tools\DistributionManager.cs" />
+    <Compile Include="ViewModels\PropertyViewModel.cs" />
+    <Compile Include="Tools\ClassToXamlVisitor.cs" />
+    <Compile Include="ViewModels\SampleViewModel.cs" />
     <Compile Include="Framework\RelayCommand.cs" />
-    <Compile Include="Tools.cs" />
     <Compile Include="ViewModels\FunctionViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\DistributionViewModel.cs" />
@@ -267,8 +266,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Accord.snk" />
     <None Include="ClassDiagram.cd" />
+    <None Include="Formats\Workbench.Formats.cd" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -292,10 +291,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Dialogs\" />
-    <Folder Include="Styles\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>

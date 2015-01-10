@@ -1,16 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Accord.IO;
-using Accord.IO.Mat;
-using Accord.Math;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.Formats
+namespace Workbench.Formats
 {
+    using Accord.IO;
+    using Accord.Math;
+    using System;
+    using System.Data;
+    using System.IO;
+
+    /// <summary>
+    ///   Format handler for data tables stored as MATLAB/Octave MAT4 files.
+    /// </summary>
+    /// 
     public class MatFileFormat : FileFormatBase, IFileFormat
     {
         public override string Extension { get { return "*.mat"; } }

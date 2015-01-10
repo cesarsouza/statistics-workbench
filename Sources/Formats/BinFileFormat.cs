@@ -1,16 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Accord.IO.Csv;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.Formats
+namespace Workbench.Formats
 {
+    using System.Data;
+    using System.IO;
+    using System.Runtime.Serialization.Formatters.Binary;
+
+    /// <summary>
+    ///   Format handler for data tables stored as binary serialized DataTables.
+    /// </summary>
+    /// 
     public class BinFileFormat : FileFormatBase, IFileFormat
     {
 

@@ -1,22 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using Accord.Statistics.Distributions;
-using PropertyChanged;
-using Statistics_Workbench.Models;
-using Statistics_Workbench.ViewModels;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.Models
+namespace Workbench.ViewModels
 {
+    using Accord.Statistics.Distributions;
+    using PropertyChanged;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using Workbench.Tools;
+
     /// <summary>
     ///   Describes a distribution's property value, 
     ///   such as its Mean, Median or Variance.
     /// </summary>
     /// 
     [ImplementPropertyChanged]
-    public class DistributionPropertyInfo
+    public class PropertyViewModel
     {
         /// <summary>
         ///   Gets the property's name.
@@ -30,14 +33,14 @@ namespace Statistics_Workbench.Models
         /// 
         public double? Value { get; private set; }
 
-        public DistributionInfo Owner { get; private set; }
+        public DistributionViewModel Owner { get; private set; }
 
         public PropertyInfo PropertyInfo { get; private set; }
 
-        public DistributionPropertyInfo(DistributionInfo model, PropertyInfo property)
+        public PropertyViewModel(DistributionViewModel model, PropertyInfo property)
         {
             this.PropertyInfo = property;
-            this.Name = Tools.ToNormalCase(property.Name);
+            this.Name = DistributionManager.ToNormalCase(property.Name);
             this.Owner = model;
 
             Name = Name.Replace("Standard", "Std.");
@@ -58,15 +61,15 @@ namespace Statistics_Workbench.Models
         }
 
 
-        public static bool TryParse(PropertyInfo prop, DistributionInfo distribution,
-            Dictionary<string, string> doc, out DistributionPropertyInfo property)
+        public static bool TryParse(PropertyInfo prop, DistributionViewModel distribution,
+            Dictionary<string, string> doc, out PropertyViewModel property)
         {
             property = null;
 
             if (prop.GetMethod.ReturnType != typeof(double))
                 return false;
 
-            property = new DistributionPropertyInfo(distribution, prop);
+            property = new PropertyViewModel(distribution, prop);
 
             return true;
         }

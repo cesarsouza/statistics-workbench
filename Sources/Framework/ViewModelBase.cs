@@ -1,16 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Windows.Threading;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.Framework
+namespace Workbench.Framework
 {
+    using System.ComponentModel;
+    using System.Diagnostics;
+    using System.Runtime.CompilerServices;
+    using System.Windows.Input;
+    using System.Windows.Threading;
+
+    /// <summary>
+    ///   Base class for specifying ViewModels.
+    /// </summary>
+    /// 
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
         private readonly Dispatcher dispatcher;
@@ -18,6 +24,10 @@ namespace Statistics_Workbench.Framework
         private event PropertyChangedEventHandler propertyChanged;
 
 
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="ViewModelBase"/> class.
+        /// </summary>
+        /// 
         public ViewModelBase()
         {
             dispatcher = Dispatcher.CurrentDispatcher;

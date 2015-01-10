@@ -1,14 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Accord.IO.Csv;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench.Formats
+namespace Workbench.Formats
 {
+    using Accord.IO;
+    using System.Data;
+    using System.IO;
+
+    /// <summary>
+    ///   File format for data tables stored as tab-separated value (TSV) files.
+    /// </summary>
+    /// 
     public class TsvFileFormat : FileFormatBase, IFileFormat
     {
 

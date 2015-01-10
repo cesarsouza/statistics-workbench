@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Workbench.Formats.FileFormatBase">
+    <Position X="8" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAEAAAAAAgABAAAQAAAAAAAAEIAAA=</HashCode>
+      <FileName>Formats\Base\FileFormatBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Workbench.Formats.BinFileFormat">
+    <Position X="8" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAEAAAAAAgAAAAAQAAAAAAAAEIAAA=</HashCode>
+      <FileName>Formats\BinFileFormat.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Workbench.Formats.CsvFileFormat">
+    <Position X="12.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAEAAAAAAgAAAAAQAAAAAAAAEIAAA=</HashCode>
+      <FileName>Formats\CsvFileFormat.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Workbench.Formats.FormatCollection">
+    <Position X="16" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Formats\Base\FormatCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Workbench.Formats.MatFileFormat">
+    <Position X="3.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAEAAAAAAgAAAAAQAAAAAAAAEIAAA=</HashCode>
+      <FileName>Formats\MatFileFormat.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Workbench.Formats.TsvFileFormat">
+    <Position X="10.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAEAAAAAAgAAAAAQAAAAAAAAEIAAA=</HashCode>
+      <FileName>Formats\TsvFileFormat.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Workbench.Formats.XlsFileFormat">
+    <Position X="14.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAEAAAAAAgAAAAAQAAAAAAAAEIAAA=</HashCode>
+      <FileName>Formats\XlsFileFormat.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Workbench.Formats.XlsxFileFormat">
+    <Position X="1.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAEAAAAAAgAAAAAQAAAAAAAAEIAAA=</HashCode>
+      <FileName>Formats\XlsxFileFormat.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Workbench.Formats.XmlFileFormat">
+    <Position X="5.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAEAAAAAAgAAAAAQAAAAAAAAEIAAA=</HashCode>
+      <FileName>Formats\XmlFileFormat.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Workbench.Formats.IFileFormat">
+    <Position X="11.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAEAAAAAAgABAAAQAAAAAAAAEIAAA=</HashCode>
+      <FileName>Formats\Base\IFileFormat.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,13 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿// Statistics Workbench
+// http://accord-framework.net
+//
+// The MIT License (MIT)
+// Copyright © 2014-2015, César Souza
+//
 
-namespace Statistics_Workbench
+namespace Workbench
 {
+    using System;
+    using System.Diagnostics;
+    using System.Windows.Input;
+
+    /// <summary>
+    ///   Relay command implementation.
+    /// </summary>
+    /// 
     public class RelayCommand : ICommand
     {
 
