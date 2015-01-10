@@ -15,7 +15,7 @@
         Title="Statistics Workbench" 
         Width="1024" 
         Height="600" 
-        Icon="Accord.NET (icon).ico" 
+        Icon="..\StatisticsWorkbench.ico" 
 
         WindowTitleBrush="#FF333333"
         WindowStartupLocation="CenterScreen"
@@ -44,7 +44,7 @@
                  Background="Transparent"
                  RenderOptions.EdgeMode="Aliased"
                  RenderOptions.BitmapScalingMode="HighQuality">
-                <Image Source="Accord.NET (icon).ico"/>
+                <Image Source="..\StatisticsWorkbench.ico"/>
             </Grid>
         </DataTemplate>
     </controls:MetroWindow.IconTemplate>

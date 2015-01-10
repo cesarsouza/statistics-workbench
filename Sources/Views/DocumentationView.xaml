@@ -56,14 +56,26 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ContentControl}">
-                        <Controls:MvvmTextEditor Margin="20, 10, 10, 10" 
-                            VerticalScrollBarVisibility="Disabled"
-                            FontFamily="Consolas" SyntaxHighlighting="C#" FontSize="10pt" 
-                            DocumentText="{TemplateBinding Content}">
-                            <i:Interaction.Behaviors>
-                                <Behaviors:IgnoreMouseWheelBehavior />
-                            </i:Interaction.Behaviors>
-                        </Controls:MvvmTextEditor>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Row="0" Grid.Column="0" Content="Launch in VS" 
+                                    Command="{Binding OpenExample}"  CommandParameter="{TemplateBinding Content}"
+                                    Panel.ZIndex="1" Opacity="0.5" Height="32" Width="100" 
+                                    HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,10,10,10"/>
+                            <Controls:MvvmTextEditor Margin="20, 10, 10, 10" Panel.ZIndex="0" 
+                                VerticalScrollBarVisibility="Disabled" Grid.Row="0" Grid.Column="0"
+                                FontFamily="Consolas" SyntaxHighlighting="C#" FontSize="10pt" 
+                                DocumentText="{TemplateBinding Content}">
+                                <i:Interaction.Behaviors>
+                                    <Behaviors:IgnoreMouseWheelBehavior />
+                                </i:Interaction.Behaviors>
+                            </Controls:MvvmTextEditor>
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
