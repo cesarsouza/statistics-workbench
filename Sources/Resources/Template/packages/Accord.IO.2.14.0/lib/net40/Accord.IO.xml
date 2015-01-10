@@ -1,0 +1,1440 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Accord.IO</name>
+    </assembly>
+    <members>
+        <member name="T:Accord.IO.ExcelReader">
+            <summary>
+              Excel file reader using Microsoft Jet Database Engine.
+            </summary>
+            
+            <remarks>
+            <para>
+              This class requires the Microsoft Access Database Engine
+              to work. The download is available from Microsoft under
+              the name "Microsoft Access Database Engine 2010 Redistributable",
+              available in both 32-bit (x86) and 64-bit (x64) versions.</para>
+              
+            <para>
+              By default, the redistributable package will only install 
+              if it is the same as the current version of Microsoft Office
+              installed in the machine (i.e. ACE 32-bit can not be installed
+              with 64-bit office and vice-versa). To overcome this limitation
+              and install both versions of the ACE drivers, specify /passive
+              as a command line argument when installing the packages.
+            </para>
+            </remarks>
+            
+            <example>
+            <code>
+            // Create a new reader, opening a given path
+            ExcelReader reader = new ExcelReader(path);
+            
+            // Afterwards, we can query the file for all
+            // worksheets within the specified workbook:
+            string[] sheets = reader.GetWorksheetList();
+            
+            // Finally, we can request an specific sheet:
+            DataTable table = reader.GetWorksheet(sheets[1]);
+            
+            // Now, we have loaded the Excel file into a DataTable. We
+            // can go further and transform it into a matrix to start
+            // running other algorithms on it: 
+            
+            double[,] matrix = table.ToMatrix();
+            
+            // We can also do it retrieving the name for each column:
+            string[] columnNames; matrix = table.ToMatrix(out columnNames);
+            
+            // Or we can extract specific columns into single arrays:
+            double[] column = table.Columns[0].ToArray();
+            
+            // PS: you might need to import the Accord.Math namespace in
+            //   order to be able to call the ToMatrix extension methods. 
+            </code>
+            </example>
+            
+        </member>
+        <member name="M:Accord.IO.ExcelReader.#ctor(System.IO.Stream,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+              Creates a new spreadsheet reader.
+            </summary>
+            
+            <param name="stream">The stream containing the spreadsheet file.</param>
+            <param name="xlsx">True if the file should be treated as .xlsx file, false otherwise.</param>
+            <param name="hasHeaders">True if the spreadsheet contains headers, false otherwise.</param>
+            <param name="hasMixedData">True to read "intermixed" data columns as text, false otherwise.</param>
+            
+        </member>
+        <member name="M:Accord.IO.ExcelReader.#ctor(System.String,System.Boolean,System.Boolean)">
+            <summary>
+              Creates a new spreadsheet reader.
+            </summary>
+            
+            <param name="path">The path of for the spreadsheet file.</param>
+            <param name="hasHeaders">True if the spreadsheet contains headers, false otherwise.</param>
+            <param name="hasMixedData">True to read "intermixed" data columns as text, false otherwise.</param>
+            
+        </member>
+        <member name="M:Accord.IO.ExcelReader.GetWorksheetList">
+            <summary>
+              Gets the list of worksheets in the spreadsheet.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.IO.ExcelReader.GetColumnsList(System.String)">
+            <summary>
+              Gets the list of columns in a worksheet.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.IO.ExcelReader.GetWorksheet(System.String)">
+            <summary>
+              Gets an worksheet as a data table.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.IO.ExcelReader.GetWorksheet">
+            <summary>
+              Gets the entire worksheet as a data set.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.ExcelReader.Provider">
+            <summary>
+              Gets the data provider used by the reader.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.ExcelReader.Version">
+            <summary>
+              Gets the Excel version used by the reader.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.ExcelReader.HasHeaders">
+            <summary>
+              Gets whether the workbook has column headers.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.ExcelReader.HasMixedData">
+            <summary>
+              Gets whether the data contains mixed string and numeric data.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.IO.SparseReader">
+             <summary>
+               Reader for data files containing samples in libsvm's sparse format.
+             </summary>
+             
+             <example>
+               <para>
+               The following example shows how to read all sparse samples from a file
+               and retrieve them as a dense multidimensional vector.</para>
+               
+               <code>
+               // Suppose we are going to read a sparse sample file containing
+               //  samples which have an actual dimension of 4. Since the samples
+               //  are in a sparse format, each entry in the file will probably
+               //  have a much lesser number of elements.
+               //
+               int sampleSize = 4;
+            
+               // Create a new Sparse Sample Reader to read any given file,
+               //  passing the correct dense sample size in the constructor
+               //
+               SparseReader reader = new SparseReader(file, Encoding.Default, sampleSize);
+               
+               // Declare a vector to obtain the label
+               //  of each of the samples in the file
+               //
+               int[] labels = null;
+               
+               // Declare a vector to obtain the description (or comments)
+               //  about each of the samples in the file, if present.
+               //
+               string[] descriptions = null;
+               
+               // Read the sparse samples and store them in a dense vector array
+               double[][] samples = reader.ReadToEnd(out labels, out descriptions);
+               </code>
+               
+               <para>Additionally, it is also possible to read each sample
+               individually and sequentially. For this, we can use a while
+               loop until we reach the end of the stream.</para>
+               
+               <code>
+               // Suppose we are going to read a sparse sample file containing
+               //  samples which have an actual dimension of 4. Since the samples
+               //  are in a sparse format, each entry in the file will probably
+               //  have a much lesser number of elements.
+               //
+               int sampleSize = 4;
+            
+               // Create a new Sparse Sample Reader to read any given file,
+               //  passing the correct dense sample size in the constructor
+               //
+               SparseReader reader = new SparseReader(file, Encoding.Default, sampleSize);
+            
+               // Declare some variables to receive each sample
+               //
+               int label = 0;
+               string description;
+               double[] sample;
+               
+               // Read a single sample from the file
+               sample = reader.ReadDense(out label, out description);
+               
+               // Read all other samples from the file
+               while (!reader.EndOfStream)
+               {
+                   sample = reader.ReadDense(out label, out description);
+               }
+               </code>
+             </example>
+             
+        </member>
+        <member name="M:Accord.IO.SparseReader.#ctor(System.String,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.IO.SparseReader"/> class.
+            </summary>
+            
+            <param name="path">The complete file path to be read.</param>
+            <param name="sampleSize">The size of the feature vectors stored in the file.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.#ctor(System.String)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.IO.SparseReader"/> class.
+            </summary>
+            
+            <param name="path">The complete file path to be read.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.#ctor(System.IO.Stream,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.IO.SparseReader"/> class.
+            </summary>
+            
+            <param name="stream">The file stream to be read.</param>
+            <param name="sampleSize">The size of the feature vectors stored in the file.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.#ctor(System.IO.Stream)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.IO.SparseReader"/> class.
+            </summary>
+            
+            <param name="stream">The file stream to be read.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.#ctor(System.IO.Stream,System.Text.Encoding,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.IO.SparseReader"/> class.
+            </summary>
+            
+            <param name="stream">The file stream to be read.</param>
+            <param name="encoding">The character encoding to use.</param>
+            <param name="sampleSize">The size of the feature vectors stored in the file.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.#ctor(System.IO.Stream,System.Text.Encoding)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.IO.SparseReader"/> class.
+            </summary>
+            
+            <param name="stream">The file stream to be read.</param>
+            <param name="encoding">The character encoding to use.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.#ctor(System.String,System.Text.Encoding,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.IO.SparseReader"/> class.
+            </summary>
+            
+            <param name="path">The complete file path to be read.</param>
+            <param name="encoding">The character encoding to use.</param>
+            <param name="sampleSize">The size of the feature vectors stored in the file.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.#ctor(System.IO.StreamReader,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.IO.SparseReader"/> class.
+            </summary>
+            
+            <param name="reader">A StreamReader containing the file to be read.</param>
+            <param name="sampleSize">The size of the feature vectors stored in the file.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.#ctor(System.String,System.Text.Encoding)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.IO.SparseReader"/> class.
+            </summary>
+            
+            <param name="path">The complete file path to be read.</param>
+            <param name="encoding">The character encoding to use.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.#ctor(System.IO.StreamReader)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.IO.SparseReader"/> class.
+            </summary>
+            
+            <param name="reader">A StreamReader containing the file to be read.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadSparse(System.Int32@,System.String@)">
+            <summary>
+              Reads a sparse sample from the current stream
+              and returns it as a sparse vector.
+            </summary>
+            
+            <param name="label">The label of the sample.</param>
+            <param name="description">An optional description accompanying the sample.</param>
+            <returns>A vector in sparse representation containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadSparse(System.Int32@)">
+            <summary>
+              Reads a sparse sample from the current stream
+              and returns it as a sparse vector.
+            </summary>
+            
+            <param name="label">The label of the sample.</param>
+            <returns>A vector in sparse representation containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadDense(System.Int32@,System.String@)">
+            <summary>
+              Reads a sparse sample from the current stream
+              and returns it as a dense vector.
+            </summary>
+            
+            <param name="label">The label of the sample.</param>
+            <param name="description">An optional description accompanying the sample.</param>
+            
+            <returns>A vector in dense representation containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadDense(System.Double@,System.String@)">
+            <summary>
+              Reads a sparse sample from the current stream
+              and returns it as a dense vector.
+            </summary>
+            
+            <param name="output">The output value associated with the sample.</param>
+            <param name="description">An optional description accompanying the sample.</param>
+            
+            <returns>A vector in dense representation containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadDense(System.Int32@)">
+            <summary>
+              Reads a sparse sample from the current stream
+              and returns it as a dense vector.
+            </summary>
+            
+            <param name="label">The label of the sample.</param>
+            <returns>A vector in dense representation containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadToEnd(System.Int32[]@)">
+            <summary>
+              Reads samples from the current position to the end of the stream.
+            </summary>
+            
+            <param name="labels">An array containing the samples' labels.</param>
+            
+            <returns>An array of dense feature vectors.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadToEnd(System.Double[]@)">
+            <summary>
+              Reads samples from the current position to the end of the stream.
+            </summary>
+            
+            <param name="outputs">An array containing the samples' output values.</param>
+            
+            <returns>An array of dense feature vectors.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadToEnd(System.Int32[]@,System.String[]@)">
+            <summary>
+              Reads samples from the current position to the end of the stream.
+            </summary>
+            
+            <param name="labels">An array containing the samples' labels.</param>
+            <param name="descriptions">An array containing the samples' descriptions.</param>
+            
+            <returns>An array of dense feature vectors.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadToEnd(System.Double[]@,System.String[]@)">
+            <summary>
+              Reads samples from the current position to the end of the stream.
+            </summary>
+            
+            <param name="outputs">An array containing the samples' output values.</param>
+            <param name="descriptions">An array containing the samples' descriptions.</param>
+            
+            <returns>An array of dense feature vectors.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadToEnd(System.Boolean,System.Int32[]@)">
+            <summary>
+              Reads samples from the current position to the end of the stream.
+            </summary>
+            
+            <param name="sparse">True to return the feature vectors in a
+            sparse representation, false to return them as dense vectors.</param>
+            <param name="labels">An array containing the samples' labels.</param>
+            
+            <returns>An array of dense feature vectors.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadToEnd(System.Boolean,System.Double[]@)">
+            <summary>
+              Reads samples from the current position to the end of the stream.
+            </summary>
+            
+            <param name="sparse">True to return the feature vectors in a
+            sparse representation, false to return them as dense vectors.</param>
+            <param name="outputs">An array containing the samples' output values.</param>
+            
+            <returns>An array of dense feature vectors.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadToEnd(System.Boolean,System.Int32[]@,System.String[]@)">
+            <summary>
+              Reads samples from the current position to the end of the stream.
+            </summary>
+            
+            <param name="sparse">True to return the feature vectors in a
+            sparse representation, false to return them as dense vectors.</param>
+            <param name="labels">An array containing the samples' labels.</param>
+            <param name="descriptions">An array containing the samples' descriptions.</param>
+            
+            <returns>An array of dense feature vectors.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.ReadToEnd(System.Boolean,System.Double[]@,System.String[]@)">
+            <summary>
+              Reads samples from the current position to the end of the stream.
+            </summary>
+            
+            <param name="sparse">True to return the feature vectors in a
+            sparse representation, false to return them as dense vectors.</param>
+            <param name="labels">An array containing the samples' labels.</param>
+            <param name="descriptions">An array containing the samples' descriptions.</param>
+            
+            <returns>An array of dense feature vectors.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.Dispose">
+            <summary>
+              Performs application-defined tasks associated with
+              freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.Dispose(System.Boolean)">
+            <summary>
+              Releases unmanaged and - optionally - managed resources
+            </summary>
+            
+            <param name="disposing"><c>true</c> to release both managed and unmanaged
+              resources; <c>false</c> to release only unmanaged resources.</param>
+            
+        </member>
+        <member name="M:Accord.IO.SparseReader.Finalize">
+            <summary>
+              Releases unmanaged resources and performs other cleanup operations before the
+              <see cref="T:Accord.IO.SparseReader"/> is reclaimed by garbage collection.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.SparseReader.BaseStream">
+            <summary>
+              Returns the underlying stream.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.SparseReader.Intercept">
+            <summary>
+              Gets or sets whether to include an intercept term
+              (bias) value at the beginning of each new sample.
+              Default is <c>null</c> (don't include anything).
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.SparseReader.Dimensions">
+            <summary>
+              Gets the number of features present in this dataset. Please 
+              note that, when using the sparse representation, it is not
+              strictly necessary to know this value.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.SparseReader.EndOfStream">
+            <summary>
+              Gets a value that indicates whether the current
+              stream position is at the end of the stream.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.IO.MatSparse">
+            <summary>
+              Sparse matrix representation used by
+              <see cref="T:Accord.IO.MatReader">.MAT files</see>.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatSparse.Rows">
+            <summary>
+              Gets the sparse row index vector.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatSparse.Columns">
+            <summary>
+              Gets the sparse column index vector.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatSparse.Values">
+            <summary>
+              Gets the values vector.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.IO.LibSvmSolverType">
+            <summary>
+              Solver types allowed in LibSVM/Liblinear model files.
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.Unknown">
+            <summary>
+              Unknown solver type.
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.L2RegularizedLogisticRegression">
+            <summary>
+              L2-regularized logistic regression in the primal (-s 0, L2R_LR).
+            </summary>
+            
+            <seealso cref="T:Accord.MachineLearning.VectorMachines.Learning.ProbabilisticNewtonMethod"/>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.L2RegularizedL2LossSvcDual">
+            <summary>
+              L2-regularized L2-loss support vector classification
+              in the dual (-s 1, L2R_L2LOSS_SVC_DUAL, the default).
+            </summary>
+            
+            <seealso cref="T:Accord.MachineLearning.VectorMachines.Learning.LinearDualCoordinateDescent"/>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.L2RegularizedL2LossSvc">
+            <summary>
+              L2-regularized L2-loss support vector classification
+              in the primal (-s 2, L2R_L2LOSS_SVC).
+            </summary>
+            
+            <seealso cref="T:Accord.MachineLearning.VectorMachines.Learning.ProbabilisticNewtonMethod"/>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.L2RegularizedL1LossSvcDual">
+            <summary>
+              L2-regularized L1-loss support vector classification
+              in the dual (-s 3, L2R_L1LOSS_SVC_DUAL).
+            </summary>
+            
+            <seealso cref="T:Accord.MachineLearning.VectorMachines.Learning.LinearDualCoordinateDescent"/>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.MulticlassSvmCrammerSinger">
+            <summary>
+              Support vector classification by 
+              Crammer and Singer (-s 4, MCSVM_CS).
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.L1RegularizedL2LossSvc">
+            <summary>
+              L1-regularized L2-loss support vector 
+              classification (-s 5, L1R_L2LOSS_SVC).
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.L1RegularizedLogisticRegression">
+            <summary>
+              L1-regularized logistic regression (-s 6, L1R_LR).
+            </summary>
+            
+            <seealso cref="T:Accord.MachineLearning.VectorMachines.Learning.ProbabilisticCoordinateDescent"/>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.L2RegularizedLogisticRegressionDual">
+            <summary>
+              L2-regularized logistic regression in the dual (-s 7, L2R_LR_DUAL).
+            </summary>
+            
+            <seealso cref="T:Accord.MachineLearning.VectorMachines.Learning.ProbabilisticDualCoordinateDescent"/>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.L2RegularizedL2LossSvr">
+            <summary>
+              L2-regularized L2-loss support vector regression 
+              in the primal (-s 11, L2R_L2LOSS_SVR).
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.L2RegularizedL2LossSvrDual">
+            <summary>
+              L2-regularized L2-loss support vector regression 
+              in the dual (-s 12, L2R_L2LOSS_SVR_DUAL).
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.LibSvmSolverType.L2RegularizedL1LossSvrDual">
+            <summary>
+              L2-regularized L1-loss support vector regression 
+              in the dual (-s 13, L2R_L1LOSS_SVR_DUAL).
+            </summary>
+            
+        </member>
+        <member name="T:Accord.IO.LibSvmModel">
+            <summary>
+              Reads <see cref="T:Accord.MachineLearning.VectorMachines.SupportVectorMachine">support vector machines</see>
+              created from LibSVM or Liblinear. Not all solver types are supported.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.IO.LibSvmModel.#ctor">
+            <summary>
+              Creates a new <see cref="T:Accord.IO.LibSvmModel"/> object.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.IO.LibSvmModel.CreateMachine">
+            <summary>
+              Creates a <see cref="T:Accord.MachineLearning.VectorMachines.SupportVectorMachine"/> that
+              attends the requisites specified in this model.
+            </summary>
+            
+            <returns>A <see cref="T:Accord.MachineLearning.VectorMachines.SupportVectorMachine"/> that represents this model.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.LibSvmModel.CreateAlgorithm(System.Double[][],System.Int32[])">
+            <summary>
+              Creates a <see cref="T:Accord.MachineLearning.VectorMachines.Learning.ISupportVectorMachineLearning"> support
+              vector machine learning algorithm</see> that attends the 
+              requisites specified in this model.
+            </summary>
+            
+            <returns>
+              A <see cref="T:Accord.MachineLearning.VectorMachines.Learning.ISupportVectorMachineLearning"/> that represents this model.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.IO.LibSvmModel.Save(System.String)">
+            <summary>
+              Saves this model to disk using LibSVM's model format.
+            </summary>
+            
+            <param name="path">The path where the file should be written.</param>
+            
+        </member>
+        <member name="M:Accord.IO.LibSvmModel.Save(System.IO.Stream)">
+            <summary>
+              Saves this model to disk using LibSVM's model format.
+            </summary>
+            
+            <param name="stream">The stream where the file should be written.</param>
+            
+        </member>
+        <member name="M:Accord.IO.LibSvmModel.Load(System.String)">
+            <summary>
+              Loads a model specified using LibSVM's model format from disk.
+            </summary>
+            
+            <param name="path">The file path from where the model should be loaded.</param>
+            
+            <returns>The <see cref="T:Accord.IO.LibSvmModel"/> stored on <paramref name="path"/>.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.LibSvmModel.Load(System.IO.Stream)">
+            <summary>
+              Loads a model specified using LibSVM's model format from a stream.
+            </summary>
+            
+            <param name="stream">The stream from where the model should be loaded.</param>
+            
+            <returns>The <see cref="T:Accord.IO.LibSvmModel"/> stored on <paramref name="stream"/>.</returns>
+            
+        </member>
+        <member name="P:Accord.IO.LibSvmModel.Solver">
+            <summary>
+              Gets or sets the solver type used to create the model.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.LibSvmModel.Classes">
+            <summary>
+              Gets or sets the number of classes that
+              this classification model can handle.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.LibSvmModel.Bias">
+            <summary>
+              Gets or sets whether an initial double value should
+              be appended in the beginning of every feature vector.
+              If set to a negative number, this functionality is
+              disabled. Default is 0.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.LibSvmModel.Dimension">
+            <summary>
+              Gets or sets the number of dimensions (features) 
+              the classification or regression model can handle.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.LibSvmModel.Labels">
+            <summary>
+              Gets or sets the class label for each class
+              this classification model expects to handle.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.LibSvmModel.Weights">
+            <summary>
+              Gets or sets the vector of linear weights used
+              by this model, if it is a compact model. If this
+              is not a compact model, this will be set to <c>null</c>.
+            </summary>
+            
+            <seealso cref="P:Accord.MachineLearning.VectorMachines.SupportVectorMachine.IsCompact"/>
+            
+        </member>
+        <member name="P:Accord.IO.LibSvmModel.Vectors">
+            <summary>
+              Gets or sets the set of support vectors used
+              by this model. If the model is compact, this
+              will be set to <c>null</c>.
+            </summary>
+            
+            <seealso cref="P:Accord.MachineLearning.VectorMachines.SupportVectorMachine.IsCompact"/>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miINT8">
+            <summary>
+              8 bit, signed
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miUINT8">
+             <summary>
+               8 bit, unsigned
+            </summary>
+             
+        </member>
+        <member name="F:Accord.IO.MatDataType.miINT16">
+            <summary>
+              16-bit, signed
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miUINT16">
+            <summary>
+              16-bit, unsigned
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miINT32">
+            <summary>
+              32-bit, signed
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miUINT32">
+            <summary>
+              32-bit, unsigned
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miSINGLE">
+            <summary>
+              IEEE® 754 single format
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miDOUBLE">
+            <summary>
+              IEEE 754 double format
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miINT64">
+            <summary>
+              64-bit, signed
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miUINT64">
+            <summary>
+              64-bit, unsigned
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miMATRIX">
+            <summary>
+              MATLAB array
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miCOMPRESSED">
+            <summary>
+              Compressed Data
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miUTF8">
+            <summary>
+              Unicode UTF-8 Encoded Character Data
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miUTF16">
+            <summary>
+              Unicode UTF-16 Encoded Character Data
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatDataType.miUTF32">
+            <summary>
+              Unicode UTF-32 Encoded Character Data
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxCELL_CLASS">
+            <summary>
+              Cell array
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxSTRUCT_CLASS">
+            <summary>
+              Structure 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxOBJECT_CLASS">
+            <summary>
+              Object 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxCHAR_CLASS">
+            <summary>
+              Character array
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxSPARSE_CLASS">
+            <summary>
+              Sparse array 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxDOUBLE_CLASS">
+            <summary>
+              Double precision array 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxSINGLE_CLASS">
+            <summary>
+              Single precision array 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxINT8_CLASS">
+            <summary>
+              8-bit, signed integer 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxUINT8_CLASS">
+            <summary>
+              8-bit, unsigned integer 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxINT16_CLASS">
+            <summary>
+              16-bit, signed integer 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxUINT16_CLASS">
+            <summary>
+              16-bit, unsigned integer 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxINT32_CLASS">
+            <summary>
+              32-bit, signed integer 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxUINT32_CLASS">
+            <summary>
+              32-bit, unsigned integer 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxINT64_CLASS">
+            <summary>
+              64-bit, signed integer 
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.MatArrayType.mxUINT64_CLASS">
+            <summary>
+              64-bit, unsigned integer 
+            </summary>
+            
+        </member>
+        <member name="T:Accord.IO.MatReader">
+            <summary>
+              Reader for .mat files (such as the ones created by Matlab and Octave).
+            </summary>
+            
+            <remarks>
+            <para>
+              MAT files are binary files containing variables and structures from mathematical 
+              processing programs, such as MATLAB or Octave. In MATLAB, .mat files can be created
+              using its <c>save</c> and <c>load</c> functions. For the moment, this reader supports
+              only version 5 MAT files (Matlab 5 MAT-file).</para>
+              
+            <para>
+              The MATLAB file format is documented at 
+              <a href="http://www.mathworks.com/help/pdf_doc/matlab/matfile_format.pdf">
+              http://www.mathworks.com/help/pdf_doc/matlab/matfile_format.pdf </a></para>
+            </remarks>
+            
+            <example>
+            <code>
+            // Create a new MAT file reader
+            var reader = new MatReader(file);
+            
+            // Extract some basic information about the file:
+            string description = reader.Description; // "MATLAB 5.0 MAT-file, Platform: PCWIN"
+            int    version     = reader.Version;     // 256
+            bool   bigEndian   = reader.BigEndian;   // false
+            
+            
+            // Enumerate the fields in the file
+            foreach (var field in reader.Fields)
+              Console.WriteLine(field.Key); // "structure"
+            
+            // We have the single following field
+            var structure = reader["structure"];
+            
+            // Enumerate the fields in the structure
+            foreach (var field in structure.Fields)
+              Console.WriteLine(field.Key); // "a", "string"
+            
+            // Check the type for the field "a"
+            var aType = structure["a"].Type; // byte[,]
+            
+            // Retrieve the field "a" from the file
+            var a = structure["a"].GetValue&lt;byte[,]>();
+            
+            // We can also do directly if we know the type in advance
+            var s = reader["structure"]["string"].GetValue&lt;string>();
+            </code>
+            </example>
+            
+        </member>
+        <member name="M:Accord.IO.MatReader.#ctor(System.IO.Stream)">
+            <summary>
+              Creates a new <see cref="T:Accord.IO.MatReader"/>.
+            </summary>
+            
+            <param name="input">The input stream containing the MAT file.</param>
+            
+        </member>
+        <member name="M:Accord.IO.MatReader.#ctor(System.IO.Stream,System.Boolean)">
+            <summary>
+              Creates a new <see cref="T:Accord.IO.MatReader"/>.
+            </summary>
+            
+            <param name="input">The input stream containing the MAT file.</param>
+            <param name="autoTranspose">Pass <c>true</c> to automatically transpose matrices if they 
+              have been stored differently from .NET's default row-major order. Default is <c>true</c>.</param>
+            
+        </member>
+        <member name="M:Accord.IO.MatReader.Dispose">
+            <summary>
+              Performs application-defined tasks associated with
+              freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.IO.MatReader.Dispose(System.Boolean)">
+            <summary>
+              Releases unmanaged and - optionally - managed resources
+            </summary>
+            
+            <param name="disposing"><c>true</c> to release both managed and unmanaged
+              resources; <c>false</c> to release only unmanaged resources.</param>
+            
+        </member>
+        <member name="M:Accord.IO.MatReader.Finalize">
+            <summary>
+              Releases unmanaged resources and performs other cleanup operations before the
+              <see cref="T:Accord.IO.MatReader"/> is reclaimed by garbage collection.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatReader.Fields">
+            <summary>
+              Gets the child nodes contained in this file.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatReader.Description">
+            <summary>
+              Gets the human readable description of the MAT file.
+            </summary>
+            
+            <example>
+              An example header description could be given by
+              <c>"MATLAB 5.0 MAT-file, Platform: PCWIN, Created on: Thu Feb 22 03:12:25 2007"</c>.
+            </example>
+            
+        </member>
+        <member name="P:Accord.IO.MatReader.Version">
+            <summary>
+              Gets the version information about the file. 
+              This field should always contain 256.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatReader.BigEndian">
+            <summary>
+              Gets whether the MAT file uses the Big-Endian
+              standard for bit-order. Currently, only little
+              endian is supported.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatReader.Transpose">
+            <summary>
+              Gets whether matrices will be auto-transposed 
+              to .NET row and column format if necessary.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatReader.BaseStream">
+            <summary>
+              Returns the underlying stream.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatReader.Item(System.String)">
+            <summary>
+              Gets a child object contained in this node.
+            </summary>
+            
+            <param name="key">The field name or index.</param>
+            
+        </member>
+        <member name="P:Accord.IO.MatReader.Item(System.Int32)">
+            <summary>
+              Gets a child object contained in this node.
+            </summary>
+            
+            <param name="key">The field index.</param>
+            
+        </member>
+        <member name="T:Accord.IO.IdxDataType">
+            <summary>
+              Data types which can be contained in a IDX data file.
+            </summary>
+            
+            <seealso cref="T:Accord.IO.IdxReader"/>
+            
+        </member>
+        <member name="F:Accord.IO.IdxDataType.UnsignedByte">
+            <summary>
+              byte (0x08)
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.IdxDataType.SignedByte">
+            <summary>
+             sbyte (0x09)
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.IdxDataType.Short">
+            <summary>
+             short (0x0B)
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.IdxDataType.Integer">
+            <summary>
+              int (0x0C)
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.IdxDataType.Float">
+            <summary>
+              float (0x0D)
+            </summary>
+            
+        </member>
+        <member name="F:Accord.IO.IdxDataType.Double">
+            <summary>
+              double (0x0E)
+            </summary>
+            
+        </member>
+        <member name="T:Accord.IO.IdxReader">
+            <summary>
+              Reader for IDX files (such as MNIST's digit database).
+            </summary>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.#ctor(System.String)">
+            <summary>
+              Creates a new <see cref="T:Accord.IO.IdxReader"/>.
+            </summary>
+            
+            <param name="path">The path for the IDX file.</param>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.#ctor(System.String,System.Boolean)">
+            <summary>
+              Creates a new <see cref="T:Accord.IO.IdxReader"/>.
+            </summary>
+            
+            <param name="path">The path for the IDX file.</param>
+            <param name="compressed">
+              Pass <c>true</c> if the stream contains 
+              a compressed (.gz) file. Default is true.</param>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.#ctor(System.IO.Stream)">
+            <summary>
+              Creates a new <see cref="T:Accord.IO.IdxReader"/>.
+            </summary>
+            
+            <param name="input">The input stream containing the IDX file.</param>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.#ctor(System.IO.Stream,System.Boolean)">
+            <summary>
+              Creates a new <see cref="T:Accord.IO.IdxReader"/>.
+            </summary>
+            
+            <param name="input">The input stream containing the IDX file.</param>
+            <param name="compressed">
+              Pass <c>true</c> if the stream contains 
+              a compressed (.gz) file. Default is true.</param>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.Read(System.Array)">
+            <summary>
+              Reads the next sample into the given array.
+            </summary>
+            
+            <param name="array">The array to contain the samples.</param>
+            
+            <returns>How many bytes were read.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.ReadValue">
+            <summary>
+              Reads the next sample as a value.
+            </summary>
+            
+            <returns>A single number containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.ReadVector">
+            <summary>
+              Reads the next sample as a vector.
+            </summary>
+            
+            <returns>A unidimensional array containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.ReadMatrix">
+            <summary>
+              Reads the next sample as a matrix.
+            </summary>
+            
+            <returns>A multidimensional array containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.TryReadValue``1(``0@)">
+            <summary>
+              Reads the next sample as a value.
+            </summary>
+            
+            <typeparam name="T">The data type to be used.</typeparam>
+            
+            <returns>A single number containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.ReadVector``1">
+            <summary>
+              Reads the next sample as a vector.
+            </summary>
+            
+            <typeparam name="T">The data type to be used.</typeparam>
+            
+            <returns>A unidimensional array containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.ReadMatrix``1">
+            <summary>
+              Reads the next sample as a matrix.
+            </summary>
+            
+            <typeparam name="T">The data type to be used.</typeparam>
+            
+            <returns>A multidimensional array containing the sample.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.ReadToEndAsMatrices``1">
+            <summary>
+              Reads all samples in the file, starting from the current position, as matrices.
+            </summary>
+            
+            <typeparam name="T">The data type to be used.</typeparam>
+            
+            <returns>
+              An array containing all samples from the current point until the end of the stream.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.ReadToEndAsVectors``1">
+            <summary>
+              Reads all samples in the file, starting from the current position, as vectors.
+            </summary>
+            
+            <typeparam name="T">The data type to be used.</typeparam>
+            
+            <returns>
+              An array containing all samples from the current point until the end of the stream.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.ReadToEndAsValues``1">
+            <summary>
+              Reads all samples in the file, starting from the current position, as vectors.
+            </summary>
+            
+            <typeparam name="T">The data type to be used.</typeparam>
+            
+            <returns>
+              An array containing all samples from the current point until the end of the stream.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.Translate(Accord.IO.IdxDataType)">
+            <summary>
+              Translates the given <see cref="T:Accord.IO.IdxDataType"/> to a .NET <see cref="T:System.Type"/>.
+            </summary>
+            
+            <param name="type">The type to be translated.</param>
+            
+            <returns>
+              A .NET <see cref="T:System.Type"/> that represents the <see cref="T:Accord.IO.IdxDataType"/>.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.Dispose">
+            <summary>
+              Performs application-defined tasks associated with
+              freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.Dispose(System.Boolean)">
+            <summary>
+              Releases unmanaged and - optionally - managed resources
+            </summary>
+            
+            <param name="disposing"><c>true</c> to release both managed and unmanaged
+              resources; <c>false</c> to release only unmanaged resources.</param>
+            
+        </member>
+        <member name="M:Accord.IO.IdxReader.Finalize">
+            <summary>
+              Releases unmanaged resources and performs other cleanup operations before the
+              <see cref="T:Accord.IO.IdxReader"/> is reclaimed by garbage collection.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.IdxReader.Magic">
+            <summary>
+              MNIST's magic number. See remarks for more details
+            </summary>
+            
+            <remarks>
+            <para>
+              The magic number is an integer (MSB first). The first 2 bytes 
+              are always 0. The third byte codes the type of the data. The 
+              4-th byte codes the number of dimensions of the vector/matrix:
+              1 for vectors, 2 for matrices.
+            </para>
+            
+            <list type="table">
+              <listheader>
+                <term>Code</term>
+                <description>Meaning</description>
+              </listheader>
+              <item>
+                <term>0x08</term><description>unsigned byte</description></item>
+              <item>
+                <term>0x09</term><description>signed byte</description></item>
+              <item>
+                <term>0x0B</term><description>short (2 bytes)</description></item>
+              <item>
+                <term>0x0C</term><description>int (4 bytes)</description></item>
+              <item>
+                <term>0x0D</term><description>float (4 bytes)</description></item>
+              <item>
+                <term>0x0E</term><description>double (8 bytes)</description></item>
+              </list>
+            </remarks>
+            
+        </member>
+        <member name="P:Accord.IO.IdxReader.DataType">
+            <summary>
+              Gets the type of the data stored in this file.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.IdxReader.Dimensions">
+            <summary>
+              Gets the number of dimensions for the samples.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.IdxReader.Samples">
+            <summary>
+              Gets the number of samples stored in this file.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.IdxReader.BaseStream">
+            <summary>
+              Returns the underlying stream.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.IO.MatNode">
+            <summary>
+              Node object contained in <see cref="T:Accord.IO.MatReader">.MAT file</see>. 
+              A node can contain a matrix object, a string, or another nodes.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.IO.MatNode.GetValue``1">
+            <summary>
+              Gets the object value contained at this node, if any. 
+              Its type can be known by checking the <see cref="P:Accord.IO.MatNode.Type"/>
+              property of this node.
+            </summary>
+            
+            <typeparam name="T">The object type, if known.</typeparam>
+            
+            <returns>The object stored at this node.</returns>
+            
+        </member>
+        <member name="M:Accord.IO.MatNode.GetEnumerator">
+            <summary>
+              Returns an enumerator that iterates through a collection.
+            </summary>
+            
+            <returns>
+              An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.IO.MatNode.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+              Returns an enumerator that iterates through a collection.
+            </summary>
+            
+            <returns>
+              An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+            </returns>
+            
+        </member>
+        <member name="P:Accord.IO.MatNode.Name">
+            <summary>
+              Gets the name of this node.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatNode.Fields">
+            <summary>
+              Gets the child nodes contained at this node.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatNode.Value">
+            <summary>
+              Gets the object value contained at this node, if any. 
+              Its type can be known by checking the <see cref="P:Accord.IO.MatNode.Type"/>
+              property of this node.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatNode.Type">
+            <summary>
+              Gets the type of the object value contained in this node.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatNode.Count">
+            <summary>
+              Gets the number of child objects contained in this node.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.IO.MatNode.Item(System.String)">
+            <summary>
+              Gets the child fields contained under the given name.
+            </summary>
+            
+            <param name="name">The name of the field to be retrieved.</param>
+            
+        </member>
+        <member name="P:Accord.IO.MatNode.Item(System.Int32)">
+            <summary>
+              Gets the child fields contained under the given name.
+            </summary>
+            
+            <param name="name">The name of the field to be retrieved.</param>
+            
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,2181 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Accord.Neuro</name>
+    </assembly>
+    <members>
+        <member name="T:Accord.Neuro.NguyenWidrow">
+            <summary>
+             Nguyen-Widrow weight initialization.
+            </summary>
+            
+            <remarks>
+            <para>The Nguyen-Widrow initialization algorithm chooses values in
+            order to distribute the active region of each neuron in the layer
+            approximately evenly across the layers' input space.</para>
+            
+            <para>The values contain a degree of randomness, so they are not the
+            same each time this function is called.</para> 
+            </remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.NguyenWidrow.#ctor(AForge.Neuro.ActivationNetwork)">
+            <summary>
+              Constructs a new Nguyen-Widrow Weight initialization.
+            </summary>
+            
+            <param name="network">The activation network whose weights will be initialized.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.NguyenWidrow.Randomize(System.Int32)">
+            <summary>
+              Randomizes (initializes) the weights of
+              the network using Nguyen-Widrow method's.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.NguyenWidrow.Randomize">
+            <summary>
+              Randomizes (initializes) the weights of
+              the network using a Gaussian distribution.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.ActivationFunctions.GaussianFunction">
+             <summary>
+               Gaussian stochastic activation function.
+             </summary>
+             
+             <remarks>
+             <para>
+               The Gaussian activation function can be used to create <see cref="T:Accord.Neuro.Neurons.StochasticNeuron">
+               Stochastic Neurons</see>, which can in turn be used to create <see cref="T:Accord.Neuro.Networks.DeepBeliefNetwork">
+               Deep Belief Networks</see> and <see cref="T:Accord.Neuro.Networks.RestrictedBoltzmannMachine">Restricted Boltzmann
+               Machines</see>. In contrast to the <see cref="T:Accord.Neuro.ActivationFunctions.BernoulliFunction"/>, the Gaussian can be used
+               to model continuous inputs in Deep Belief Networks. If, however, the inputs of the problem
+               being learned are discrete in nature, the use of a Bernoulli function would be more indicated.</para>
+               
+             <para>
+               The Gaussian activation function is modeled after a <see cref="T:Accord.Statistics.Distributions.Univariate.NormalDistribution">
+               Gaussian (Normal) probability distribution</see>.
+             </para>
+             
+             <para>
+               This function assumes output variables have been 
+               normalized to have zero mean and unit variance.</para>
+             </remarks>
+             
+             <example>
+               <code>
+               // Create a Gaussian function with slope alpha = 4.2
+               GaussianFunction function = new GaussianFunction(4.2);
+               
+               // Computes the function output (linear, y = alpha * x)
+               double y = function.Function(x: 0.2); // 4.2 * 2 = 0.48
+               
+               // Draws a sample from a Gaussian distribution with
+               // mean given by the function output y (previously 0.48)
+               double z = function.Generate(x: 0.4); // (random, between 0 and 1)
+               
+               // Please note that the above is completely equivalent 
+               // to computing the line below (remember, 0.48 == y)
+               double w = function.Generate2(y: 0.48); // (random, between 0 and 1)
+               
+               
+               // We can also compute the derivative of the sigmoid function
+               double d = function.Derivative(x: 0.2); // 4.2 (the slope)
+               
+               // Or compute the derivative given the functions' output y
+               double e = function.Derivative2(y: 0.2); // 4.2 (the slope)
+             </code>
+             </example>
+             
+             <seealso cref="T:Accord.Neuro.ActivationFunctions.BernoulliFunction"/>
+             <seealso cref="T:Accord.Statistics.Distributions.Univariate.NormalDistribution"/>
+             <seealso cref="T:Accord.Neuro.Networks.DeepBeliefNetwork"/>
+            
+        </member>
+        <member name="T:Accord.Neuro.ActivationFunctions.IStochasticFunction">
+            <summary>
+              Common interface for stochastic activation functions.
+            </summary>
+            
+            <seealso cref="T:Accord.Neuro.ActivationFunctions.BernoulliFunction"/>
+            <seealso cref="T:Accord.Neuro.ActivationFunctions.GaussianFunction"/>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.IStochasticFunction.Generate(System.Double)">
+            <summary>
+              Samples a value from the function given a input value.
+            </summary>
+            
+            <param name="x">Function input value.</param>
+            
+            <returns>Draws a random value from the function.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.IStochasticFunction.Generate2(System.Double)">
+            <summary>
+              Samples a value from the function given a function output value.
+            </summary>
+            
+            <param name="y">The function output value. This is the value which was obtained
+            with the help of the <see cref="M:AForge.Neuro.IActivationFunction.Function(System.Double)"/> method.</param>
+            
+            <remarks><para>The method calculates the same output value as the
+            <see cref="M:Accord.Neuro.ActivationFunctions.IStochasticFunction.Generate(System.Double)"/> method, but it takes not the input <b>x</b> value
+            itself, but the function value, which was calculated previously with help
+            of the <see cref="M:AForge.Neuro.IActivationFunction.Function(System.Double)"/> method.</para>
+            </remarks>
+            
+            <returns>Draws a random value from the function.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.GaussianFunction.#ctor(System.Double)">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.ActivationFunctions.GaussianFunction"/>.
+            </summary>
+            
+            <param name="alpha">The linear slope value. Default is 1.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.GaussianFunction.#ctor">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.ActivationFunctions.GaussianFunction"/>.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.GaussianFunction.#ctor(System.Double,AForge.DoubleRange)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.ActivationFunctions.GaussianFunction"/> class.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.GaussianFunction.Function(System.Double)">
+             <summary>
+             Calculates function value.
+             </summary>
+            
+             <param name="x">Function input value.</param>
+             
+             <returns>Function output value, <i>f(x)</i>.</returns>
+            
+             <remarks>The method calculates function value at point <paramref name="x"/>.</remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.GaussianFunction.Generate(System.Double)">
+            <summary>
+              Samples a value from the function given a input value.
+            </summary>
+            
+            <param name="x">Function input value.</param>
+            
+            <returns>
+              Draws a random value from the function.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.GaussianFunction.Generate2(System.Double)">
+            <summary>
+              Samples a value from the function given a function output value.
+            </summary>
+            
+            <param name="y">Function output value - the value, which was obtained
+            with the help of <see cref="M:Accord.Neuro.ActivationFunctions.GaussianFunction.Function(System.Double)"/> method.</param>
+            
+            <returns>
+              Draws a random value from the function.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.GaussianFunction.Derivative(System.Double)">
+             <summary>
+             Calculates function derivative.
+             </summary>
+             
+             <param name="x">Function input value.</param>
+             
+             <returns>Function derivative, <i>f'(x)</i>.</returns>
+             
+             <remarks>The method calculates function derivative at point <paramref name="x"/>.</remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.GaussianFunction.Derivative2(System.Double)">
+            <summary>
+            Calculates function derivative.
+            </summary>
+            
+            <param name="y">Function output value - the value, which was obtained
+            with the help of <see cref="M:Accord.Neuro.ActivationFunctions.GaussianFunction.Function(System.Double)"/> method.</param>
+            
+            <returns>Function derivative, <i>f'(x)</i>.</returns>
+            
+            <remarks><para>The method calculates the same derivative value as the
+            <see cref="M:Accord.Neuro.ActivationFunctions.GaussianFunction.Derivative(System.Double)"/> method, but it takes not the input <b>x</b> value
+            itself, but the function value, which was calculated previously with
+            the help of <see cref="M:Accord.Neuro.ActivationFunctions.GaussianFunction.Function(System.Double)"/> method.</para>
+            
+            <para><note>Some applications require as function value, as derivative value,
+            so they can save the amount of calculations using this method to calculate derivative.</note></para>
+            </remarks>
+            
+        </member>
+        <member name="P:Accord.Neuro.ActivationFunctions.GaussianFunction.Random">
+            <summary>
+              Gets or sets the class-wide  
+              Gaussian random generator.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.ActivationFunctions.GaussianFunction.Alpha">
+            <summary>
+            Linear slope value.
+            </summary>
+            
+            <remarks>
+              <para>Default value is set to <b>1</b>.</para>
+            </remarks>
+            
+        </member>
+        <member name="P:Accord.Neuro.ActivationFunctions.GaussianFunction.Range">
+             <summary>
+               Function output range.
+             </summary>
+            
+             <remarks>
+               <para>Default value is set to [-1;+1]</para>
+             </remarks>
+            
+        </member>
+        <member name="T:Accord.Neuro.Networks.DeepBeliefNetwork">
+            <summary>
+              Deep Belief Network.
+            </summary>
+            
+            <remarks>
+              The Deep Belief Network can be seen as a collection of stacked
+              <see cref="T:Accord.Neuro.Networks.RestrictedBoltzmannMachine">Restricted Boltzmann
+              Machines</see> disposed as layers of a network. In turn, the
+              whole network can be seen as an stochastic activation network
+              in which the neurons activate within some given probability.
+            </remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.#ctor(System.Int32,System.Int32[])">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.Networks.DeepBeliefNetwork"/>.
+            </summary>
+            
+            <param name="inputsCount">The number of inputs for the network.</param>
+            <param name="hiddenNeurons">The number of hidden neurons in each layer.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.#ctor(Accord.Neuro.ActivationFunctions.IStochasticFunction,System.Int32,System.Int32[])">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.Networks.DeepBeliefNetwork"/>.
+            </summary>
+            
+            <param name="function">The activation function to be used in the network neurons.</param>
+            <param name="inputsCount">The number of inputs for the network.</param>
+            <param name="hiddenNeurons">The number of hidden neurons in each layer.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.#ctor(System.Int32,Accord.Neuro.Networks.RestrictedBoltzmannMachine[])">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.Networks.DeepBeliefNetwork"/>.
+            </summary>
+            
+            <param name="inputsCount">The number of inputs for the network.</param>
+            <param name="layers">The layers to add to the deep network.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Compute(System.Double[])">
+            <summary>
+              Computes the network's outputs for a given input.
+            </summary>
+            
+            <param name="input">The input vector.</param>
+            
+            <returns>
+              Returns the network's output for the given input.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Compute(System.Double[],System.Int32)">
+            <summary>
+              Computes the network's outputs for a given input.
+            </summary>
+            
+            <param name="input">The input vector.</param>
+            <param name="layerIndex">The index of the layer.</param>
+            
+            <returns>
+              Returns the network's output for the given input.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Reconstruct(System.Double[])">
+            <summary>
+              Reconstructs a input vector for a given output.
+            </summary>
+            
+            <param name="output">The output vector.</param>
+            
+            <returns>
+              Returns a probable input vector which may 
+              have originated the given output.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Reconstruct(System.Double[],System.Int32)">
+            <summary>
+              Reconstructs a input vector using the output
+              vector of a given layer.
+            </summary>
+            
+            <param name="output">The output vector.</param>
+            <param name="layerIndex">The index of the layer.</param>
+            
+            <returns>
+              Returns a probable input vector which may 
+              have originated the given output in the 
+              indicated layer.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.GenerateOutput(System.Double[])">
+            <summary>
+              Samples an output vector from the network
+              given an input vector.
+            </summary>
+            
+            <param name="input">An input vector.</param>
+            
+            <returns>
+              A possible output considering the
+              stochastic activations of the network.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.GenerateOutput(System.Double[],System.Int32)">
+            <summary>
+              Samples an output vector from the network
+              given an input vector.
+            </summary>
+            
+            <param name="input">An input vector.</param>
+            <param name="layerIndex">The index of the layer.</param>
+            
+            <returns>
+              A possible output considering the
+              stochastic activations of the network.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.GenerateInput(System.Double[])">
+            <summary>
+              Samples an input vector from the network
+              given an output vector.
+            </summary>
+            
+            <param name="output">An output vector.</param>
+            
+            <returns>
+              A possible reconstruction considering the
+              stochastic activations of the network.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Push(System.Int32)">
+            <summary>
+              Inserts a new layer at the end of this network.
+            </summary>
+            
+            <param name="neurons">The number of neurons in the new layer.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Push(System.Int32,Accord.Neuro.ActivationFunctions.IStochasticFunction)">
+            <summary>
+              Inserts a new layer at the end of this network.
+            </summary>
+            
+            <param name="neurons">The number of neurons in the new layer.</param>
+            <param name="function">The activation function which should be used by the neurons.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Push(System.Int32,Accord.Neuro.ActivationFunctions.IStochasticFunction,Accord.Neuro.ActivationFunctions.IStochasticFunction)">
+            <summary>
+              Inserts a new layer at the end of this network.
+            </summary>
+            
+            <param name="neurons">The number of neurons in the layer.</param>
+            <param name="visibleFunction">The activation function which should be used by the visible neurons.</param>
+            <param name="hiddenFunction">The activation function which should be used by the hidden neurons.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Push(Accord.Neuro.Networks.RestrictedBoltzmannMachine)">
+            <summary>
+              Stacks a new Boltzmann Machine at the end of this network.
+            </summary>
+            
+            <param name="network">The machine to be added to the network.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Pop">
+            <summary>
+              Removes the last layer from the network.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.UpdateVisibleWeights">
+            <summary>
+              Updates the weights of the visible layers by copying
+              the reverse of the weights in the hidden layers.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.CreateGaussianBernoulli(System.Int32,System.Int32[])">
+            <summary>
+              Creates a Gaussian-Bernoulli network.
+            </summary>
+            
+            <param name="inputsCount">The number of inputs for the network.</param>
+            <param name="hiddenNeurons">The number of hidden neurons in each layer.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.CreateMixedNetwork(Accord.Neuro.ActivationFunctions.IStochasticFunction,Accord.Neuro.ActivationFunctions.IStochasticFunction,System.Int32,System.Int32[])">
+            <summary>
+              Creates a Mixed-Bernoulli network.
+            </summary>
+            
+            <param name="visible">The <see cref="T:Accord.Neuro.ActivationFunctions.IStochasticFunction"/> to be used in the first visible layer.</param>
+            <param name="hidden">The <see cref="T:Accord.Neuro.ActivationFunctions.IStochasticFunction"/> to be used in all other layers.</param>
+            
+            <param name="inputsCount">The number of inputs for the network.</param>
+            <param name="hiddenNeurons">The number of hidden neurons in each layer.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Save(System.IO.Stream)">
+            <summary>
+              Saves the network to a stream.
+            </summary>
+            
+            <param name="stream">The stream to which the network is to be serialized.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Save(System.String)">
+            <summary>
+              Saves the network to a stream.
+            </summary>
+            
+            <param name="path">The file path to which the network is to be serialized.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Load(System.IO.Stream)">
+            <summary>
+              Loads a network from a stream.
+            </summary>
+            
+            <param name="stream">The network from which the machine is to be deserialized.</param>
+            
+            <returns>The deserialized network.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.DeepBeliefNetwork.Load(System.String)">
+            <summary>
+              Loads a network from a file.
+            </summary>
+            
+            <param name="path">The path to the file from which the network is to be deserialized.</param>
+            
+            <returns>The deserialized network.</returns>
+            
+        </member>
+        <member name="P:Accord.Neuro.Networks.DeepBeliefNetwork.OutputCount">
+            <summary>
+              Gets the number of output neurons in the network
+              (the size of the computed output vectors).
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Networks.DeepBeliefNetwork.Machines">
+            <summary>
+              Gets the Restricted Boltzmann Machines
+              on each layer of this deep network.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.Learning.ActivationNetworkLearningConfigurationFunction">
+            <summary>
+              Delegate used to configure and create layer-specific learning algorithms.
+            </summary>
+            
+            <param name="network">The network layer being trained.</param>
+            <param name="index">The index of the layer in the deep network.</param>
+            
+            <returns>
+              The function should return an instance of the algorithm 
+              which should be used to train the network.
+            </returns>
+            
+        </member>
+        <member name="T:Accord.Neuro.Learning.DeepNeuralNetworkLearning">
+            <summary>
+              Deep Neural Network learning algorithm.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepNeuralNetworkLearning.#ctor(Accord.Neuro.Networks.DeepBeliefNetwork)">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.Learning.DeepBeliefNetworkLearning"/> algorithm.
+            </summary>
+            
+            <param name="network">The network to be trained.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepNeuralNetworkLearning.GetLayerInput(System.Double[][])">
+            <summary>
+              Gets the learning data needed to train the <see cref="P:Accord.Neuro.Learning.DeepNeuralNetworkLearning.LayerIndex">currently
+              selected layer</see>. The return of this function should then be passed to
+              <see cref="M:Accord.Neuro.Learning.DeepNeuralNetworkLearning.RunEpoch(System.Double[][],System.Double[][])"/> to actually run a learning epoch.
+            </summary>
+            
+            <param name="input">The batch of input data.</param>
+            
+            <returns>The learning data for the current layer.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepNeuralNetworkLearning.GetLayerInput(System.Double[][][])">
+            <summary>
+              Gets the learning data needed to train the <see cref="P:Accord.Neuro.Learning.DeepNeuralNetworkLearning.LayerIndex">currently
+              selected layer</see>. The return of this function should then be passed to
+              <see cref="M:Accord.Neuro.Learning.DeepNeuralNetworkLearning.RunEpoch(System.Double[][],System.Double[][])"/> to actually run a learning epoch.
+            </summary>
+            
+            <param name="batches">The mini-batches of input data.</param>
+            
+            <returns>The learning data for the current layer.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepNeuralNetworkLearning.Run(System.Double[],System.Double[])">
+            <summary>
+              Runs a single learning iteration.
+            </summary>
+            
+            <param name="input">A single input vector.</param>
+            <param name="output">The corresponding output vector.</param>
+            
+            <returns>
+              Returns the learning error after the iteration.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepNeuralNetworkLearning.RunEpoch(System.Double[][],System.Double[][])">
+            <summary>
+              Runs a single batch epoch
+              of the learning algorithm.
+            </summary>
+            
+            <param name="input">Array of input vectors.</param>
+            <param name="output">Array of corresponding output vectors.</param>
+            
+            <returns>
+              Returns sum of learning errors.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepNeuralNetworkLearning.RunEpoch(System.Double[][][],System.Double[][][])">
+            <summary>
+              Runs a single learning epoch using
+              multiple mini-batches to improve speed.
+            </summary>
+            
+            <param name="inputBatches">Array of input batches.</param>
+            <param name="outputBatches">Array of corresponding output batches.</param>
+            
+            <returns>
+              Returns sum of learning errors.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepNeuralNetworkLearning.ComputeError(System.Double[][],System.Double[][])">
+            <summary>
+              Computes the reconstruction error for 
+              a given set of input values.
+            </summary>
+            
+            <param name="inputs">The input values.</param>
+            <param name="outputs">The corresponding output values.</param>
+            
+            <returns>The squared reconstruction error.</returns>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.DeepNeuralNetworkLearning.Algorithm">
+            <summary>
+              Gets or sets the configuration function used
+              to specify and create the learning algorithms
+              for each of the layers of the deep network.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.DeepNeuralNetworkLearning.LayerIndex">
+            <summary>
+              Gets or sets the current layer index being
+              trained by the deep learning algorithm.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.DeepNeuralNetworkLearning.LayerCount">
+            <summary>
+              Gets or sets the number of layers, starting at <see cref="P:Accord.Neuro.Learning.DeepNeuralNetworkLearning.LayerIndex"/>
+              to be trained by the deep learning algorithm.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.Layers.StochasticLayer">
+            <summary>
+              Stochastic Activation Layer.
+            </summary>
+            
+            <remarks>
+              This class represents a layer of <see cref="T:Accord.Neuro.Neurons.StochasticNeuron">stochastic neurons</see>.
+            </remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.Layers.StochasticLayer.#ctor(System.Int32,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.Layers.StochasticLayer"/> class.
+            </summary>
+            
+            <param name="neuronsCount">Layer's neurons count.</param>
+            <param name="inputsCount">Layer's inputs count.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Layers.StochasticLayer.#ctor(Accord.Neuro.ActivationFunctions.IStochasticFunction,System.Int32,System.Int32)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.Layers.StochasticLayer"/> class.
+            </summary>
+            
+            <param name="function">The activation function for the neurons in the layer.</param>
+            <param name="neuronsCount">The neurons count.</param>
+            <param name="inputsCount">The inputs count.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Layers.StochasticLayer.Compute(System.Double[])">
+            <summary>
+              Compute output vector of the layer.
+            </summary>
+            
+            <param name="input">Input vector.</param>
+            
+            <returns>
+              Returns layer's output vector.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Layers.StochasticLayer.Generate(System.Double[])">
+            <summary>
+              Compute probability vector of the layer.
+            </summary>
+            
+            <param name="input">Input vector.</param>
+            
+            <returns>
+              Returns layer's probability vector.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Layers.StochasticLayer.CopyReversedWeightsFrom(Accord.Neuro.Layers.StochasticLayer)">
+            <summary>
+              Copy the weights of another layer in reversed order. This
+              can be used to update visible layers from hidden layers and
+              vice-versa.
+            </summary>
+            
+            <param name="layer">The layer to copy the weights from.</param>
+            
+        </member>
+        <member name="P:Accord.Neuro.Layers.StochasticLayer.Neurons">
+            <summary>
+              Gets the layer's neurons.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Layers.StochasticLayer.Sample">
+            <summary>
+              Gets the layer's sample values generated in the last
+              call of any of the <see cref="M:Accord.Neuro.Layers.StochasticLayer.Generate(System.Double[])"/> methods.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.RectifiedLinearFunction">
+             <summary>
+               Rectified linear activation function.
+             </summary>
+            
+             <remarks>
+               <para>This class implements a rectified linear activation 
+               function as given by the piecewise formula:</para>
+             
+               <code lang="none">
+               f(x) = 0, if x > 0
+               f(x) = x, otherwise
+               </code>
+               
+             <para>
+               This function is non-differentiable at zero.
+             </para>
+             </remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.RectifiedLinearFunction.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.RectifiedLinearFunction"/> class.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.RectifiedLinearFunction.Function(System.Double)">
+             <summary>
+               Calculates function value.
+             </summary>
+            
+             <param name="x">Function input value.</param>
+             
+             <returns>Function output value, <i>f(x)</i>.</returns>
+            
+             <remarks>The method calculates function value at point <paramref name="x"/>.</remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.RectifiedLinearFunction.Derivative(System.Double)">
+             <summary>
+               Calculates function derivative.
+             </summary>
+             
+             <param name="x">Function input value.</param>
+             
+             <returns>Function derivative, <i>f'(x)</i>.</returns>
+             
+             <remarks>The method calculates function derivative at point <paramref name="x"/>.</remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.RectifiedLinearFunction.Derivative2(System.Double)">
+            <summary>
+            Calculates function derivative.
+            </summary>
+            
+            <param name="y">Function output value - the value, which was obtained
+            with the help of <see cref="M:Accord.Neuro.RectifiedLinearFunction.Function(System.Double)"/> method.</param>
+            
+            <returns>Function derivative, <i>f'(x)</i>.</returns>
+            
+            <remarks><para>The method calculates the same derivative value as the
+            <see cref="M:Accord.Neuro.RectifiedLinearFunction.Derivative(System.Double)"/> method, but it takes not the input <b>x</b> value
+            itself, but the function value, which was calculated previously with
+            the help of <see cref="M:Accord.Neuro.RectifiedLinearFunction.Function(System.Double)"/> method.</para>
+            
+            <para><note>Some applications require as function value, as derivative value,
+            so they can save the amount of calculations using this method to calculate derivative.</note></para>
+            </remarks>
+            
+        </member>
+        <member name="T:Accord.Neuro.Neurons.StochasticNeuron">
+            <summary>
+              Stochastic Activation Neuron.
+            </summary>
+            
+            <remarks>
+              The Stochastic Activation Neuron is an activation neuron
+              which activates (returns 1) only within a given probability.
+              The neuron has a random component in the activation function,
+              and the neuron fires only if the total sum, after applied
+              to a logistic activation function, is greater than a randomly
+              sampled value.
+            </remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.Neurons.StochasticNeuron.#ctor(System.Int32,Accord.Neuro.ActivationFunctions.IStochasticFunction)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.Neurons.StochasticNeuron"/> class.
+            </summary>
+            
+            <param name="inputs">Number of inputs for the neuron.</param>
+            <param name="function">Activation function for the neuron.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Neurons.StochasticNeuron.Compute(System.Double[])">
+            <summary>
+              Computes output value of neuron.
+            </summary>
+            
+            <param name="input">An input vector.</param>
+            
+            <returns>Returns the neuron's output value for the given input.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Neurons.StochasticNeuron.Generate(System.Double[])">
+            <summary>
+              Samples the neuron output considering
+              the stochastic activation function.
+            </summary>
+            
+            <param name="input">An input vector.</param>
+            
+            <returns>A possible output for the neuron drawn
+            from the neuron's stochastic function.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Neurons.StochasticNeuron.Generate(System.Double)">
+            <summary>
+              Samples the neuron output considering
+              the stochastic activation function.
+            </summary>
+            
+            <param name="output">The (previously computed) neuron output.</param>
+            
+            <returns>A possible output for the neuron drawn
+            from the neuron's stochastic function.</returns>
+            
+        </member>
+        <member name="P:Accord.Neuro.Neurons.StochasticNeuron.Sample">
+            <summary>
+              Gets the neuron sample value generated in the last
+              call of any of the <see cref="M:Accord.Neuro.Neurons.StochasticNeuron.Generate(System.Double[])"/> methods.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Neurons.StochasticNeuron.ActivationFunction">
+            <summary>
+              Gets or sets the stochastic activation 
+              function for this stochastic neuron.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.Learning.JacobianMethod">
+            <summary>
+              The Jacobian computation method used by the Levenberg-Marquardt.
+            </summary>
+        </member>
+        <member name="F:Accord.Neuro.Learning.JacobianMethod.ByFiniteDifferences">
+            <summary>
+              Computes the Jacobian using approximation by finite differences. This
+              method is slow in comparison with back-propagation and should be used
+              only for debugging or comparison purposes.
+            </summary>
+            
+        </member>
+        <member name="F:Accord.Neuro.Learning.JacobianMethod.ByBackpropagation">
+            <summary>
+              Computes the Jacobian using back-propagation for the chain rule of
+              calculus. This is the preferred way of computing the Jacobian.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.Learning.LevenbergMarquardtLearning">
+            <summary>
+              Levenberg-Marquardt Learning Algorithm with optional Bayesian Regularization.
+            </summary>
+            
+            <remarks>
+            <para>This class implements the Levenberg-Marquardt learning algorithm,
+            which treats the neural network learning as a function optimization
+            problem. The Levenberg-Marquardt is one of the fastest and accurate
+            learning algorithms for small to medium sized networks.</para>
+            
+            <para>However, in general, the standard LM algorithm does not perform as well
+            on pattern recognition problems as it does on function approximation problems.
+            The LM algorithm is designed for least squares problems that are approximately
+            linear. Because the output neurons in pattern recognition problems are generally
+            saturated, it will not be operating in the linear region.</para>
+            
+            <para>The advantages of the LM algorithm decreases as the number of network
+            parameters increases. </para>
+            
+            <para>Sample usage (training network to calculate XOR function):</para>
+              <code>
+              // initialize input and output values
+              double[][] input =
+              {
+                  new double[] {0, 0}, new double[] {0, 1},
+                  new double[] {1, 0}, new double[] {1, 1}
+              };
+            
+              double[][] output = 
+              {
+                  new double[] {0}, new double[] {1},
+                  new double[] {1}, new double[] {0}
+              };
+              
+              // create neural network
+              ActivationNetwork   network = new ActivationNetwork(
+                  SigmoidFunction( 2 ),
+                  2, // two inputs in the network
+                  2, // two neurons in the first layer
+                  1 ); // one neuron in the second layer
+                
+              // create teacher
+              LevenbergMarquardtLearning teacher = new LevenbergMarquardtLearning( network );
+              
+              // loop
+              while ( !needToStop )
+              {
+                  // run epoch of learning procedure
+                  double error = teacher.RunEpoch( input, output );
+                  
+                  // check error value to see if we need to stop
+                  // ...
+              }
+            </code>
+            
+            <para>
+              References:
+              <list type="bullet">
+                <item><description><a href="http://www.cs.nyu.edu/~roweis/notes/lm.pdf">
+                  Sam Roweis. Levenberg-Marquardt Optimization.</a></description></item>
+                <item><description><a href="http://www-alg.ist.hokudai.ac.jp/~jan/alpha.pdf">
+                  Jan Poland. (2001). On the Robustness of Update Strategies for the Bayesian
+                  Hyperparameter alpha. Available on: http://www-alg.ist.hokudai.ac.jp/~jan/alpha.pdf </a></description></item>
+                <item><description><a href="http://cs.olemiss.edu/~ychen/publications/conference/chen_ijcnn99.pdf">
+                  B. Wilamowski, Y. Chen. (1999). Efficient Algorithm for Training Neural Networks 
+                  with one Hidden Layer. Available on: http://cs.olemiss.edu/~ychen/publications/conference/chen_ijcnn99.pdf </a></description></item>
+                <item><description><a href="http://www.inference.phy.cam.ac.uk/mackay/Bayes_FAQ.html">
+                  David MacKay. (2004). Bayesian methods for neural networks - FAQ. Available on:
+                  http://www.inference.phy.cam.ac.uk/mackay/Bayes_FAQ.html </a></description></item>
+              </list>
+            </para>   
+            </remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.#ctor(AForge.Neuro.ActivationNetwork)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.Learning.LevenbergMarquardtLearning"/> class.
+            </summary>
+            
+            <param name="network">Network to teach.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.#ctor(AForge.Neuro.ActivationNetwork,System.Boolean)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.Learning.LevenbergMarquardtLearning"/> class.
+            </summary>
+            
+            <param name="network">Network to teach.</param>
+            <param name="useRegularization">True to use Bayesian regularization, false otherwise.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.#ctor(AForge.Neuro.ActivationNetwork,System.Boolean,Accord.Neuro.Learning.JacobianMethod)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.Learning.LevenbergMarquardtLearning"/> class.
+            </summary>
+            
+            <param name="network">Network to teach.</param>
+            <param name="useRegularization">True to use Bayesian regularization, false otherwise.</param>
+            <param name="method">The method by which the Jacobian matrix will be calculated.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.Run(System.Double[],System.Double[])">
+             <summary>
+              This method should not be called. Use <see cref="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.RunEpoch(System.Double[][],System.Double[][])"/> instead.
+             </summary>
+             
+             <param name="input">Array of input vectors.</param>
+             <param name="output">Array of output vectors.</param>
+             
+             <returns>Nothing.</returns>
+             
+             <remarks><para>Online learning mode is not supported by the
+             Levenberg Marquardt. Use batch learning mode instead.</para></remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.RunEpoch(System.Double[][],System.Double[][])">
+             <summary>
+               Runs a single learning epoch.
+             </summary>
+             
+             <param name="input">Array of input vectors.</param>
+             <param name="output">Array of output vectors.</param>
+             
+             <returns>Returns summary learning error for the epoch.</returns>
+             
+             <remarks><para>The method runs one learning epoch, by calling running necessary
+             iterations of the Levenberg Marquardt to achieve an error decrease.</para></remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.ComputeError(System.Double[][],System.Double[][])">
+            <summary>
+              Compute network error for a given data set.
+            </summary>
+            
+            <param name="input">The input points.</param>
+            <param name="output">The output points.</param>
+            
+            <returns>The sum of squared errors for the data.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.loadArrayIntoNetwork">
+            <summary>
+             Update network's weights.
+            </summary>
+            
+            <returns>The sum of squared weights divided by 2.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.saveNetworkToArray">
+            <summary>
+              Creates the initial weight vector w
+            </summary>
+            
+            <returns>The sum of squared weights divided by 2.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.getNumberOfParameters(AForge.Neuro.ActivationNetwork)">
+            <summary>
+              Gets the number of parameters in a network.
+            </summary>
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.JacobianByChainRule(System.Double[][],System.Double[][])">
+            <summary>
+              Calculates the Jacobian matrix by using the chain rule.
+            </summary>
+            <param name="input">The input vectors.</param>
+            <param name="output">The desired output vectors.</param>
+            <returns>The sum of squared errors for the last error divided by 2.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.CalculateDerivatives(System.Double[],System.Double[],System.Int32)">
+            <summary>
+              Calculates partial derivatives for all weights of the network.
+            </summary>
+            
+            <param name="input">The input vector.</param>
+            <param name="desiredOutput">Desired output vector.</param>
+            <param name="outputIndex">The current output location (index) in the desired output vector.</param>
+            
+            <returns>Returns summary squared error of the last layer.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.JacobianByFiniteDifference(System.Double[][],System.Double[][])">
+            <summary>
+              Calculates the Jacobian Matrix using Finite Differences
+            </summary>
+            
+            <returns>Returns the sum of squared errors of the network divided by 2.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.createCoefficients(System.Int32)">
+            <summary>
+              Creates the coefficients to be used when calculating
+              the approximate Jacobian by using finite differences.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.LevenbergMarquardtLearning.ComputeDerivative(System.Double[],System.Int32,System.Int32,System.Int32,System.Double@,System.Double,System.Int32)">
+            <summary>
+              Computes the derivative of the network in 
+              respect to the weight passed as parameter.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.LevenbergMarquardtLearning.LearningRate">
+             <summary>
+               Levenberg's damping factor, also known as lambda.
+             </summary>
+             
+             <remarks><para>The value determines speed of learning.</para>
+             
+             <para>Default value is <b>0.1</b>.</para>
+             </remarks>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.LevenbergMarquardtLearning.Adjustment">
+             <summary>
+               Learning rate adjustment. 
+             </summary>
+             
+             <remarks><para>The value by which the learning rate
+             is adjusted when searching for the minimum cost surface.</para>
+             
+             <para>Default value is <b>10</b>.</para>
+             </remarks>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.LevenbergMarquardtLearning.NumberOfParameters">
+            <summary>
+              Gets the total number of parameters
+              in the network being trained.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.LevenbergMarquardtLearning.EffectiveParameters">
+            <summary>
+              Gets the number of effective parameters being used
+              by the network as determined by the Bayesian regularization.
+            </summary>
+            <remarks>
+              If no regularization is being used, the value will be 0.
+            </remarks>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.LevenbergMarquardtLearning.Alpha">
+            <summary>
+              Gets or sets the importance of the squared sum of network
+              weights in the cost function. Used by the regularization.
+            </summary>
+            <remarks>
+              This is the first Bayesian hyperparameter. The default
+              value is 0.
+            </remarks>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.LevenbergMarquardtLearning.Beta">
+            <summary>
+              Gets or sets the importance of the squared sum of network
+              errors in the cost function. Used by the regularization.
+            </summary>
+            <remarks>
+              This is the second Bayesian hyperparameter. The default
+              value is 1.
+            </remarks>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.LevenbergMarquardtLearning.UseRegularization">
+            <summary>
+              Gets or sets whether to use Bayesian Regularization.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.LevenbergMarquardtLearning.Blocks">
+            <summary>
+              Gets or sets the number of blocks to divide the 
+              Jacobian matrix in the Hessian calculation to
+              preserve memory. Default is 1.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.LevenbergMarquardtLearning.Hessian">
+            <summary>
+              Gets the approximate Hessian matrix of second derivatives 
+              generated in the last algorithm iteration. The Hessian is 
+              stored in the upper triangular part of this matrix. See 
+              remarks for details.
+              </summary>
+              
+            <remarks>
+            <para>
+              The Hessian needs only be upper-triangular, since
+              it is symmetric. The Cholesky decomposition will
+              make use of this fact and use the lower-triangular
+              portion to hold the decomposition, conserving memory</para>
+            <para>
+              Thus said, this property will hold the Hessian matrix
+              in the upper-triangular part of this matrix, and store
+              its Cholesky decomposition on its lower triangular part.</para>
+            </remarks>
+             
+        </member>
+        <member name="P:Accord.Neuro.Learning.LevenbergMarquardtLearning.Gradient">
+            <summary>
+              Gets the gradient vector computed in the last iteration.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.Learning.RestrictedBoltzmannNetworkLearningConfigurationFunction">
+            <summary>
+              Delegate used to configure and create layer-specific learning algorithms.
+            </summary>
+            
+            <param name="hiddenLayer">The hidden layer being trained.</param>
+            <param name="visibleLayer">The visible layer being trained.</param>
+            <param name="index">The layer-pair index in the deep network.</param>
+            
+            <returns>
+              The function should return an instance of the algorithm 
+              which should be used to train the pair of layers.
+            </returns>
+            
+        </member>
+        <member name="T:Accord.Neuro.Learning.DeepBeliefNetworkLearning">
+            <summary>
+              Deep Belief Network learning algorithm.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepBeliefNetworkLearning.#ctor(Accord.Neuro.Networks.DeepBeliefNetwork)">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.Learning.DeepBeliefNetworkLearning"/> algorithm.
+            </summary>
+            
+            <param name="network">The network to be trained.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepBeliefNetworkLearning.GetLayerInput(System.Double[][])">
+            <summary>
+              Gets the learning data needed to train the <see cref="P:Accord.Neuro.Learning.DeepBeliefNetworkLearning.LayerIndex">currently
+              selected layer</see>. The return of this function should then be passed to
+              <see cref="M:Accord.Neuro.Learning.DeepBeliefNetworkLearning.RunEpoch(System.Double[][])"/> to actually run a learning epoch.
+            </summary>
+            
+            <param name="input">The batch of input data.</param>
+            
+            <returns>The learning data for the current layer.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepBeliefNetworkLearning.GetLayerInput(System.Double[][][])">
+            <summary>
+              Gets the learning data needed to train the <see cref="P:Accord.Neuro.Learning.DeepBeliefNetworkLearning.LayerIndex">currently
+              selected layer</see>. The return of this function should then be passed to
+              <see cref="M:Accord.Neuro.Learning.DeepBeliefNetworkLearning.RunEpoch(System.Double[][])"/> to actually run a learning epoch.
+            </summary>
+            
+            <param name="batches">The mini-batches of input data.</param>
+            
+            <returns>The learning data for the current layer.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepBeliefNetworkLearning.GetLayerAlgorithm(System.Int32)">
+            <summary>
+              Gets the <see cref="T:AForge.Neuro.Learning.IUnsupervisedLearning">unsupervised 
+              learning algorithm</see> allocated for the given layer.
+            </summary>
+            
+            <param name="layerIndex">The index of the layer to get the algorithm for.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepBeliefNetworkLearning.Run(System.Double[])">
+            <summary>
+              Runs a single learning iteration.
+            </summary>
+            
+            <param name="input">A single input vector.</param>
+            
+            <returns>
+              Returns the learning error after the iteration.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepBeliefNetworkLearning.RunEpoch(System.Double[][])">
+            <summary>
+              Runs a single batch epoch
+              of the learning algorithm.
+            </summary>
+            
+            <param name="input">Array of input vectors.</param>
+            
+            <returns>
+              Returns sum of learning errors.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepBeliefNetworkLearning.RunEpoch(System.Double[][][])">
+            <summary>
+              Runs a single learning epoch using
+              multiple mini-batches to improve speed.
+            </summary>
+            
+            <param name="batches">Array of input batches.</param>
+            
+            <returns>
+              Returns sum of learning errors.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.DeepBeliefNetworkLearning.ComputeError(System.Double[][])">
+            <summary>
+              Computes the reconstruction error for 
+              a given set of input values.
+            </summary>
+            
+            <param name="inputs">The input values.</param>
+            
+            <returns>The squared reconstruction error.</returns>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.DeepBeliefNetworkLearning.Algorithm">
+            <summary>
+              Gets or sets the configuration function used
+              to specify and create the learning algorithms
+              for each of the layers of the deep network.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.DeepBeliefNetworkLearning.LayerIndex">
+            <summary>
+              Gets or sets the current layer index being
+              trained by the deep learning algorithm.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning">
+            <summary>
+              Resilient Backpropagation learning algorithm.
+            </summary>
+            
+            <remarks><para>This class implements the resilient backpropagation (RProp)
+            learning algorithm. The RProp learning algorithm is one of the fastest learning
+            algorithms for feed-forward learning networks which use only first-order
+            information.</para>
+            
+            <para>Sample usage (training network to calculate XOR function):</para>
+            <code>
+            // initialize input and output values
+            double[][] input = new double[4][] {
+                new double[] {0, 0}, new double[] {0, 1},
+                new double[] {1, 0}, new double[] {1, 1}
+            };
+            double[][] output = new double[4][] {
+                new double[] {0}, new double[] {1},
+                new double[] {1}, new double[] {0}
+            };
+            // create neural network
+            ActivationNetwork   network = new ActivationNetwork(
+                SigmoidFunction( 2 ),
+                2, // two inputs in the network
+                2, // two neurons in the first layer
+                1 ); // one neuron in the second layer
+            // create teacher
+            ResilientBackpropagationLearning teacher = new ResilientBackpropagationLearning( network );
+            // loop
+            while ( !needToStop )
+            {
+                // run epoch of learning procedure
+                double error = teacher.RunEpoch( input, output );
+                // check error value to see if we need to stop
+                // ...
+            }
+            </code>
+            </remarks>
+            
+            <seealso cref="T:Accord.Neuro.Learning.LevenbergMarquardtLearning"/>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.#ctor(AForge.Neuro.ActivationNetwork)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning"/> class.
+            </summary>
+            
+            <param name="network">Network to teach.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.Run(System.Double[],System.Double[])">
+             <summary>
+               Runs learning iteration.
+             </summary>
+             
+             <param name="input">Input vector.</param>
+             <param name="output">Desired output vector.</param>
+             
+             <returns>Returns squared error (difference between current network's output and
+             desired output) divided by 2.</returns>
+             
+             <remarks><para>Runs one learning iteration and updates neuron's
+             weights.</para></remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.RunEpoch(System.Double[][],System.Double[][])">
+            <summary>
+              Runs learning epoch.
+            </summary>
+            
+            <param name="input">Array of input vectors.</param>
+            <param name="output">Array of output vectors.</param>
+            
+            <returns>Returns summary learning error for the epoch. See <see cref="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.Run(System.Double[],System.Double[])"/>
+            method for details about learning error calculation.</returns>
+            
+            <remarks><para>The method runs one learning epoch, by calling <see cref="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.Run(System.Double[],System.Double[])"/> method
+            for each vector provided in the <paramref name="input"/> array.</para></remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.UpdateNetwork">
+            <summary>
+              Update network weights.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.ComputeError(System.Double[][],System.Double[][])">
+            <summary>
+              Compute network error for a given data set.
+            </summary>
+            
+            <param name="input">The input points.</param>
+            <param name="output">The output points.</param>
+            
+            <returns>The sum of squared errors for the data.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.Reset(System.Double)">
+            <summary>
+              Resets the current update steps using the given learning rate.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.ResetGradient">
+            <summary>
+              Resets the gradient vector back to zero.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.CalculateError(System.Double[])">
+            <summary>
+              Calculates error values for all neurons of the network.
+            </summary>
+            
+            <param name="desiredOutput">Desired output vector.</param>
+            
+            <returns>Returns summary squared error of the last layer divided by 2.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.CalculateGradient(System.Double[])">
+             <summary>
+               Computes the gradient for a given input.
+             </summary>
+            
+             <param name="input">Network's input vector.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.Dispose">
+            <summary>
+              Performs application-defined tasks associated with freeing,
+              releasing, or resetting unmanaged resources.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.Finalize">
+            <summary>
+              Releases unmanaged resources and performs other cleanup operations before
+              the <see cref="T:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning"/> is reclaimed by garbage
+              collection.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.Dispose(System.Boolean)">
+            <summary>
+              Releases unmanaged and - optionally - managed resources
+            </summary>
+            
+            <param name="disposing"><c>true</c> to release both managed 
+            and unmanaged resources; <c>false</c> to release only unmanaged
+            resources.</param>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.UpdateUpperBound">
+            <summary>
+              Gets or sets the maximum possible update step,
+              also referred as delta min. Default is 50.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.UpdateLowerBound">
+            <summary>
+              Gets or sets the minimum possible update step,
+              also referred as delta max. Default is 1e-6.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.DecreaseFactor">
+            <summary>
+              Gets the decrease parameter, also 
+              referred as eta minus. Default is 0.5.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.ParallelResilientBackpropagationLearning.IncreaseFactor">
+            <summary>
+              Gets the increase parameter, also
+              referred as eta plus. Default is 1.2.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.LinearFunction">
+             <summary>
+               Linear activation function.
+             </summary>
+            
+             <remarks>
+               <para>This class implements a linear activation function bounded
+               in the interval (a,b), as given by the piecewise formula:</para>
+             
+               <code lang="none">
+               f(x) = alpha*x, if a > x*alpha > b
+               f(x) = a,       if a > x*alpha;
+               f(x) = b,       if     x*alpha > b;
+               </code>
+               
+             <para>
+               In which, by default, a = -1 and b = +1.</para>
+             
+             <para>
+               This function is continuous only in the interval (a/alpha, b/alpha). This is similar
+               to the threshold function but with a linear growth component. If alpha is set to a 
+               very high value (such as infinity), the function behaves as a threshold function.
+             </para>
+             
+             <para>The output range of the function can be set to an arbitrary
+             value. The default output range is <b>[-1, +1]</b>.</para>
+             
+             </remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.LinearFunction.#ctor(System.Double)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.LinearFunction"/> class.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.LinearFunction.#ctor(AForge.DoubleRange)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.LinearFunction"/> class.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.LinearFunction.#ctor(System.Double,AForge.DoubleRange)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.LinearFunction"/> class.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.LinearFunction.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.LinearFunction"/> class.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.LinearFunction.Function(System.Double)">
+             <summary>
+               Calculates function value.
+             </summary>
+            
+             <param name="x">Function input value.</param>
+             
+             <returns>Function output value, <i>f(x)</i>.</returns>
+            
+             <remarks>The method calculates function value at point <paramref name="x"/>.</remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.LinearFunction.Derivative(System.Double)">
+             <summary>
+               Calculates function derivative.
+             </summary>
+             
+             <param name="x">Function input value.</param>
+             
+             <returns>Function derivative, <i>f'(x)</i>.</returns>
+             
+             <remarks>The method calculates function derivative at point <paramref name="x"/>.</remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.LinearFunction.Derivative2(System.Double)">
+            <summary>
+            Calculates function derivative.
+            </summary>
+            
+            <param name="y">Function output value - the value, which was obtained
+            with the help of <see cref="M:Accord.Neuro.LinearFunction.Function(System.Double)"/> method.</param>
+            
+            <returns>Function derivative, <i>f'(x)</i>.</returns>
+            
+            <remarks><para>The method calculates the same derivative value as the
+            <see cref="M:Accord.Neuro.LinearFunction.Derivative(System.Double)"/> method, but it takes not the input <b>x</b> value
+            itself, but the function value, which was calculated previously with
+            the help of <see cref="M:Accord.Neuro.LinearFunction.Function(System.Double)"/> method.</para>
+            
+            <para><note>Some applications require as function value, as derivative value,
+            so they can save the amount of calculations using this method to calculate derivative.</note></para>
+            </remarks>
+            
+        </member>
+        <member name="P:Accord.Neuro.LinearFunction.Alpha">
+            <summary>
+            Linear slope value.
+            </summary>
+            
+            <remarks>
+              <para>Default value is set to <b>1</b>.</para>
+            </remarks>
+            
+        </member>
+        <member name="P:Accord.Neuro.LinearFunction.Range">
+             <summary>
+               Function output range.
+             </summary>
+            
+             <remarks>
+               <para>Default value is set to [-1;+1]</para>
+             </remarks>
+            
+        </member>
+        <member name="T:Accord.Neuro.Learning.ContrastiveDivergenceLearning">
+            <summary>
+              Contrastive Divergence learning algorithm for Restricted Boltzmann Machines.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ContrastiveDivergenceLearning.#ctor(Accord.Neuro.Networks.RestrictedBoltzmannMachine)">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.Learning.ContrastiveDivergenceLearning"/> algorithm.
+            </summary>
+            
+            <param name="network">The network to be trained.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ContrastiveDivergenceLearning.#ctor(Accord.Neuro.Layers.StochasticLayer,Accord.Neuro.Layers.StochasticLayer)">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.Learning.ContrastiveDivergenceLearning"/> algorithm.
+            </summary>
+            
+            <param name="hidden">The hidden layer of the hidden-visible layer pair to be trained.</param>
+            <param name="visible">The visible layer of the hidden-visible layer pair to be trained.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ContrastiveDivergenceLearning.Run(System.Double[])">
+            <summary>
+              Not supported.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ContrastiveDivergenceLearning.RunEpoch(System.Double[][])">
+            <summary>
+              Runs learning epoch.
+            </summary>
+            
+            <param name="input">Array of input vectors.</param>
+            
+            <returns>
+              Returns sum of learning errors.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ContrastiveDivergenceLearning.Dispose">
+            <summary>
+              Performs application-defined tasks associated with 
+              freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ContrastiveDivergenceLearning.Dispose(System.Boolean)">
+            <summary>
+              Releases unmanaged and - optionally - managed resources
+            </summary>
+            
+            <param name="disposing"><c>true</c> to release both managed and unmanaged
+            resources; <c>false</c> to release only unmanaged resources.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Learning.ContrastiveDivergenceLearning.Finalize">
+            <summary>
+              Releases unmanaged resources and performs other cleanup operations before the
+              <see cref="T:Accord.Neuro.Learning.ContrastiveDivergenceLearning"/> is reclaimed by garbage collection.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.ContrastiveDivergenceLearning.LearningRate">
+            <summary>
+              Gets or sets the learning rate of the
+              learning algorithm. Default is 0.1.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.ContrastiveDivergenceLearning.Momentum">
+            <summary>
+              Gets or sets the momentum term of the
+              learning algorithm. Default is 0.9.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Learning.ContrastiveDivergenceLearning.Decay">
+            <summary>
+              Gets or sets the Weight Decay constant
+              of the learning algorithm. Default is 0.01.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.IdentityFunction">
+            <summary>
+              Identity activation function.
+            </summary>
+            
+            <remarks>
+              The identity activation function is given by <c>f(x) = x</c>,
+              meaning it simply repasses the neuronal summation output to
+              further neurons untouched. 
+            </remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.IdentityFunction.#ctor">
+            <summary>
+              Creates a new identity activation function.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.IdentityFunction.Function(System.Double)">
+             <summary>
+               Calculates function value.
+             </summary>
+            
+             <param name="x">Function input value.</param>
+             
+             <returns>Function output value, <i>f(x)</i>.</returns>
+            
+             <remarks>The method calculates function value at point <paramref name="x"/>.</remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.IdentityFunction.Derivative(System.Double)">
+             <summary>
+               Calculates function derivative.
+             </summary>
+             
+             <param name="x">Function input value.</param>
+             
+             <returns>Function derivative, <i>f'(x)</i>.</returns>
+             
+             <remarks>The method calculates function derivative at point <paramref name="x"/>.</remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.IdentityFunction.Derivative2(System.Double)">
+            <summary>
+            Calculates function derivative.
+            </summary>
+            
+            <param name="y">Function output value - the value, which was obtained
+            with the help of <see cref="M:Accord.Neuro.IdentityFunction.Function(System.Double)"/> method.</param>
+            
+            <returns>Function derivative, <i>f'(x)</i>.</returns>
+            
+            <remarks><para>The method calculates the same derivative value as the
+            <see cref="M:Accord.Neuro.IdentityFunction.Derivative(System.Double)"/> method, but it takes not the input <b>x</b> value
+            itself, but the function value, which was calculated previously with
+            the help of <see cref="M:Accord.Neuro.IdentityFunction.Function(System.Double)"/> method.</para>
+            
+            <para><note>Some applications require as function value, as derivative value,
+            so they can save the amount of calculations using this method to calculate derivative.</note></para>
+            </remarks>
+            
+        </member>
+        <member name="T:Accord.Neuro.Visualization.ActivationMaximization">
+            <summary>
+              Activation-Maximization method for visualizing neuron's roles.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.Visualization.ActivationMaximization.#ctor(AForge.Neuro.ActivationNeuron)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.Visualization.ActivationMaximization"/> class.
+            </summary>
+            
+            <param name="neuron">The neuron to be visualized.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Visualization.ActivationMaximization.Maximize">
+            <summary>
+              Finds the value which maximizes
+              the activation of this neuron.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.Networks.RestrictedBoltzmannMachine">
+            <summary>
+              Restricted Boltzmann Machine.
+            </summary>
+            
+            <example>
+              <code>
+              // Create some sample inputs and outputs. Note that the
+              // first four vectors belong to one class, and the other
+              // four belong to another (you should see that the 1s
+              // accumulate on the beginning for the first four vectors
+              // and on the end for the second four).
+              
+              double[][] inputs =
+              {
+                  new double[] { 1,1,1, 0,0,0 }, // class a
+                  new double[] { 1,0,1, 0,0,0 }, // class a
+                  new double[] { 1,1,1, 0,0,0 }, // class a
+                  new double[] { 0,0,1, 1,1,0 }, // class b
+                  new double[] { 0,0,1, 1,0,0 }, // class b
+                  new double[] { 0,0,1, 1,1,0 }, // class b
+              };
+              
+              double[][] outputs =
+              {
+                  new double[] { 1, 0 }, // indicates the inputs at this
+                  new double[] { 1, 0 }, // position belongs to class a
+                  new double[] { 1, 0 },
+                  new double[] { 0, 1 }, // indicates the inputs at this
+                  new double[] { 0, 1 }, // position belongs to class b
+                  new double[] { 0, 1 },
+              };
+              
+              // Create a Bernoulli activation function
+              var function = new BernoulliFunction(alpha: 0.5);
+              
+              // Create a Restricted Boltzmann Machine for 6 inputs and with 1 hidden neuron
+              var rbm = new RestrictedBoltzmannMachine(function, inputsCount: 6, hiddenNeurons: 2);
+              
+              // Create the learning algorithm for RBMs
+              var teacher = new ContrastiveDivergenceLearning(rbm)
+              {
+                  Momentum = 0,
+                  LearningRate = 0.1,
+                  Decay = 0
+              };
+              
+              // learn 5000 iterations
+              for (int i = 0; i &lt; 5000; i++)
+                  teacher.RunEpoch(inputs);
+              
+              // Compute the machine answers for the given inputs:
+              double[] a = rbm.Compute(new double[] { 1, 1, 1, 0, 0, 0 }); // { 0.99, 0.00 }
+              double[] b = rbm.Compute(new double[] { 0, 0, 0, 1, 1, 1 }); // { 0.00, 0.99 }
+              
+              // As we can see, the first neuron responds to vectors belonging
+              // to the first class, firing 0.99 when we feed vectors which 
+              // have 1s at the beginning. Likewise, the second neuron fires 
+              // when the vector belongs to the second class.
+              
+              // We can also generate input vectors given the classes:
+              double[] xa = rbm.GenerateInput(new double[] { 1, 0 }); // { 1, 1, 1, 0, 0, 0 }
+              double[] xb = rbm.GenerateInput(new double[] { 0, 1 }); // { 0, 0, 1, 1, 1, 0 }
+              
+              // As we can see, if we feed an output pattern where the first neuron
+              // is firing and the second isn't, the network generates an example of
+              // a vector belonging to the first class. The same goes for the second
+              // neuron and the second class.
+            </code>
+            </example>
+            
+            <seealso cref="T:Accord.Neuro.Learning.ContrastiveDivergenceLearning"/>
+            <seealso cref="T:Accord.Neuro.ActivationFunctions.BernoulliFunction"/>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.#ctor(System.Int32,System.Int32)">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.Networks.RestrictedBoltzmannMachine"/>.
+            </summary>
+            
+            <param name="inputsCount">The number of inputs for the machine.</param>
+            <param name="hiddenNeurons">The number of hidden neurons in the machine.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.#ctor(Accord.Neuro.Layers.StochasticLayer,Accord.Neuro.Layers.StochasticLayer)">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.Networks.RestrictedBoltzmannMachine"/>.
+            </summary>
+            
+            <param name="hidden">The hidden layer to be added in the machine.</param>
+            <param name="visible">The visible layer to be added in the machine.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.#ctor(Accord.Neuro.ActivationFunctions.IStochasticFunction,System.Int32,System.Int32)">
+            <summary>
+              Creates a new <see cref="T:Accord.Neuro.Networks.RestrictedBoltzmannMachine"/>.
+            </summary>
+            
+            <param name="function">The activation function to use in the network neurons.</param>
+            <param name="inputsCount">The number of inputs for the machine.</param>
+            <param name="hiddenNeurons">The number of hidden neurons in the machine.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.Compute(System.Double[])">
+            <summary>
+              Compute output vector of the network.
+            </summary>
+            
+            <param name="input">Input vector.</param>
+            
+            <returns>
+              Returns network's output vector.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.Reconstruct(System.Double[])">
+            <summary>
+              Reconstructs a input vector for a given output.
+            </summary>
+            
+            <param name="output">The output vector.</param>
+            
+            <returns>
+              Returns a probable input vector which may 
+              have originated the given output.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.GenerateOutput(System.Double[])">
+            <summary>
+              Samples an output vector from the network
+              given an input vector.
+            </summary>
+            
+            <param name="input">An input vector.</param>
+            
+            <returns>
+              A possible output considering the
+              stochastic activations of the network.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.GenerateInput(System.Double[])">
+            <summary>
+              Samples an input vector from the network
+              given an output vector.
+            </summary>
+            
+            <param name="output">An output vector.</param>
+            
+            <returns>
+              A possible reconstruction considering the
+              stochastic activations of the network.
+            </returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.CreateGaussianBernoulli(System.Int32,System.Int32)">
+            <summary>
+              Constructs a Gaussian-Bernoulli network with 
+              visible Gaussian units and hidden Bernoulli units.
+            </summary>
+            
+            <param name="inputsCount">The number of inputs for the machine.</param>
+            <param name="hiddenNeurons">The number of hidden neurons in the machine.</param>
+            
+            <returns>A Gaussian-Bernoulli Restricted Boltzmann Machine</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.ToActivationNetwork(System.Int32)">
+            <summary>
+              Creates a new <see cref="T:AForge.Neuro.ActivationNetwork"/> from this instance.
+            </summary>
+            
+            <param name="outputs">The number of output neurons in the last layer.</param>
+            
+            <returns>An <see cref="T:AForge.Neuro.ActivationNetwork"/> containing this network.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.ToActivationNetwork(AForge.Neuro.IActivationFunction,System.Int32)">
+            <summary>
+              Creates a new <see cref="T:AForge.Neuro.ActivationNetwork"/> from this instance.
+            </summary>
+            
+            <param name="outputs">The number of output neurons in the last layer.</param>
+            <param name="function">The activation function to use in the last layer.</param>
+            
+            <returns>An <see cref="T:AForge.Neuro.ActivationNetwork"/> containing this network.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.Networks.RestrictedBoltzmannMachine.UpdateVisibleWeights">
+            <summary>
+              Updates the weights of the visible layer by copying
+              the reverse of the weights in the hidden layer.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Networks.RestrictedBoltzmannMachine.Visible">
+            <summary>
+              Gets the visible layer of the machine.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.Networks.RestrictedBoltzmannMachine.Hidden">
+            <summary>
+              Gets the hidden layer of the machine.
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.GaussianWeights">
+            <summary>
+              Gaussian weight initialization.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.GaussianWeights.#ctor(AForge.Neuro.ActivationNetwork,System.Double)">
+            <summary>
+              Constructs a new Gaussian Weight initialization.
+            </summary>
+            
+            <param name="network">The activation network whose weights will be initialized.</param>
+            <param name="stdDev">The standard deviation to be used. Common values lie in the 0.001-
+            0.1 range. Default is 0.1.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.GaussianWeights.Randomize">
+            <summary>
+              Randomizes (initializes) the weights of
+              the network using a Gaussian distribution.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.GaussianWeights.Randomize(System.Int32)">
+            <summary>
+              Randomizes (initializes) the weights of
+              the network using a Gaussian distribution.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.GaussianWeights.UpdateThresholds">
+            <summary>
+              Gets ors sets whether the initialization
+              should update neurons thresholds (biases)
+            </summary>
+            
+        </member>
+        <member name="T:Accord.Neuro.ActivationFunctions.BernoulliFunction">
+            <summary>
+              Bernoulli stochastic activation function.
+            </summary>
+            
+            <remarks>
+            <para>
+              The Bernoulli activation function can be used to create <see cref="T:Accord.Neuro.Neurons.StochasticNeuron">
+              Stochastic Neurons</see>, which can in turn be used to create <see cref="T:Accord.Neuro.Networks.DeepBeliefNetwork">
+              Deep Belief Networks</see> and <see cref="T:Accord.Neuro.Networks.RestrictedBoltzmannMachine">Restricted Boltzmann
+              Machines</see>. The use of a Bernoulli function is indicated when the inputs of a problem
+              are discrete, it is, are either 0 or 1. When the inputs are continuous, the use of a
+              <see cref="T:Accord.Neuro.ActivationFunctions.GaussianFunction"/> might be more indicated.</para>
+            <para>
+              As a <see cref="T:Accord.Neuro.ActivationFunctions.IStochasticFunction">stochastic activation function</see>, the Bernoulli
+              function is able to generate values following a statistic probability distribution. In
+              this case, the Bernoulli function follows a <see cref="T:Accord.Statistics.Distributions.Univariate.BernoulliDistribution">Bernoulli
+              distribution</see> with its <see cref="P:Accord.Statistics.Distributions.Univariate.BernoulliDistribution.Mean">mean</see> given by
+              the output of this class' <see cref="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.Function(System.Double)">sigmoidal function</see>.</para>
+            </remarks>
+            
+            <example>
+              <code>
+              // Create a Bernoulli function with sigmoid's alpha = 1
+              BernoulliFunction function = new BernoulliFunction();
+              
+              // Computes the function output (sigmoid function)
+              double y = function.Function(x: 0.4); // 0.5986876
+              
+              // Draws a sample from a Bernoulli distribution with
+              // mean given by the function output y (given as before)
+              double z = function.Generate(x: 0.4); // (random, 0 or 1)
+              
+              // Here, z can be either 0 or 1. Since it follows a Bernoulli
+              // distribution with mean 0.59, it is expected to be 1 about 
+              // 0.59 of the time.
+              
+              // Now, please note that the above is completely equivalent 
+              // to computing the line below (remember, 0.5986876 == y)
+              double w = function.Generate2(y: 0.5986876); // (random, 0 or 1)
+              
+              
+              // We can also compute the derivative of the sigmoid function
+              double d = function.Derivative(x: 0.4); // 0.240260
+              
+              // Or compute the derivative given the functions' output y
+              double e = function.Derivative2(y: 0.5986876); // 0.240260
+              </code>
+            </example>
+            
+            <seealso cref="T:Accord.Statistics.Distributions.Univariate.BernoulliDistribution"/>
+            <seealso cref="T:Accord.Neuro.ActivationFunctions.GaussianFunction"/>
+            <seealso cref="T:Accord.Neuro.Networks.DeepBeliefNetwork"/>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.#ctor(System.Double)">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.ActivationFunctions.BernoulliFunction"/> class.
+            </summary>
+            
+            <param name="alpha">Sigmoid's alpha value. Default is 1.</param>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.#ctor">
+            <summary>
+              Initializes a new instance of the <see cref="T:Accord.Neuro.ActivationFunctions.BernoulliFunction"/> class.
+            </summary>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.Function(System.Double)">
+             <summary>
+             Calculates function value.
+             </summary>
+            
+             <param name="x">Function input value.</param>
+             
+             <returns>Function output value, <i>f(x)</i>.</returns>
+            
+             <remarks>The method calculates function value at point <paramref name="x"/>.</remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.Generate(System.Double)">
+            <summary>
+              Samples a value from the function given a input value.
+            </summary>
+            
+            <param name="x">Function input value.</param>
+            
+            <returns>Draws a random value from the function.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.Generate2(System.Double)">
+            <summary>
+              Samples a value from the function given a function output value.
+            </summary>
+            
+            <param name="y">The function output value. This is the value which was obtained
+            with the help of the <see cref="M:AForge.Neuro.IActivationFunction.Function(System.Double)"/> method.</param>
+            
+            <remarks><para>The method calculates the same output value as the
+            <see cref="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.Generate(System.Double)"/> method, but it takes not the input <b>x</b> value
+            itself, but the function value, which was calculated previously with help
+            of the <see cref="M:AForge.Neuro.IActivationFunction.Function(System.Double)"/> method.</para>
+            </remarks>
+            
+            <returns>Draws a random value from the function.</returns>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.Derivative(System.Double)">
+             <summary>
+             Calculates function derivative.
+             </summary>
+             
+             <param name="x">Function input value.</param>
+             
+             <returns>Function derivative, <i>f'(x)</i>.</returns>
+             
+             <remarks>The method calculates function derivative at point <paramref name="x"/>.</remarks>
+            
+        </member>
+        <member name="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.Derivative2(System.Double)">
+            <summary>
+            Calculates function derivative.
+            </summary>
+            
+            <param name="y">Function output value - the value, which was obtained
+            with the help of <see cref="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.Function(System.Double)"/> method.</param>
+            
+            <returns>Function derivative, <i>f'(x)</i>.</returns>
+            
+            <remarks><para>The method calculates the same derivative value as the
+            <see cref="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.Derivative(System.Double)"/> method, but it takes not the input <b>x</b> value
+            itself, but the function value, which was calculated previously with
+            the help of <see cref="M:Accord.Neuro.ActivationFunctions.BernoulliFunction.Function(System.Double)"/> method.</para>
+            
+            <para><note>Some applications require as function value, as derivative value,
+            so they can save the amount of calculations using this method to calculate derivative.</note></para>
+            </remarks>
+            
+        </member>
+        <member name="P:Accord.Neuro.ActivationFunctions.BernoulliFunction.Random">
+            <summary>
+              Gets or sets the random sample generator
+              used to activate neurons of this class.
+            </summary>
+            
+        </member>
+        <member name="P:Accord.Neuro.ActivationFunctions.BernoulliFunction.Alpha">
+             <summary>
+               Sigmoid's alpha value.
+             </summary>
+             
+             <remarks><para>The value determines steepness of the function. Increasing value of
+             this property changes sigmoid to look more like a threshold function. Decreasing
+             value of this property makes sigmoid to be very smooth (slowly growing from its
+             minimum value to its maximum value).</para>
+            
+             <para>Default value is set to <b>1</b>.</para>
+             </remarks>
+             
+        </member>
+    </members>
+</doc>
