@@ -25,7 +25,7 @@ namespace Workbench.Tools
 
     public class DistributionManager
     {
-        private static string baseURL = "http://accord-framework.net/docs/html/T_";
+        private static string baseURL = "http://accord-framework.net/docs/html/";
 
 
         public static IFittingOptions GetFittingOptions(Type type)
@@ -57,7 +57,7 @@ namespace Workbench.Tools
             var assembly = Assembly.GetAssembly(baseType);
 
             // Prepare and leave Accord.NET documentation parsed
-            Dictionary<string, string> doc = GetDocumentation(assembly);
+            var doc = GetDocumentation(assembly);
 
             // Get all univariate distributions in Accord.NET:
             var distributions = assembly.GetTypes()
@@ -79,17 +79,23 @@ namespace Workbench.Tools
 
         public static string GetDocumentationUrl(Type type)
         {
-            string docPage = baseURL + type.FullName.Replace(".", "_") + ".htm";
+            string docPage = baseURL + "T_" + type.FullName.Replace(".", "_") + ".htm";
             return docPage;
         }
 
-        private static Dictionary<string, string> GetDocumentation(Assembly assembly)
+        public static string GetDocumentationUrl(string cref)
+        {
+            string seeURL = cref.Replace(".", "_").Replace(":", "_");
+            string docPage = baseURL + seeURL + ".htm";
+            return docPage;
+        }
+
+        private static Dictionary<string, DocumentationViewModel> GetDocumentation(Assembly assembly)
         {
             var members = DocReader.Read(assembly);
             ClassToXamlVisitor visitor = new ClassToXamlVisitor(members.IdMap);
             members.Accept(visitor);
-            Dictionary<string, string> doc = visitor.Texts.ToDictionary(x => x.Key, y => y.Value.ToString());
-            return doc;
+            return visitor.Texts;
         }
 
 

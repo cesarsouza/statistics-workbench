@@ -68,7 +68,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Label Content="Accord.NET Framework" Foreground="White" Background="#FF333333" 
+        <Label Content="Accord.NET Framework" Foreground="White" Background="Black" 
 			Padding="12, 5, 0, 0" Height="29" VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Stretch" Grid.ColumnSpan="2"/>
 
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
@@ -83,7 +83,7 @@
                 <ColumnDefinition Width="290"/>
             </Grid.ColumnDefinitions>
             <ScrollViewer x:Name="scroll" Grid.Column="0" Grid.ColumnSpan="1" Margin="10,10,10,10" Padding="0,0,10,0"
-                          VerticalScrollBarVisibility="Hidden" Grid.RowSpan="1">
+                           Grid.RowSpan="1" Style="{DynamicResource ScrollViewerStyle1}">
                 <ListView ItemsSource="{Binding Distributions}" 
                 	SelectedIndex="{Binding SelectedDistributionIndex}" BorderThickness="0" SelectionMode="Single">
                     <i:Interaction.Behaviors>
@@ -102,17 +102,8 @@
             <TabControl Grid.Column="2" 
                             RequestBringIntoView="ListView_RequestBringIntoView" Grid.RowSpan="2" >
                 <TabItem Header="Overview" DataContext="{Binding SelectedDistribution, Mode=OneWay}">
-                    <ScrollViewer>
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label FontSize="36">The</Label>
-                                <Label Content="{Binding Name, Mode=TwoWay}" FontSize="36"  />
-                                <Label FontSize="36">Distribution</Label>
-                            </StackPanel>
-
-                            <Controls:XamlFrame Source="{Binding Documentation, Mode=TwoWay}" 
-                                                MaxWidth="650" HorizontalAlignment="Left" Margin="10,0,0,0"/>
-                        </StackPanel>
+                    <ScrollViewer Style="{DynamicResource ScrollViewerStyle1}">
+                        <Views:DocumentationView DataContext="{Binding Documentation, Mode=TwoWay}" Margin="10,0,0,0" />
                     </ScrollViewer>
 
                 </TabItem>
@@ -129,7 +120,7 @@
                             <RowDefinition Height="1*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="280"/>
+                            <ColumnDefinition Width="285"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
@@ -235,7 +226,7 @@
                     <ColumnDefinition Width="151*"/>
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
-                <oxy:PlotView Grid.Row="0" Grid.ColumnSpan="3" MinHeight="150"
+                <oxy:PlotView Grid.Row="0" Grid.ColumnSpan="3" MinHeight="120"
                                   DataContext="{Binding SelectedDistribution, Mode=OneWay}" Model="{Binding DensityFunction}" Margin="10,10,10,10" Grid.RowSpan="1" />
                 <StackPanel Grid.ColumnSpan="3" Grid.RowSpan="1" Grid.Row="1" 
                             DataContext="{Binding SelectedDistribution, Mode=OneWay}">
@@ -280,12 +271,15 @@
                 </StackPanel>
                 <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Visibility="{Binding Path=ShowEditor, Converter={StaticResource BoolToVisibility}}">
                     <Label Content="Estimation" HorizontalAlignment="Left" Height="26" FontSize="14"
-                        FontWeight="Bold" Padding="5,2,0,0"/>
+                        FontWeight="Bold" Padding="5,2,0,0" Visibility="{Binding Path=HasOptions, Converter={StaticResource BoolToVisibility}}" />
                     <xctk:PropertyGrid  VerticalAlignment="Top"
                                 HorizontalAlignment="Left" MinWidth="200" Height="auto"
                                 SelectedObject="{Binding Options, Mode=OneWay}"
                                 IsEnabled="{Binding HasOptions, Mode=OneWay}" 
-                                Background="White" BorderBrush="{x:Null}" Margin="10,10,10,10" ShowSummary="False" ShowTitle="False" IsCategorized="False" ShowSortOptions="False" ShowSearchBox="False" />
+                                Background="White" BorderBrush="{x:Null}" Margin="10,10,10,10"
+                                ShowSummary="False" ShowTitle="False" IsCategorized="False"
+                                ShowSortOptions="False" ShowSearchBox="False"
+                                Visibility="{Binding Path=HasOptions, Converter={StaticResource BoolToVisibility}}" />
                 </StackPanel>
                 <Label Content="Generate" Grid.ColumnSpan="1" Grid.Row="3" Grid.Column="0" Grid.RowSpan="1" />
                 <TextBox Text="{Binding Samples,Mode=TwoWay}" Grid.Row="3"  Grid.Column="1" Grid.ColumnSpan="1" Grid.RowSpan="1" />

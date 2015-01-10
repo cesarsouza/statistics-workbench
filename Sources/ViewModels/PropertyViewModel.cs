@@ -61,8 +61,8 @@ namespace Workbench.ViewModels
         }
 
 
-        public static bool TryParse(PropertyInfo prop, DistributionViewModel distribution,
-            Dictionary<string, string> doc, out PropertyViewModel property)
+        public static bool TryParse(PropertyInfo prop, DistributionViewModel distribution, 
+            out PropertyViewModel property)
         {
             property = null;
 

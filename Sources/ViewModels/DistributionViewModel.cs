@@ -38,7 +38,7 @@ namespace Workbench.ViewModels
 
         public string Name { get; private set; }
 
-        public string Documentation { get; private set; }
+        public DocumentationViewModel Documentation { get; private set; }
 
         public string ExternalDocUrl { get; private set; }
 
@@ -60,7 +60,7 @@ namespace Workbench.ViewModels
 
 
 
-        public static bool TryParse(Type type, Dictionary<string, string> doc, out DistributionViewModel distribution)
+        public static bool TryParse(Type type, Dictionary<string, DocumentationViewModel> doc, out DistributionViewModel distribution)
         {
             distribution = new DistributionViewModel();
 
@@ -75,7 +75,7 @@ namespace Workbench.ViewModels
             foreach (PropertyInfo prop in type.GetProperties())
             {
                 PropertyViewModel property;
-                if (PropertyViewModel.TryParse(prop, distribution, doc, out property))
+                if (PropertyViewModel.TryParse(prop, distribution, out property))
                     properties.Add(property);
             }
 
@@ -102,15 +102,17 @@ namespace Workbench.ViewModels
 
 
             // Extract some documentation
-            string summary = doc[type.Name];
+            var documentation = doc[type.Name];
+            documentation.Name = name;
 
             distribution.Constructor = main;
             distribution.Properties = new ObservableCollection<PropertyViewModel>(properties);
             distribution.Parameters = main.Parameters;
             distribution.Type = type;
             distribution.Name = name;
-            distribution.Documentation = summary;
+            distribution.Documentation = documentation;
             distribution.CanGenerate = typeof(ISampleableDistribution<double>).IsAssignableFrom(type);
+            
 
             // Get documentation page from the Accord.NET website
             distribution.ExternalDocUrl = DistributionManager.GetDocumentationUrl(distribution.Type);
