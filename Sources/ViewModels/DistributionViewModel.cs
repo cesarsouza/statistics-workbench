@@ -21,20 +21,43 @@ namespace Workbench.ViewModels
     using System.Threading.Tasks;
     using Workbench.Tools;
 
+    /// <summary>
+    ///   Describes a probability distribution, such as the Gaussian, the Bernoulli,
+    ///   or the Gamma. This class can be data-bound to a user interface so the user
+    ///   can select the distribution parameter's and instantiate or estimate it.
+    /// </summary>
+    /// 
     [ImplementPropertyChanged]
     public class DistributionViewModel
     {
 
+        /// <summary>
+        ///   Gets the current active probability distribution, if any.
+        /// </summary>
+        /// 
         public IUnivariateDistribution Instance { get; private set; }
 
-        public IFittingOptions Options { get; private set; }
-
+        /// <summary>
+        ///   Gets the parameters that can be set to create the distribution.
+        /// </summary>
+        /// 
         public ObservableCollection<ParameterViewModel> Parameters { get; private set; }
 
+        /// <summary>
+        ///   Gets the properties that can be extract from a distribution, 
+        ///   such as its mean, standard deviation, variance, mode, and so on.
+        /// </summary>
+        /// 
         public ObservableCollection<PropertyViewModel> Properties { get; private set; }
 
+        /// <summary>
+        ///   Gets the fitting options that be selected to estimate this distribution.
+        /// </summary>
+        /// 
+        public IFittingOptions EstimationOptions { get; private set; }
 
-        public bool CanGenerate { get; private set; }
+        public bool HasOptions { get { return EstimationOptions != null; } }
+
 
         public string Name { get; private set; }
 
@@ -52,7 +75,6 @@ namespace Workbench.ViewModels
 
         public PlotModel DensityFunction { get; private set; }
 
-        public event EventHandler InstanceChanged;
 
 
         public DistributionViewModel()
@@ -76,12 +98,12 @@ namespace Workbench.ViewModels
         {
             if (weights == null)
             {
-                Instance.Fit(values, Options);
+                Instance.Fit(values, EstimationOptions);
             }
             else
             {
                 weights = weights.Divide(weights.Sum());
-                Instance.Fit(values, weights, Options);
+                Instance.Fit(values, weights, EstimationOptions);
             }
 
             update(Instance);
@@ -139,7 +161,6 @@ namespace Workbench.ViewModels
             distribution.Type = type;
             distribution.Name = name;
             distribution.Documentation = documentation;
-            distribution.CanGenerate = typeof(ISampleableDistribution<double>).IsAssignableFrom(type);
 
 
             // Get documentation page from the Accord.NET website
@@ -148,7 +169,7 @@ namespace Workbench.ViewModels
             foreach (var parameter in distribution.Constructor.Parameters)
                 parameter.ValueChanged += distribution.OnParameterChanged;
 
-            distribution.Options = DistributionManager.GetFittingOptions(distribution.Type);
+            distribution.EstimationOptions = DistributionManager.GetFittingOptions(distribution.Type);
 
 
             Task.Run((Action)distribution.Create);
@@ -176,8 +197,12 @@ namespace Workbench.ViewModels
 
         private void update(IUnivariateDistribution instance)
         {
+            this.Instance = instance;
+            this.Functions.Instance = instance;
+            this.DensityFunction = this.Functions.CreatePDF();
+
             foreach (var property in Properties)
-                property.Update(instance);
+                property.Update();
 
             foreach (var param in Parameters)
             {
@@ -185,10 +210,6 @@ namespace Workbench.ViewModels
                 param.Sync();
                 param.ValueChanged += OnParameterChanged;
             }
-
-            this.Instance = instance;
-            this.Functions.Instance = instance;
-            this.DensityFunction = this.Functions.CreatePDF();
         }
 
     }

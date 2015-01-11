@@ -111,7 +111,8 @@
                                                 VerticalAlignment="Top" Height="434" Width="Auto"
                                                 DataContext="{Binding Functions}"/>
                 </TabItem>
-                <TabItem Header="Estimation" IsSelected="{Binding ShowEditor}" local:AttachedProperties.CommandBindings="{Binding CommandBindings}">
+                <TabItem Header="Estimation" IsSelected="{Binding ShowEditor}" 
+                         local:AttachedProperties.CommandBindings="{Binding CommandBindings}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -270,12 +271,14 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
-                <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Visibility="{Binding Path=ShowEditor, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel Grid.Row="2" Grid.ColumnSpan="3" 
+                            Visibility="{Binding Path=ShowEditor, Converter={StaticResource BoolToVisibility}}">
                     <Label Content="Estimation" HorizontalAlignment="Left" Height="26" FontSize="14"
-                        FontWeight="Bold" Padding="5,2,0,0" Visibility="{Binding Path=HasOptions, Converter={StaticResource BoolToVisibility}}" />
-                    <xctk:PropertyGrid  VerticalAlignment="Top"
+                           DataContext="{Binding SelectedDistribution, Mode=OneWay}" FontWeight="Bold" Padding="5,2,0,0" 
+                           Visibility="{Binding Path=HasOptions, Converter={StaticResource BoolToVisibility}}" />
+                    <xctk:PropertyGrid  VerticalAlignment="Top" DataContext="{Binding SelectedDistribution, Mode=OneWay}"
                                 HorizontalAlignment="Left" MinWidth="200" Height="auto"
-                                SelectedObject="{Binding Options, Mode=OneWay}"
+                                SelectedObject="{Binding EstimationOptions, Mode=OneWay}"
                                 IsEnabled="{Binding HasOptions, Mode=OneWay}" 
                                 Background="White" BorderBrush="{x:Null}" Margin="10,10,10,10"
                                 ShowSummary="False" ShowTitle="False" IsCategorized="False"

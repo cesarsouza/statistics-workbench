@@ -28,32 +28,46 @@ namespace Workbench.ViewModels
     using Workbench.Framework;
     using Workbench.Tools;
 
+    /// <summary>
+    ///   Main view model associated with the main application window.
+    /// </summary>
+    /// 
     [ImplementPropertyChanged]
     public class MainViewModel : ViewModelBase
     {
 
+        /// <summary>
+        ///   Gets all distributions that can be selected.
+        /// </summary>
+        /// 
         public ObservableCollection<DistributionViewModel> Distributions { get; private set; }
 
+        /// <summary>
+        ///   Gets or sets the index of the current selected distribution.
+        /// </summary>
+        /// 
         public int SelectedDistributionIndex { get; set; }
 
-
+        /// <summary>
+        ///   Gets the current selected distribution.
+        /// </summary>
+        /// 
         public DistributionViewModel SelectedDistribution
         {
             get { return Distributions[SelectedDistributionIndex]; }
         }
 
+
+
         public bool ShowEditor { get; set; }
 
 
-
-        public IFittingOptions Options { get { return SelectedDistribution.Options; } }
-
-        public bool CanGenerate { get { return SelectedDistribution.CanGenerate; } }
-        public bool HasOptions { get { return Options != null; } }
         public bool IsContinuous { get; set; }
 
         public bool HasModifications { get; set; }
+
         public string LastSavePath { get; set; }
+
         public IFileFormat LastSaveFormat { get; set; }
 
         public BindingList<SampleViewModel> Data { get; private set; }
@@ -97,19 +111,22 @@ namespace Workbench.ViewModels
         public ObservableCollection<GoodnessOfFit> Analysis { get; set; }
 
 
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="MainViewModel"/> class.
+        /// </summary>
+        /// 
         public MainViewModel()
         {
             // Create ViewModels for each statistical distribution
-
             var distributions = DistributionManager.GetDistributions();
             this.Distributions = new ObservableCollection<DistributionViewModel>(distributions);
             this.SelectedDistributionIndex = distributions.Find(x => x.Name == "Normal")[0];
 
-            this.NewCommand = new RelayCommand(New_Execute, New_CanExecute);
+            this.NewCommand = new RelayCommand(New_Execute);
             this.SaveCommand = new RelayCommand(Save_Execute, Save_CanExecute);
-            this.OpenCommand = new RelayCommand(Open_Execute, Open_CanExecute);
+            this.OpenCommand = new RelayCommand(Open_Execute);
             this.RefreshCommand = new RelayCommand(Refresh_Execute, Refresh_CanExecute);
-            this.GenerateCommand = new RelayCommand(Generate_Execute, Generate_CanExecute);
+            this.GenerateCommand = new RelayCommand(Generate_Execute);
 
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, Paste_Executed, Paste_CanExecute));
 
@@ -120,7 +137,7 @@ namespace Workbench.ViewModels
 
             this.Analysis = new ObservableCollection<GoodnessOfFit>();
 
-            this.Samples = 100;
+            this.Samples = 1000;
         }
 
 
@@ -141,10 +158,6 @@ namespace Workbench.ViewModels
             Data.Add(new SampleViewModel() { Value = 0, Weight = 1 });
         }
 
-        public bool New_CanExecute(object sender)
-        {
-            return true;
-        }
 
         public void Save_Execute(object parameter)
         {
@@ -227,10 +240,6 @@ namespace Workbench.ViewModels
             }
         }
 
-        public bool Open_CanExecute(object sender)
-        {
-            return true;
-        }
 
         public void Paste_Executed(object target, ExecutedRoutedEventArgs e)
         {
@@ -313,11 +322,6 @@ namespace Workbench.ViewModels
         public bool Refresh_CanExecute(object sender)
         {
             return Data.Count > 0;
-        }
-
-        private bool Generate_CanExecute(object obj)
-        {
-            return CanGenerate;
         }
 
         private void Generate_Execute(object obj)

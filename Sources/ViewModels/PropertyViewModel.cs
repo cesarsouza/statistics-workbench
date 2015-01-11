@@ -72,6 +72,19 @@ namespace Workbench.ViewModels
         }
 
 
+        public void Update()
+        {
+            try
+            {
+                var instance = ParentDistribution.Instance;
+                if (instance != null)
+                    Value = (double)PropertyInfo.GetValue(instance);
+            }
+            catch
+            {
+                Value = null;
+            }
+        }
 
 
 
@@ -82,22 +95,6 @@ namespace Workbench.ViewModels
             this.ParentDistribution = distribution;
             this.Name = DistributionManager.ToNormalCase(prop.Name);
             this.Name = DistributionManager.NormalizeTerms(Name);
-
-            // this.ParentDistribution.InstanceChanged += ParentDistribution_InstanceChanged;
-        }
-
-
-        public void Update(IUnivariateDistribution instance)
-        {
-            try
-            {
-                if (instance != null)
-                    Value = (double)PropertyInfo.GetValue(instance);
-            }
-            catch
-            {
-                Value = null;
-            }
         }
 
     }
