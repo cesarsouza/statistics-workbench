@@ -18,6 +18,12 @@ namespace Workbench.Tools
     using System.Web;
     using Workbench.ViewModels;
 
+    /// <summary>
+    ///   NuDoq's visitor implementation used to parse through
+    ///   classes XML documentation files and generate XAML code
+    ///   containing such documentation.
+    /// </summary>
+    /// 
     public class ClassToXamlVisitor : Visitor
     {
         public Dictionary<string, DocumentationViewModel> Texts { get; set; }
@@ -26,18 +32,25 @@ namespace Workbench.Tools
         private DocumentationViewModel current;
 
         private MemberIdMap map;
-
         private StringBuilder builder;
-
         private bool insideTextBlock = false;
+
 
         public ClassToXamlVisitor(MemberIdMap map)
         {
             this.map = map;
-            Texts = new Dictionary<string, DocumentationViewModel>();
+            this.Texts = new Dictionary<string, DocumentationViewModel>();
         }
 
 
+        /// <summary>
+        ///   Visit the generic base class <see cref="T:NuDoq.Member" />.
+        /// </summary>
+        /// 
+        /// <remarks>
+        ///   This method is called for all <see cref="T:NuDoq.Member" />-derived types.
+        /// </remarks>
+        /// 
         public override void VisitMember(Member member)
         {
             if (member.Kind.HasFlag(MemberKinds.Class))
@@ -53,6 +66,10 @@ namespace Workbench.Tools
             }
         }
 
+        /// <summary>
+        ///   Visits the <c>summary</c> documentation element.
+        /// </summary>
+        /// 
         public override void VisitSummary(Summary summary)
         {
             builder.Clear();
@@ -65,6 +82,10 @@ namespace Workbench.Tools
             current.Summary = builder.ToString();
         }
 
+        /// <summary>
+        ///   Visits the <c>remarks</c> documentation element.
+        /// </summary>
+        /// 
         public override void VisitRemarks(Remarks remarks)
         {
             builder.Clear();
@@ -77,6 +98,10 @@ namespace Workbench.Tools
             current.Remarks = builder.ToString();
         }
 
+        /// <summary>
+        ///   Visits the <c>example</c> documentation element.
+        /// </summary>
+        /// 
         public override void VisitExample(Example example)
         {
             builder.Clear();
@@ -90,6 +115,10 @@ namespace Workbench.Tools
         }
 
 
+        /// <summary>
+        ///   Visits the <c>para</c> documentation element.
+        /// </summary>
+        /// 
         public override void VisitPara(Para para)
         {
             builder.AppendLine("<TextBlock>");
@@ -101,6 +130,10 @@ namespace Workbench.Tools
             insideTextBlock = false;
         }
 
+        /// <summary>
+        ///   Visits the <c>list</c> documentation element.
+        /// </summary>
+        /// 
         public override void VisitList(List list)
         {
             bool addedBlock = false;
@@ -120,6 +153,10 @@ namespace Workbench.Tools
             }
         }
 
+        /// <summary>
+        ///   Visits the <c>item</c> documentation element.
+        /// </summary>
+        /// 
         public override void VisitItem(Item item)
         {
             if (this.insideTextBlock)
@@ -127,20 +164,25 @@ namespace Workbench.Tools
             base.VisitItem(item);
         }
 
+        /// <summary>
+        ///   Visits the <c>listheader</c> documentation element.
+        /// </summary>
+        /// 
         public override void VisitListHeader(ListHeader header)
         {
             base.VisitListHeader(header);
         }
 
-
-
+        /// <summary>
+        ///   Visits the <c>code</c> documentation element.
+        /// </summary>
+        /// 
         public override void VisitCode(Code code)
         {
             current.ExampleCodes.Add(code.Content);
 
             string[] lines = code.Content
                 .Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
 
             builder.Append("<ContentControl xml:space=\"preserve\" Tag=\"Code\">");
 
@@ -150,8 +192,10 @@ namespace Workbench.Tools
             builder.AppendLine("</ContentControl>");
         }
 
-
-
+        /// <summary>
+        ///   Visits the literal text inside other documentation elements.
+        /// </summary>
+        /// 
         public override void VisitText(Text text)
         {
             if (!insideTextBlock)
@@ -166,6 +210,10 @@ namespace Workbench.Tools
             }
         }
 
+        /// <summary>
+        ///   Visits the <c>see</c> documentation element.
+        /// </summary>
+        /// 
         public override void VisitSee(See see)
         {
             string url = DistributionManager.GetDocumentationUrl(see.Cref);
@@ -177,6 +225,10 @@ namespace Workbench.Tools
             builder.Append(hyperlink(url, text));
         }
 
+        /// <summary>
+        ///   Visits the <c>a</c> extended documentation element.
+        /// </summary>
+        /// 
         public override void VisitAnchor(Anchor anchor)
         {
             string url = DistributionManager.GetDocumentationUrl(anchor.Href);
@@ -188,6 +240,10 @@ namespace Workbench.Tools
             builder.Append(hyperlink(url, text));
         }
 
+        /// <summary>
+        ///   Visits the <c>seealso</c> documentation element.
+        /// </summary>
+        /// 
         public override void VisitSeeAlso(SeeAlso seeAlso)
         {
             string url = DistributionManager.GetDocumentationUrl(seeAlso.Cref);
@@ -205,7 +261,7 @@ namespace Workbench.Tools
 
         private static string hyperlink(string url, string text)
         {
-            return " <Hyperlink NavigateUri=\"" + url + "\">" + text + "</Hyperlink> ";
+            return " <Hyperlink NavigateUri=\"" + url + "\">" + encode(text) + "</Hyperlink> ";
         }
 
         private string parse(string cref, bool full)
@@ -231,7 +287,7 @@ namespace Workbench.Tools
             return toAppend;
         }
 
-        public static string encode(string text)
+        private static string encode(string text)
         {
             char[] chars = HttpUtility.HtmlEncode(text).ToCharArray();
             StringBuilder result = new StringBuilder(text.Length + (int)(text.Length * 0.1));

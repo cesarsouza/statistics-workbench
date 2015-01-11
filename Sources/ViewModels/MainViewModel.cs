@@ -74,7 +74,7 @@ namespace Workbench.ViewModels
 
 
 
-        public FormatCollection SaveFormats = new FormatCollection
+        private FormatCollection SaveFormats = new FormatCollection
         {
             new CsvFileFormat(),
             new TsvFileFormat(),
@@ -82,7 +82,7 @@ namespace Workbench.ViewModels
             new BinFileFormat()
         };
 
-        public FormatCollection LoadFormats = new FormatCollection
+        private FormatCollection LoadFormats = new FormatCollection
         {
             new XlsxFileFormat(),
             new XlsFileFormat(),
@@ -330,6 +330,7 @@ namespace Workbench.ViewModels
             ShowEditor = true;
             RefreshCommand.Execute(null);
         }
+
 
     }
 }

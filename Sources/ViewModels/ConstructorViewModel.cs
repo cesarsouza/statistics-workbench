@@ -12,57 +12,100 @@ namespace Workbench.ViewModels
     using System.Collections.ObjectModel;
     using System.Reflection;
 
+    /// <summary>
+    ///   Describes a distribution's constructor, which can use or not a number
+    ///   of parameters in order to instantiate a new probability distribution.
+    /// </summary>
+    /// 
     public class ConstructorViewModel
     {
+
+        /// <summary>
+        ///   Gets the constructor's reflection information.
+        /// </summary>
+        /// 
         public ConstructorInfo Constructor { get; private set; }
 
+        /// <summary>
+        ///   Gets the constructor's parameters and their current selected values.
+        /// </summary>
+        /// 
         public ObservableCollection<ParameterViewModel> Parameters { get; private set; }
 
-        public int Length { get { return Parameters.Count; } }
+        /// <summary>
+        ///   Gets the parent distribution to whom this constructor belongs.
+        /// </summary>
+        /// 
+        public DistributionViewModel ParentDistribution { get; private set; }
 
-        public DistributionViewModel Owner { get; private set; }
 
-        public static bool TryParse(ConstructorInfo ctor, DistributionViewModel owner,
-            out ConstructorViewModel constructor)
+        private ConstructorViewModel(ConstructorInfo info, DistributionViewModel owner)
         {
-            constructor = new ConstructorViewModel();
-
-            ParameterInfo[] info = ctor.GetParameters();
-            var parameters = new ParameterViewModel[info.Length];
-
-            for (int i = 0; i < info.Length; i++)
-            {
-                if (!ParameterViewModel.TryParse(info[i], constructor, out parameters[i]))
-                    return false;
-            }
-
-            constructor.Owner = owner;
-            constructor.Constructor = ctor;
-            constructor.Parameters = new ObservableCollection<ParameterViewModel>(parameters);
-
-            return true;
+            this.ParentDistribution = owner;
+            this.Constructor = info;
+            this.Parameters = new ObservableCollection<ParameterViewModel>();
         }
 
-        public bool TryCreate(out IUnivariateDistribution distribution)
-        {
-            distribution = null;
 
-            var parameters = new object[Parameters.Count];
+        /// <summary>
+        ///   Creates a new distribution instance using the currenct selected
+        ///   values for this constructor's parameters. If there is any problem
+        ///   creating the object, this method returns null.
+        /// </summary>
+        /// 
+        public IUnivariateDistribution Activate()
+        {
+            IUnivariateDistribution distribution = null;
 
             try
             {
-                foreach (var p in Parameters)
-                    parameters[p.Parameter.Position] = Convert.ChangeType(p.Value, p.Parameter.ParameterType);
+                var parameters = new object[Parameters.Count];
+                foreach (ParameterViewModel p in Parameters)
+                    parameters[p.ParameterInfo.Position] = Convert.ChangeType(p.Value, p.ParameterInfo.ParameterType);
 
-                distribution = (IUnivariateDistribution)Activator.CreateInstance(Owner.Type, parameters);
+                distribution = (IUnivariateDistribution)Activator.CreateInstance(ParentDistribution.Type, parameters);
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Trace.WriteLine(ex.ToString());
-                return false;
+                return null;
+            }
+
+            return distribution;
+        }
+
+
+
+
+        /// <summary>
+        ///   Attempts to create a distribution's constructor. If the constructor 
+        ///   parameter's aren't valid, this method fails and returns false.
+        /// </summary>
+        /// 
+        /// <param name="info">The constructor's reflection information.</param>
+        /// <param name="distribution">The distribution that owns this constructor.</param>
+        /// <param name="constructor">The created distribution constructor.</param>
+        /// 
+        /// <returns>True if the constructor could be created; false otherwise.</returns>
+        /// 
+        public static bool TryParse(ConstructorInfo info, DistributionViewModel distribution, out ConstructorViewModel constructor)
+        {
+            constructor = new ConstructorViewModel(info, distribution);
+
+            foreach (var param in info.GetParameters())
+            {
+                ParameterViewModel viewModel;
+                if (!ParameterViewModel.TryParse(param, constructor, out viewModel))
+                    return false;
+
+                constructor.Parameters.Add(viewModel);
             }
 
             return true;
         }
+
+
+
+
     }
 }

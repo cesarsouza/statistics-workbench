@@ -19,26 +19,54 @@ namespace Workbench.ViewModels
     using System.Globalization;
     using System.Linq;
 
+    /// <summary>
+    ///   View Model for the distribution's function details page. Includes
+    ///   charts models for each possible function associated with a distribution,
+    ///   such as its PDF, CDF, HF, and more.
+    /// </summary>
+    /// 
     [ImplementPropertyChanged]
     public class FunctionViewModel
     {
 
-        public IUnivariateDistribution Instance { get; private set; }
+        private IUnivariateDistribution instance;
 
-        public DoubleRange Range { get; private set; }
-        public DoubleRange Unit { get; private set; }
-        public double[] SupportPoints { get; private set; }
-        public double[] Probabilities { get; private set; }
+        private DoubleRange range;
+        private DoubleRange unit;
+        private double[] supportPoints;
+        private double[] probabilities;
+
+
+        /// <summary>
+        ///   Gets the current instance of the selected distribution
+        ///   that is currently active in the application.
+        /// </summary>
+        /// 
+        public IUnivariateDistribution Instance
+        {
+            get { return instance; }
+            set { update(value); }
+        }
+
+
 
 
         public PlotModel DistributionFunction { get; private set; }
+
         public PlotModel DensityFunction { get; private set; }
+
         public PlotModel LogDensityFunction { get; private set; }
+
         public PlotModel InverseDistributionFunction { get; private set; }
+
         public PlotModel HazardFunction { get; private set; }
+
         public PlotModel CumulativeHazardFunction { get; private set; }
+
         public PlotModel QuantileDensityFunction { get; private set; }
+
         public PlotModel ComplementaryDistributionFunction { get; private set; }
+
 
         public FunctionViewModel()
         {
@@ -46,11 +74,16 @@ namespace Workbench.ViewModels
         }
 
 
+
+
+
+
+
         public PlotModel CreatePDF()
         {
             string title = "PDF";
 
-            double[] x = SupportPoints;
+            double[] x = supportPoints;
             double[] y;
 
             try { y = x.Apply(Instance.ProbabilityFunction); }
@@ -61,14 +94,14 @@ namespace Workbench.ViewModels
                 y = x.Apply(general.ProbabilityDensityFunction);
             }
 
-            return createBaseModel(Range, title, SupportPoints, y);
+            return createBaseModel(range, title, supportPoints, y);
         }
 
         public PlotModel CreateLPDF()
         {
             string title = "Log-PDF";
 
-            double[] x = SupportPoints;
+            double[] x = supportPoints;
             double[] y;
 
             try { y = x.Apply(Instance.LogProbabilityFunction); }
@@ -79,7 +112,7 @@ namespace Workbench.ViewModels
                 y = x.Apply(general.LogProbabilityDensityFunction);
             }
 
-            return createBaseModel(Range, title, SupportPoints, y);
+            return createBaseModel(range, title, supportPoints, y);
         }
 
         public PlotModel CreateIPDF()
@@ -88,7 +121,7 @@ namespace Workbench.ViewModels
             {
                 string title = "IPDF";
 
-                double[] x = Probabilities;
+                double[] x = probabilities;
                 double[] y;
 
                 try { y = x.Apply(Instance.QuantileDensityFunction); }
@@ -99,7 +132,7 @@ namespace Workbench.ViewModels
                     y = x.Apply(general.QuantileDensityFunction);
                 }
 
-                return createBaseModel(Unit, title, x, y);
+                return createBaseModel(unit, title, x, y);
             }
             catch
             {
@@ -107,15 +140,13 @@ namespace Workbench.ViewModels
             }
         }
 
-
-
         public PlotModel CreateCDF()
         {
             try
             {
                 string title = "CDF";
 
-                double[] x = SupportPoints;
+                double[] x = supportPoints;
 
                 double[] y;
                 try { y = x.Apply(Instance.DistributionFunction); }
@@ -126,7 +157,7 @@ namespace Workbench.ViewModels
                     y = x.Apply(general.DistributionFunction);
                 }
 
-                return createBaseModel(Range, title, x, y);
+                return createBaseModel(range, title, x, y);
             }
             catch
             {
@@ -138,7 +169,7 @@ namespace Workbench.ViewModels
         {
             string title = "CCDF";
 
-            double[] x = SupportPoints;
+            double[] x = supportPoints;
 
             double[] y;
             try { y = x.Apply(Instance.ComplementaryDistributionFunction); }
@@ -149,14 +180,14 @@ namespace Workbench.ViewModels
                 y = x.Apply(general.ComplementaryDistributionFunction);
             }
 
-            return createBaseModel(Range, title, x, y);
+            return createBaseModel(range, title, x, y);
         }
 
         public PlotModel CreateCHF()
         {
             string title = "CHF";
 
-            double[] x = SupportPoints;
+            double[] x = supportPoints;
 
             double[] y;
             try { y = x.Apply(Instance.CumulativeHazardFunction); }
@@ -176,7 +207,7 @@ namespace Workbench.ViewModels
                 }
             }
 
-            return createBaseModel(Range, title, x, y);
+            return createBaseModel(range, title, x, y);
         }
 
         public PlotModel CreateICDF()
@@ -185,7 +216,7 @@ namespace Workbench.ViewModels
             {
                 string title = "QDF";
 
-                double[] x = Probabilities;
+                double[] x = probabilities;
 
                 double[] y;
                 try { y = x.Apply(Instance.InverseDistributionFunction); }
@@ -205,7 +236,7 @@ namespace Workbench.ViewModels
                     }
                 }
 
-                return createBaseModel(Unit, title, x, y);
+                return createBaseModel(unit, title, x, y);
             }
             catch
             {
@@ -219,7 +250,7 @@ namespace Workbench.ViewModels
             {
                 string title = "HF";
 
-                double[] x = SupportPoints;
+                double[] x = supportPoints;
 
                 double[] y;
                 try { y = x.Apply(Instance.HazardFunction); }
@@ -239,13 +270,17 @@ namespace Workbench.ViewModels
                     }
                 }
 
-                return createBaseModel(Range, title, x, y);
+                return createBaseModel(range, title, x, y);
             }
             catch
             {
                 return null;
             }
         }
+
+
+
+
 
         private PlotModel createBaseModel(DoubleRange range, string title, double[] x, double[] y)
         {
@@ -285,8 +320,8 @@ namespace Workbench.ViewModels
 
             var valueAxis = new LinearAxis()
             {
-                Position = AxisPosition.Left, 
-                Minimum = ymin - minGrace, 
+                Position = AxisPosition.Left,
+                Minimum = ymin - minGrace,
                 Maximum = ymax + maxGrace,
                 Key = "yAxis",
                 MajorGridlineStyle = LineStyle.Solid,
@@ -342,12 +377,10 @@ namespace Workbench.ViewModels
 
 
 
-        public void Update(IUnivariateDistribution instance)
+        private void update(IUnivariateDistribution instance)
         {
-            this.Instance = instance;
-
+            this.instance = instance;
             this.updateRange();
-
             this.DensityFunction = CreatePDF();
             this.DistributionFunction = CreateCDF();
             this.ComplementaryDistributionFunction = CreateCCDF();
@@ -371,10 +404,10 @@ namespace Workbench.ViewModels
             {
             }
 
-            this.Range = new DoubleRange(range.Min - 5, range.Max + 5);
-            this.Unit = new DoubleRange(0, 1);
-            this.SupportPoints = Matrix.Interval(range.Min, range.Max, (range.Length) / 1000.0);
-            this.Probabilities = Matrix.Interval(0.0, 1.0, 1000);
+            this.range = new DoubleRange(range.Min - 5, range.Max + 5);
+            this.unit = new DoubleRange(0, 1);
+            this.supportPoints = Matrix.Interval(range.Min, range.Max, (range.Length) / 1000.0);
+            this.probabilities = Matrix.Interval(0.0, 1.0, 1000);
         }
 
     }

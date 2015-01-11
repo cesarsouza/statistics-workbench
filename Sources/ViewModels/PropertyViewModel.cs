@@ -9,7 +9,6 @@ namespace Workbench.ViewModels
 {
     using Accord.Statistics.Distributions;
     using PropertyChanged;
-    using System.Collections.Generic;
     using System.Reflection;
     using Workbench.Tools;
 
@@ -21,6 +20,7 @@ namespace Workbench.ViewModels
     [ImplementPropertyChanged]
     public class PropertyViewModel
     {
+
         /// <summary>
         ///   Gets the property's name.
         /// </summary>
@@ -33,23 +33,62 @@ namespace Workbench.ViewModels
         /// 
         public double? Value { get; private set; }
 
-        public DistributionViewModel Owner { get; private set; }
-
+        /// <summary>
+        ///   Gets the distribution parameter's reflection information.
+        /// </summary>
+        /// 
         public PropertyInfo PropertyInfo { get; private set; }
 
-        public PropertyViewModel(DistributionViewModel model, PropertyInfo property)
-        {
-            this.PropertyInfo = property;
-            this.Name = DistributionManager.ToNormalCase(property.Name);
-            this.Owner = model;
+        /// <summary>
+        ///   Gets the parent distribution to whom this property belongs.
+        /// </summary>
+        /// 
+        public DistributionViewModel ParentDistribution { get; private set; }
 
-            Name = Name.Replace("Standard", "Std.");
+
+
+        /// <summary>
+        ///   Attempts to create a distribution's property. If the property doesn't
+        ///   qualify as a valid property to be shown in the automatic distribution
+        ///   description, the method fails and returns false.
+        /// </summary>
+        /// 
+        /// <param name="info">The property's reflection information.</param>
+        /// <param name="owner">The distribution that should own this property.</param>
+        /// <param name="property">The created distribution property.</param>
+        /// 
+        /// <returns>True if the property could be created; false otherwise.</returns>
+        /// 
+        public static bool TryParse(PropertyInfo info, DistributionViewModel owner, out PropertyViewModel property)
+        {
+            property = null;
+
+            if (info.GetMethod.ReturnType != typeof(double))
+                return false;
+
+            property = new PropertyViewModel(info, owner);
+
+            return true;
         }
+
+
+
+
+
+
+        private PropertyViewModel(PropertyInfo prop, DistributionViewModel distribution)
+        {
+            this.PropertyInfo = prop;
+            this.ParentDistribution = distribution;
+            this.Name = DistributionManager.ToNormalCase(prop.Name);
+            this.Name = DistributionManager.NormalizeTerms(Name);
+
+            // this.ParentDistribution.InstanceChanged += ParentDistribution_InstanceChanged;
+        }
+
 
         public void Update(IUnivariateDistribution instance)
         {
-            Value = null;
-
             try
             {
                 if (instance != null)
@@ -57,21 +96,9 @@ namespace Workbench.ViewModels
             }
             catch
             {
+                Value = null;
             }
         }
 
-
-        public static bool TryParse(PropertyInfo prop, DistributionViewModel distribution, 
-            out PropertyViewModel property)
-        {
-            property = null;
-
-            if (prop.GetMethod.ReturnType != typeof(double))
-                return false;
-
-            property = new PropertyViewModel(distribution, prop);
-
-            return true;
-        }
     }
 }

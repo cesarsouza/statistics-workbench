@@ -194,5 +194,16 @@ namespace Workbench.Tools
             return textInfo.ToTitleCase(withSpaces);
         }
 
+
+        public static string NormalizeTerms(string name)
+        {
+            name = name.Replace("Standard", "Std.");
+            name = name.Replace("Deviation", "Dev.");
+
+            if (name.EndsWith("Dev"))
+                name += ".";
+
+            return name;
+        }
     }
 }

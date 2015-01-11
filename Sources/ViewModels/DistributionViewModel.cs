@@ -38,7 +38,6 @@ namespace Workbench.ViewModels
 
         public string Name { get; private set; }
 
-        public DocumentationViewModel Documentation { get; private set; }
 
         public string ExternalDocUrl { get; private set; }
 
@@ -48,16 +47,45 @@ namespace Workbench.ViewModels
 
         public FunctionViewModel Functions { get; private set; }
 
+        public DocumentationViewModel Documentation { get; private set; }
+
+
         public PlotModel DensityFunction { get; private set; }
+
+        public event EventHandler InstanceChanged;
+
 
         public DistributionViewModel()
         {
             this.Parameters = new ObservableCollection<ParameterViewModel>();
             this.Properties = new ObservableCollection<PropertyViewModel>();
             this.Functions = new FunctionViewModel();
-            
         }
 
+
+
+        public void Create()
+        {
+            var instance = Constructor.Activate();
+
+            if (instance != null)
+                update(instance);
+        }
+
+        public void Estimate(double[] values, double[] weights)
+        {
+            if (weights == null)
+            {
+                Instance.Fit(values, Options);
+            }
+            else
+            {
+                weights = weights.Divide(weights.Sum());
+                Instance.Fit(values, weights, Options);
+            }
+
+            update(Instance);
+        }
 
 
         public static bool TryParse(Type type, Dictionary<string, DocumentationViewModel> doc, out DistributionViewModel distribution)
@@ -112,14 +140,13 @@ namespace Workbench.ViewModels
             distribution.Name = name;
             distribution.Documentation = documentation;
             distribution.CanGenerate = typeof(ISampleableDistribution<double>).IsAssignableFrom(type);
-            
+
 
             // Get documentation page from the Accord.NET website
             distribution.ExternalDocUrl = DistributionManager.GetDocumentationUrl(distribution.Type);
 
-            // Get the constructor parameters and their ranges (if possible)
             foreach (var parameter in distribution.Constructor.Parameters)
-                parameter.PropertyChanged += distribution.OnParameterChanged;
+                parameter.ValueChanged += distribution.OnParameterChanged;
 
             distribution.Options = DistributionManager.GetFittingOptions(distribution.Type);
 
@@ -129,51 +156,40 @@ namespace Workbench.ViewModels
             return true;
         }
 
+
+
+        private void OnParameterChanged(object sender, EventArgs e)
+        {
+            Create(); // When a parameter has changed, we have to re-recreate the distribution.
+        }
+
+
+
+
         public override string ToString()
         {
             return Name;
         }
 
-        void OnParameterChanged(object sender, PropertyChangedEventArgs e)
-        {
-            Create(); // When a parameter has changed, we have to re-recreate the distribution.
-        }
 
-        public void Create()
-        {
-            IUnivariateDistribution instance;
-            if (Constructor.TryCreate(out instance))
-            {
-                update(instance);
-            }
-        }
 
-        public void Estimate(double[] values, double[] weights)
-        {
-            if (weights == null)
-            {
-                Instance.Fit(values, Options);
-            }
-            else
-            {
-                weights = weights.Divide(weights.Sum());
-                Instance.Fit(values, weights, Options);
-            }
 
-            update(Instance);
-        }
-
-       
         private void update(IUnivariateDistribution instance)
         {
+            foreach (var property in Properties)
+                property.Update(instance);
+
+            foreach (var param in Parameters)
+            {
+                param.ValueChanged -= OnParameterChanged;
+                param.Sync();
+                param.ValueChanged += OnParameterChanged;
+            }
+
             this.Instance = instance;
-
-            foreach (var prop in Properties)
-                prop.Update(instance);
-
-            Functions.Update(Instance);
-
-            this.DensityFunction = Functions.CreatePDF();
+            this.Functions.Instance = instance;
+            this.DensityFunction = this.Functions.CreatePDF();
         }
+
     }
 }
