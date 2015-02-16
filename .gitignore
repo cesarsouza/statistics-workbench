@@ -1,5 +1,6 @@
 /Binaries
 /Sources/obj
+/Packages
 
 *.suo
 *.user
