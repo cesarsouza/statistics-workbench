@@ -66,6 +66,12 @@ namespace Workbench.Controls
         /// 
         private void display(string xaml)
         {
+            if (string.IsNullOrEmpty(xaml))
+            {
+                this.Content = String.Empty;
+                return;
+            }
+
             var context = new ParserContext();
             context.XmlnsDictionary.Add("", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
             context.XmlnsDictionary.Add("x", "http://schemas.microsoft.com/winfx/2006/xaml");

@@ -15,9 +15,9 @@ namespace Workbench.ViewModels
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
     using System.Linq;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
     using Workbench.Tools;
 
@@ -30,6 +30,10 @@ namespace Workbench.ViewModels
     [ImplementPropertyChanged]
     public class DistributionViewModel
     {
+
+        public bool IsInitialized { get; private set; }
+
+        public bool IsInitializing { get; private set; }
 
         /// <summary>
         ///   Gets the current active probability distribution, if any.
@@ -85,13 +89,24 @@ namespace Workbench.ViewModels
         }
 
 
+        public void InitAsync()
+        {
+            if (!IsInitialized && !IsInitializing)
+            {
+                IsInitializing = true;
+                Task.Factory.StartNew(() => this.Update());
+            }
+        }
 
-        public void Create()
+        private void Update()
         {
             var instance = Constructor.Activate();
 
             if (instance != null)
                 update(instance);
+
+            IsInitializing = false;
+            IsInitialized = true;
         }
 
         public void Estimate(double[] values, double[] weights)
@@ -171,8 +186,7 @@ namespace Workbench.ViewModels
 
             distribution.EstimationOptions = DistributionManager.GetFittingOptions(distribution.Type);
 
-
-            Task.Run((Action)distribution.Create);
+            // Task.Run((Action)distribution.Update);
 
             return true;
         }
@@ -181,7 +195,7 @@ namespace Workbench.ViewModels
 
         private void OnParameterChanged(object sender, EventArgs e)
         {
-            Create(); // When a parameter has changed, we have to re-recreate the distribution.
+            Update(); // When a parameter has changed, we have to re-recreate the distribution.
         }
 
 
@@ -211,6 +225,7 @@ namespace Workbench.ViewModels
                 param.ValueChanged += OnParameterChanged;
             }
         }
+
 
     }
 }

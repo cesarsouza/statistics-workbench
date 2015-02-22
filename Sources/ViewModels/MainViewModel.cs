@@ -54,9 +54,12 @@ namespace Workbench.ViewModels
         /// 
         public DistributionViewModel SelectedDistribution
         {
-            get { return Distributions[SelectedDistributionIndex]; }
+            get
+            {
+                Distributions[SelectedDistributionIndex].InitAsync();
+                return Distributions[SelectedDistributionIndex];
+            }
         }
-
 
 
         public bool ShowEditor { get; set; }
@@ -240,12 +243,16 @@ namespace Workbench.ViewModels
             }
         }
 
+        private void Paste_Executed(object target, ExecutedRoutedEventArgs e)
+        {
+            Paste_Executed(target, e as RoutedEventArgs);
+        }
 
-        public void Paste_Executed(object target, ExecutedRoutedEventArgs e)
+        public void Paste_Executed(object target, RoutedEventArgs e)
         {
             var text = Clipboard.GetText();
 
-            var reader = new CsvReader(new StringReader(text), false);
+            var reader = new CsvReader(new StringReader(text), false, '\t');
             var lines = reader.ReadToEnd();
 
             lines.Reverse();
@@ -326,15 +333,27 @@ namespace Workbench.ViewModels
 
         private void Generate_Execute(object obj)
         {
-            var generate = SelectedDistribution.Instance as ISampleableDistribution<double>;
-            double[] values = generate.Generate(Samples);
-            Data.Clear();
-            foreach (var d in values)
-                Data.Add(new SampleViewModel() { Value = d });
-            ShowEditor = true;
-            RefreshCommand.Execute(null);
-        }
+            Message = String.Empty;
 
+            var generate = SelectedDistribution.Instance as ISampleableDistribution<double>;
+
+            try
+            {
+                double[] values = generate.Generate(Samples);
+
+                Data.Clear();
+                foreach (var d in values)
+                    Data.Add(new SampleViewModel() { Value = d });
+
+                RefreshCommand.Execute(null);
+            }
+            catch
+            {
+                Message = "Sample generation failed. Please check the chosen distribution parameters.";
+            }
+
+            ShowEditor = true;
+        }
 
     }
 }
