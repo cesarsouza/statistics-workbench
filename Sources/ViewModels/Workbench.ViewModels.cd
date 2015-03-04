@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Workbench.ViewModels.ConstructorViewModel">
+    <Position X="19.5" Y="3" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AIAAAEAAAAAAAABAAAAAQAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\Distributions\ConstructorViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ParentDistribution" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Parameters" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Workbench.ViewModels.DistributionViewModel">
+    <Position X="15.25" Y="3.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AMAAiEAAAAAAAAgEAAAAAAQAABAEACAAQYAADABGAAA=</HashCode>
+      <FileName>ViewModels\Distributions\DistributionViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Constructor" />
+      <Property Name="Documentation" />
+      <Property Name="Measures" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Properties" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Workbench.ViewModels.DocumentationViewModel">
+    <Position X="13.75" Y="8.75" Width="2.25" />
+    <Members>
+      <Field Name="visualStudio" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AgCAAAAAAIAAAAgAABIIAAQAAAAAAEAAAAAAgAAAAAA=</HashCode>
+      <FileName>ViewModels\Documentation\DocumentationViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="SeeAlso" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Workbench.ViewModels.EstimateViewModel">
+    <Position X="8" Y="3" Width="2.5" />
+    <Members>
+      <Method Name="data_ListChanged" Hidden="true" />
+      <Method Name="generate_Execute" Hidden="true" />
+      <Field Name="lastSaveFormat" Hidden="true" />
+      <Field Name="lastSavePath" Hidden="true" />
+      <Field Name="loadFormats" Hidden="true" />
+      <Field Name="saveFormats" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAJQEAAwCCAQwgBAAAQSAAEAUAAQAAAAiAgtAAEACg=</HashCode>
+      <FileName>ViewModels\Estimation\EstimateViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Parent" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Values" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Workbench.ViewModels.MeasuresViewModel">
+    <Position X="16.5" Y="8.75" Width="2.75" />
+    <Members>
+      <Method Name="createBaseModel" Hidden="true" />
+      <Field Name="instance" Hidden="true" />
+      <Field Name="probabilities" Hidden="true" />
+      <Field Name="range" Hidden="true" />
+      <Field Name="supportPoints" Hidden="true" />
+      <Field Name="unit" Hidden="true" />
+      <Method Name="update" Hidden="true" />
+      <Method Name="updateRange" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAQKBANAAEgAAkAQACAAgAAEABAAAACQCEAIAAEIEA=</HashCode>
+      <FileName>ViewModels\Distributions\MeasuresViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Workbench.ViewModels.HyperlinkViewModel">
+    <Position X="11" Y="10" Width="1.75" />
+    <Members>
+      <Method Name="canExecute" Hidden="true" />
+      <Method Name="execute" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAABAEAAAAAAACAAACAAAAAA=</HashCode>
+      <FileName>ViewModels\Documentation\HyperlinkViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Workbench.ViewModels.MainViewModel">
+    <Position X="11.75" Y="0.5" Width="2" />
+    <AssociationLine Name="Distributions" Type="Workbench.ViewModels.DistributionViewModel" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.656" Y="2.377" />
+        <Point X="13.656" Y="3.968" />
+        <Point X="15.25" Y="3.968" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Estimate" Type="Workbench.ViewModels.EstimateViewModel" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.016" Y="2.377" />
+        <Point X="13.016" Y="3.959" />
+        <Point X="10.5" Y="3.959" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAiAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>ViewModels\MainViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Estimate" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Distributions" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Workbench.ViewModels.ParameterViewModel">
+    <Position X="22.75" Y="3" Width="1.75" />
+    <Members>
+      <Field Name="value" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>QIAAAAAAABAAAACAEAABAAQAAEAAACEAIEAgAAAAAAA=</HashCode>
+      <FileName>ViewModels\Distributions\ParameterViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Workbench.ViewModels.PropertyViewModel">
+    <Position X="19.5" Y="5.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AIQAAAAAAAABAAAAAAAAQAQAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>ViewModels\Distributions\PropertyViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Workbench.ViewModels.SampleViewModel">
+    <Position X="11.75" Y="5.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>ViewModels\Estimation\SampleViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

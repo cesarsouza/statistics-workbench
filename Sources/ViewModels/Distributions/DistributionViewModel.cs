@@ -17,7 +17,6 @@ namespace Workbench.ViewModels
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Reflection;
-    using System.Threading;
     using System.Threading.Tasks;
     using Workbench.Tools;
 
@@ -30,9 +29,16 @@ namespace Workbench.ViewModels
     [ImplementPropertyChanged]
     public class DistributionViewModel
     {
-
+        /// <summary>
+        ///   Gets a value indicating whether this instance is initialized.
+        /// </summary>
+        /// 
         public bool IsInitialized { get; private set; }
 
+        /// <summary>
+        ///   Gets a value indicating whether this instance is initializing.
+        /// </summary>
+        /// 
         public bool IsInitializing { get; private set; }
 
         /// <summary>
@@ -58,73 +64,105 @@ namespace Workbench.ViewModels
         ///   Gets the fitting options that be selected to estimate this distribution.
         /// </summary>
         /// 
-        public IFittingOptions EstimationOptions { get; private set; }
+        public IFittingOptions Options { get; private set; }
 
-        public bool HasOptions { get { return EstimationOptions != null; } }
+        /// <summary>
+        ///   Gets a value indicating whether it is possible to configure the way
+        ///   this distribution estimates its values when analyzing a data sample.
+        /// </summary>
+        /// 
+        public bool HasOptions { get { return Options != null; } }
 
-
+        /// <summary>
+        ///   Gets the name of this distribution, such as "Normal" or "Bernoulli".
+        /// </summary>
+        /// 
         public string Name { get; private set; }
 
-
-        public string ExternalDocUrl { get; private set; }
-
+        /// <summary>
+        ///   Gets the type of this distribution.
+        /// </summary>
+        /// 
         public Type Type { get; private set; }
 
+        /// <summary>
+        ///   Gets the distribution's constructor view model, that allows the parameters needed
+        ///   to create this distribution to be shown and set in the applications's right sidebar.
+        /// </summary>
+        /// 
         public ConstructorViewModel Constructor { get; private set; }
 
-        public FunctionViewModel Functions { get; private set; }
+        /// <summary>
+        ///   Gets the functions view model for this distribution, that contains the many
+        ///   functions (such as PDF, CDF, QF) that are shown in the Measures page of the
+        ///   main application.
+        /// </summary>
+        /// 
+        public MeasuresViewModel Measures { get; private set; }
 
+        /// <summary>
+        /// Gets the documentation view model for this distribution, that contains, among
+        /// other things, the XAML codes generated from its documentation page so they can
+        /// be data-bound to the Summary page in the main application.
+        /// </summary>
+        /// 
         public DocumentationViewModel Documentation { get; private set; }
 
-
+        /// <summary>
+        ///   Gets the density function that is displayed on top of the application's right sidebar.
+        /// </summary>
+        /// 
         public PlotModel DensityFunction { get; private set; }
 
 
 
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="DistributionViewModel"/> class.
+        /// </summary>
+        /// 
         public DistributionViewModel()
         {
             this.Parameters = new ObservableCollection<ParameterViewModel>();
             this.Properties = new ObservableCollection<PropertyViewModel>();
-            this.Functions = new FunctionViewModel();
+            this.Measures = new MeasuresViewModel();
         }
 
-
+        /// <summary>
+        ///   Asynchronously begin to initialize this instance. This method immediately returns.
+        /// </summary>
+        /// 
         public void InitAsync()
         {
             if (!IsInitialized && !IsInitializing)
             {
                 IsInitializing = true;
-                Task.Factory.StartNew(() => this.Update());
+                Task.Factory.StartNew(() => this.update());
             }
         }
 
-        private void Update()
-        {
-            var instance = Constructor.Activate();
-
-            if (instance != null)
-                update(instance);
-
-            IsInitializing = false;
-            IsInitialized = true;
-        }
-
-        public void Estimate(double[] values, double[] weights)
+        /// <summary>
+        ///   Estimates valid values for the distributions' parameters that fit the specified sample.
+        /// </summary>
+        /// 
+        public void Estimate(double[] sample, double[] weights)
         {
             if (weights == null)
             {
-                Instance.Fit(values, EstimationOptions);
+                Instance.Fit(sample, Options);
             }
             else
             {
                 weights = weights.Divide(weights.Sum());
-                Instance.Fit(values, weights, EstimationOptions);
+                Instance.Fit(sample, weights, Options);
             }
 
             update(Instance);
         }
 
 
+        /// <summary>
+        /// Attempts to create a new DistributionViewModel from a given type.
+        /// </summary>
         public static bool TryParse(Type type, Dictionary<string, DocumentationViewModel> doc, out DistributionViewModel distribution)
         {
             distribution = new DistributionViewModel();
@@ -178,29 +216,23 @@ namespace Workbench.ViewModels
             distribution.Documentation = documentation;
 
 
-            // Get documentation page from the Accord.NET website
-            distribution.ExternalDocUrl = DistributionManager.GetDocumentationUrl(distribution.Type);
-
             foreach (var parameter in distribution.Constructor.Parameters)
-                parameter.ValueChanged += distribution.OnParameterChanged;
+                parameter.ValueChanged += distribution.distribution_OnParameterChanged;
 
-            distribution.EstimationOptions = DistributionManager.GetFittingOptions(distribution.Type);
-
-            // Task.Run((Action)distribution.Update);
+            distribution.Options = DistributionManager.GetFittingOptions(distribution.Type);
 
             return true;
         }
 
 
-
-        private void OnParameterChanged(object sender, EventArgs e)
-        {
-            Update(); // When a parameter has changed, we have to re-recreate the distribution.
-        }
-
-
-
-
+        /// <summary>
+        ///   Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// 
+        /// <returns>
+        ///   A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        /// 
         public override string ToString()
         {
             return Name;
@@ -208,24 +240,38 @@ namespace Workbench.ViewModels
 
 
 
+        private void distribution_OnParameterChanged(object sender, EventArgs e)
+        {
+            update(); // When a parameter has changed, we have to re-recreate the distribution.
+        }
+
+        private void update()
+        {
+            var instance = Constructor.Activate();
+
+            if (instance != null)
+                update(instance);
+
+            IsInitializing = false;
+            IsInitialized = true;
+        }
 
         private void update(IUnivariateDistribution instance)
         {
             this.Instance = instance;
-            this.Functions.Instance = instance;
-            this.DensityFunction = this.Functions.CreatePDF();
+            this.Measures.Instance = instance;
+            this.DensityFunction = this.Measures.CreatePDF();
 
             foreach (var property in Properties)
                 property.Update();
 
             foreach (var param in Parameters)
             {
-                param.ValueChanged -= OnParameterChanged;
+                param.ValueChanged -= distribution_OnParameterChanged;
                 param.Sync();
-                param.ValueChanged += OnParameterChanged;
+                param.ValueChanged += distribution_OnParameterChanged;
             }
         }
-
 
     }
 }

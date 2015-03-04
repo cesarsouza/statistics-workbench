@@ -26,7 +26,7 @@ namespace Workbench.ViewModels
     /// </summary>
     /// 
     [ImplementPropertyChanged]
-    public class FunctionViewModel
+    public class MeasuresViewModel
     {
 
         private IUnivariateDistribution instance;
@@ -50,25 +50,60 @@ namespace Workbench.ViewModels
 
 
 
-
+        /// <summary>
+        ///   Data-bindable plot for the distribution's Distribution Function (CDF).
+        /// </summary>
+        /// 
         public PlotModel DistributionFunction { get; private set; }
 
+        /// <summary>
+        ///   Data-bindable plot for the distribution's Density Function (PDF).
+        /// </summary>
+        /// 
         public PlotModel DensityFunction { get; private set; }
 
+        /// <summary>
+        ///   Data-bindable plot for the distribution's Log(PDF(x)) Function.
+        /// </summary>
+        /// 
         public PlotModel LogDensityFunction { get; private set; }
 
+        /// <summary>
+        ///   Data-bindable plot for the distribution's Quantile Function (QF).
+        /// </summary>
+        /// 
         public PlotModel InverseDistributionFunction { get; private set; }
 
+        /// <summary>
+        ///   Data-bindable plot for the distribution's Hazard Function (HF).
+        /// </summary>
+        /// 
         public PlotModel HazardFunction { get; private set; }
 
+        /// <summary>
+        ///   Data-bindable plot for the distribution's Cumulative Hazard Function (CHF).
+        /// </summary>
+        /// 
         public PlotModel CumulativeHazardFunction { get; private set; }
 
+        /// <summary>
+        ///   Data-bindable plot for the distribution's Quantile Density Function (QDF).
+        /// </summary>
+        /// 
         public PlotModel QuantileDensityFunction { get; private set; }
 
+        /// <summary>
+        ///   Data-bindable plot for the distribution's Complementary Distribution Function (CCDF).
+        /// </summary>
+        /// 
         public PlotModel ComplementaryDistributionFunction { get; private set; }
 
 
-        public FunctionViewModel()
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="MeasuresViewModel"/> class.
+        /// </summary>
+        /// 
+        public MeasuresViewModel()
         {
             DensityFunction = new PlotModel();
         }
@@ -76,63 +111,60 @@ namespace Workbench.ViewModels
 
 
 
-
-
-
+        /// <summary>
+        ///   Creates a OxyPlot's graph for the Probability Density Function.
+        /// </summary>
+        ///
         public PlotModel CreatePDF()
         {
-            string title = "PDF";
-
-            double[] x = supportPoints;
             double[] y;
-
-            try { y = x.Apply(Instance.ProbabilityFunction); }
+            try { y = supportPoints.Apply(Instance.ProbabilityFunction); }
             catch
             {
                 var general = GeneralContinuousDistribution
                     .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
-                y = x.Apply(general.ProbabilityDensityFunction);
+                y = supportPoints.Apply(general.ProbabilityDensityFunction);
             }
 
-            return createBaseModel(range, title, supportPoints, y);
+            return createBaseModel(range, "PDF", supportPoints, y);
         }
 
+        /// <summary>
+        ///   Creates a OxyPlot's graph for the Log Probability Density Function.
+        /// </summary>
+        ///
         public PlotModel CreateLPDF()
         {
-            string title = "Log-PDF";
-
-            double[] x = supportPoints;
             double[] y;
-
-            try { y = x.Apply(Instance.LogProbabilityFunction); }
+            try { y = supportPoints.Apply(Instance.LogProbabilityFunction); }
             catch
             {
                 var general = GeneralContinuousDistribution
                     .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
-                y = x.Apply(general.LogProbabilityDensityFunction);
+                y = supportPoints.Apply(general.LogProbabilityDensityFunction);
             }
 
-            return createBaseModel(range, title, supportPoints, y);
+            return createBaseModel(range, "Log-PDF", supportPoints, y);
         }
 
+        /// <summary>
+        ///   Creates a OxyPlot's graph for the Inverse Probability Density Function.
+        /// </summary>
+        /// 
         public PlotModel CreateIPDF()
         {
             try
             {
-                string title = "IPDF";
-
-                double[] x = probabilities;
                 double[] y;
-
-                try { y = x.Apply(Instance.QuantileDensityFunction); }
+                try { y = probabilities.Apply(Instance.QuantileDensityFunction); }
                 catch
                 {
                     var general = GeneralContinuousDistribution
                         .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
-                    y = x.Apply(general.QuantileDensityFunction);
+                    y = probabilities.Apply(general.QuantileDensityFunction);
                 }
 
-                return createBaseModel(unit, title, x, y);
+                return createBaseModel(unit, "IPDF", probabilities, y);
             }
             catch
             {
@@ -140,24 +172,24 @@ namespace Workbench.ViewModels
             }
         }
 
+        /// <summary>
+        ///   Creates a OxyPlot's graph for the Cumulative Distribution Function.
+        /// </summary>
+        /// 
         public PlotModel CreateCDF()
         {
             try
             {
-                string title = "CDF";
-
-                double[] x = supportPoints;
-
                 double[] y;
-                try { y = x.Apply(Instance.DistributionFunction); }
+                try { y = supportPoints.Apply(Instance.DistributionFunction); }
                 catch
                 {
                     var general = GeneralContinuousDistribution
                         .FromDensityFunction(Instance.Support, Instance.ProbabilityFunction);
-                    y = x.Apply(general.DistributionFunction);
+                    y = supportPoints.Apply(general.DistributionFunction);
                 }
 
-                return createBaseModel(range, title, x, y);
+                return createBaseModel(range, "CDF", supportPoints, y);
             }
             catch
             {
@@ -165,78 +197,78 @@ namespace Workbench.ViewModels
             }
         }
 
+        /// <summary>
+        ///   Creates a OxyPlot's graph for the Complementary Cumulative Distribution Function.
+        /// </summary>
+        /// 
         public PlotModel CreateCCDF()
         {
-            string title = "CCDF";
-
-            double[] x = supportPoints;
-
             double[] y;
-            try { y = x.Apply(Instance.ComplementaryDistributionFunction); }
+            try { y = supportPoints.Apply(Instance.ComplementaryDistributionFunction); }
             catch
             {
                 var general = GeneralContinuousDistribution
                     .FromDensityFunction(Instance.Support, Instance.ProbabilityFunction);
-                y = x.Apply(general.ComplementaryDistributionFunction);
+                y = supportPoints.Apply(general.ComplementaryDistributionFunction);
             }
 
-            return createBaseModel(range, title, x, y);
+            return createBaseModel(range, "CCDF", supportPoints, y);
         }
 
+        /// <summary>
+        ///   Creates a OxyPlot's graph for the Cumulative Hazard Function.
+        /// </summary>
+        /// 
         public PlotModel CreateCHF()
         {
-            string title = "CHF";
-
-            double[] x = supportPoints;
-
             double[] y;
-            try { y = x.Apply(Instance.CumulativeHazardFunction); }
+            try { y = supportPoints.Apply(Instance.CumulativeHazardFunction); }
             catch
             {
                 try
                 {
                     var general = GeneralContinuousDistribution
                         .FromDensityFunction(Instance.Support, Instance.ProbabilityFunction);
-                    y = x.Apply(general.CumulativeHazardFunction);
+                    y = supportPoints.Apply(general.CumulativeHazardFunction);
                 }
                 catch
                 {
                     var general = GeneralContinuousDistribution
                         .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
-                    y = x.Apply(general.CumulativeHazardFunction);
+                    y = supportPoints.Apply(general.CumulativeHazardFunction);
                 }
             }
 
-            return createBaseModel(range, title, x, y);
+            return createBaseModel(range, "CHF", supportPoints, y);
         }
 
+        /// <summary>
+        ///   Creates a OxyPlot's graph for the Quantile Function.
+        /// </summary>
+        /// 
         public PlotModel CreateICDF()
         {
             try
             {
-                string title = "QDF";
-
-                double[] x = probabilities;
-
                 double[] y;
-                try { y = x.Apply(Instance.InverseDistributionFunction); }
+                try { y = probabilities.Apply(Instance.InverseDistributionFunction); }
                 catch
                 {
                     try
                     {
                         var general = GeneralContinuousDistribution
                             .FromDensityFunction(Instance.Support, Instance.ProbabilityFunction);
-                        y = x.Apply(general.InverseDistributionFunction);
+                        y = probabilities.Apply(general.InverseDistributionFunction);
                     }
                     catch
                     {
                         var general = GeneralContinuousDistribution
                             .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
-                        y = x.Apply(general.InverseDistributionFunction);
+                        y = probabilities.Apply(general.InverseDistributionFunction);
                     }
                 }
 
-                return createBaseModel(unit, title, x, y);
+                return createBaseModel(unit, "QDF", probabilities, y);
             }
             catch
             {
@@ -244,33 +276,33 @@ namespace Workbench.ViewModels
             }
         }
 
+        /// <summary>
+        ///   Creates a OxyPlot's graph for the Hazard Function.
+        /// </summary>
+        ///
         public PlotModel CreateHF()
         {
             try
             {
-                string title = "HF";
-
-                double[] x = supportPoints;
-
                 double[] y;
-                try { y = x.Apply(Instance.HazardFunction); }
+                try { y = supportPoints.Apply(Instance.HazardFunction); }
                 catch
                 {
                     try
                     {
                         var general = GeneralContinuousDistribution
                             .FromDensityFunction(Instance.Support, Instance.ProbabilityFunction);
-                        y = x.Apply(general.HazardFunction);
+                        y = supportPoints.Apply(general.HazardFunction);
                     }
                     catch
                     {
                         var general = GeneralContinuousDistribution
                             .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
-                        y = x.Apply(general.HazardFunction);
+                        y = supportPoints.Apply(general.HazardFunction);
                     }
                 }
 
-                return createBaseModel(range, title, x, y);
+                return createBaseModel(range, "HF", supportPoints, y);
             }
             catch
             {

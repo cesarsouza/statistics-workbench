@@ -36,16 +36,20 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Accord">
-      <HintPath>..\packages\Accord.2.14.2-alpha\lib\net45\Accord.dll</HintPath>
+    <Reference Include="Accord, Version=2.14.3.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Accord.2.14.3-alpha\lib\net45\Accord.dll</HintPath>
     </Reference>
-    <Reference Include="Accord.Math">
-      <HintPath>..\packages\Accord.Math.2.14.2-alpha\lib\net45\Accord.Math.dll</HintPath>
+    <Reference Include="Accord.Math, Version=2.14.3.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Accord.Math.2.14.3-alpha\lib\net45\Accord.Math.dll</HintPath>
     </Reference>
-    <Reference Include="Accord.Statistics">
-      <HintPath>..\packages\Accord.Statistics.2.14.2-alpha\lib\net45\Accord.Statistics.dll</HintPath>
+    <Reference Include="Accord.Statistics, Version=2.14.3.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Accord.Statistics.2.14.3-alpha\lib\net45\Accord.Statistics.dll</HintPath>
     </Reference>
     <Reference Include="AForge">
       <HintPath>..\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
@@ -73,6 +77,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

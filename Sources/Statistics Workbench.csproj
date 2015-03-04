@@ -56,6 +56,7 @@
     <DocumentationFile>..\Binaries\Release\Statistics Workbench.XML</DocumentationFile>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <Prefer32Bit>true</Prefer32Bit>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>StatisticsWorkbench.ico</ApplicationIcon>
@@ -78,8 +79,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="Accord">
-      <HintPath>..\packages\Accord.2.14.2-alpha\lib\net45\Accord.dll</HintPath>
+    <Reference Include="Accord, Version=2.14.3.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Accord.2.14.3-alpha\lib\net45\Accord.dll</HintPath>
     </Reference>
     <Reference Include="Accord.IO, Version=2.14.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -89,11 +91,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\framework\Release\net45\Accord.MachineLearning.dll</HintPath>
     </Reference>
-    <Reference Include="Accord.Math">
-      <HintPath>..\packages\Accord.Math.2.14.2-alpha\lib\net45\Accord.Math.dll</HintPath>
+    <Reference Include="Accord.Math, Version=2.14.3.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Accord.Math.2.14.3-alpha\lib\net45\Accord.Math.dll</HintPath>
     </Reference>
-    <Reference Include="Accord.Statistics">
-      <HintPath>..\packages\Accord.Statistics.2.14.2-alpha\lib\net45\Accord.Statistics.dll</HintPath>
+    <Reference Include="Accord.Statistics, Version=2.14.3.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Accord.Statistics.2.14.3-alpha\lib\net45\Accord.Statistics.dll</HintPath>
     </Reference>
     <Reference Include="AForge">
       <HintPath>..\packages\AForge.2.2.5\lib\AForge.dll</HintPath>
@@ -104,8 +108,9 @@
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>..\packages\AvalonEdit.5.0.2\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
-    <Reference Include="MahApps.Metro">
-      <HintPath>..\packages\MahApps.Metro.1.0.0.0\lib\net45\MahApps.Metro.dll</HintPath>
+    <Reference Include="MahApps.Metro, Version=1.1.1.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\MahApps.Metro.1.1.1.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -148,7 +153,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.0.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.1.1.1.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml">
       <Private>True</Private>
@@ -180,29 +185,29 @@
     <Reference Include="PresentationFramework">
       <Private>True</Private>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock, Version=2.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=2.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.3\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=2.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=2.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.3\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=2.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=2.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.3\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=2.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=2.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.3\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid, Version=2.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+    <Reference Include="Xceed.Wpf.DataGrid, Version=2.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.3\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.Toolkit, Version=2.3.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+    <Reference Include="Xceed.Wpf.Toolkit, Version=2.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Extended.Wpf.Toolkit.2.3\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.4\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -226,23 +231,26 @@
     <Compile Include="Formats\Base\IFileFormat.cs" />
     <Compile Include="Framework\AttachedProperties.cs" />
     <Compile Include="Framework\ViewModelBase.cs" />
-    <Compile Include="ViewModels\DocumentationViewModel.cs" />
+    <Compile Include="ViewModels\Documentation\DocumentationViewModel.cs" />
     <Compile Include="Controls\MvvmTextEditor.cs" />
-    <Compile Include="ViewModels\ParameterViewModel.cs" />
-    <Compile Include="ViewModels\ConstructorViewModel.cs" />
+    <Compile Include="ViewModels\Estimation\EstimateViewModel.cs" />
+    <Compile Include="ViewModels\Estimation\GoodnessOfFitViewModel.cs" />
+    <Compile Include="ViewModels\Documentation\HyperlinkViewModel.cs" />
+    <Compile Include="ViewModels\Distributions\ParameterViewModel.cs" />
+    <Compile Include="ViewModels\Distributions\ConstructorViewModel.cs" />
     <Compile Include="Tools\DistributionManager.cs" />
-    <Compile Include="ViewModels\PropertyViewModel.cs" />
+    <Compile Include="ViewModels\Distributions\PropertyViewModel.cs" />
     <Compile Include="Tools\ClassToXamlVisitor.cs" />
-    <Compile Include="ViewModels\SampleViewModel.cs" />
+    <Compile Include="ViewModels\Estimation\SampleViewModel.cs" />
     <Compile Include="Framework\RelayCommand.cs" />
-    <Compile Include="ViewModels\FunctionViewModel.cs" />
+    <Compile Include="ViewModels\Distributions\MeasuresViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\DistributionViewModel.cs" />
+    <Compile Include="ViewModels\Distributions\DistributionViewModel.cs" />
     <Compile Include="Views\DocumentationView.xaml.cs">
       <DependentUpon>DocumentationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\FunctionView.xaml.cs">
-      <DependentUpon>FunctionView.xaml</DependentUpon>
+    <Compile Include="Views\MeasuresView.xaml.cs">
+      <DependentUpon>MeasuresView.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\XamlFrame.xaml">
       <SubType>Designer</SubType>
@@ -272,7 +280,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\FunctionView.xaml">
+    <Page Include="Views\MeasuresView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -307,6 +315,7 @@
     </None>
     <AppDesigner Include="Properties\" />
     <None Include="StatisticsWorkbench.pfx" />
+    <None Include="ViewModels\Workbench.ViewModels.cd" />
     <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>

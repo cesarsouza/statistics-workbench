@@ -72,6 +72,11 @@ namespace Workbench.ViewModels
         }
 
 
+        /// <summary>
+        ///   Updates the property value by querying
+        ///   the underlying distribution model.
+        /// </summary>
+        /// 
         public void Update()
         {
             try
@@ -87,14 +92,11 @@ namespace Workbench.ViewModels
         }
 
 
-
-
         private PropertyViewModel(PropertyInfo prop, DistributionViewModel distribution)
         {
             this.PropertyInfo = prop;
             this.ParentDistribution = distribution;
-            this.Name = DistributionManager.ToNormalCase(prop.Name);
-            this.Name = DistributionManager.NormalizeTerms(Name);
+            this.Name = DistributionManager.Normalize(prop.Name);
         }
 
     }

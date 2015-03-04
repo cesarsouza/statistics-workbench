@@ -23,35 +23,30 @@ namespace Workbench.Tools
     using System.Threading;
     using Workbench.ViewModels;
 
-    public class DistributionManager
+    /// <summary>
+    ///   Static class for performing actions related to distributions, such as obtaining all 
+    ///   available distributions through reflection, querying its parameters, and normalizing 
+    ///   their names.
+    /// </summary>
+    /// 
+    public static class DistributionManager
     {
         private static string baseURL = "http://accord-framework.net/docs/html/";
 
 
-        public static IFittingOptions GetFittingOptions(Type type)
-        {
-            // Try to create a fitting options object
-            var interfaces = type.GetInterfaces()
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IFittableDistribution<,>));
-
-            foreach (var i in interfaces)
-            {
-                foreach (var arg in i.GetGenericArguments())
-                {
-                    var argType = arg.GetTypeInfo();
-
-                    if (typeof(IFittingOptions).IsAssignableFrom(argType) && argType != typeof(IFittingOptions))
-                    {
-                        return (IFittingOptions)Activator.CreateInstance(argType);
-                    }
-                }
-            }
-
-            return null;
-        }
-
+        /// <summary>
+        ///   Gets an array containing all distributions that can be dynamically build by
+        ///   this application by inspecting Accord.NET assemblies using reflection.
+        /// </summary>
+        /// 
         public static DistributionViewModel[] GetDistributions()
         {
+            // This function iterates the Accord.Statistics assembly looking for
+            // classes that are concrete (not abstract) and that implement the
+            // IUnivariateDistribution interface. Then, it attempts to create a
+            // DistributionViewModel from the distribution's type by using the
+            // DistributionViewModel.TryParse method.
+
             var baseType = typeof(IUnivariateDistribution);
 
             var assembly = Assembly.GetAssembly(baseType);
@@ -77,32 +72,81 @@ namespace Workbench.Tools
             return buildable.ToArray();
         }
 
+
+        /// <summary>
+        ///   Gets the fitting options object that are expected by one distribution, if any. An
+        ///   Accord.NET distribution object can be fitted to a set of observed values. However,
+        ///   some distributions have different settings on how this fitting can be done. This
+        ///   function creates an object that contains those possible settings that can be configured
+        ///   for a given distribution type.
+        /// </summary>
+        /// 
+        public static IFittingOptions GetFittingOptions(Type type)
+        {
+            // Try to create a fitting options object
+            var interfaces = type.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IFittableDistribution<,>));
+
+            foreach (var i in interfaces)
+            {
+                foreach (var arg in i.GetGenericArguments())
+                {
+                    var argType = arg.GetTypeInfo();
+
+                    if (typeof(IFittingOptions).IsAssignableFrom(argType) && argType != typeof(IFittingOptions))
+                    {
+                        return (IFittingOptions)Activator.CreateInstance(argType);
+                    }
+                }
+            }
+
+            return null;
+        }
+   
+
+        /// <summary>
+        ///   Gets the online documentation URL for given an Accord.NET type.
+        /// </summary>
+        /// 
         public static string GetDocumentationUrl(Type type)
         {
-            string docPage = baseURL + "T_" + type.FullName.Replace(".", "_") + ".htm";
-            return docPage;
+            return baseURL + "T_" + type.FullName.Replace(".", "_") + ".htm";
         }
 
+        /// <summary>
+        ///   Gets the documentation URL for a code reference link 
+        ///   contained in one of Accord.NET's documentation pages.
+        /// </summary>
+        /// 
         public static string GetDocumentationUrl(string cref)
         {
             string seeURL = cref.Replace(".", "_").Replace(":", "_");
-            string docPage = baseURL + seeURL + ".htm";
-            return docPage;
+            return baseURL + seeURL + ".htm";
         }
 
+        /// <summary>
+        ///   Parses through Accord.NET XML documentation files and generate XAML code for some 
+        ///   selected types of documentation entries, such as Summary, Remarks and Examples.
+        /// </summary>
+        /// 
         private static Dictionary<string, DocumentationViewModel> GetDocumentation(Assembly assembly)
         {
-            var members = DocReader.Read(assembly);
-            ClassToXamlVisitor visitor = new ClassToXamlVisitor(members.IdMap);
+            AssemblyMembers members = DocReader.Read(assembly);
+            var visitor = new ClassToXamlVisitor(members.IdMap);
             members.Accept(visitor);
             return visitor.Texts;
         }
 
-
+        /// <summary>
+        ///   Gets the name of the distribution modeled by a given Accord.NET type. 
+        ///   The name is returned in a normalized form (i.e. given a type whose name
+        ///   is  NormalDistribution, the function would return "Normal").
+        /// </summary>
+        /// 
         public static string GetDistributionName(Type type)
         {
             // Extract the real distribution name from the class name
-            string name = DistributionManager.ToNormalCase(type.Name);
+            string name = DistributionManager.Normalize(type.Name);
 
             if (name.Contains('`'))
                 name = name.Remove(name.IndexOf("`"));
@@ -114,20 +158,12 @@ namespace Workbench.Tools
             return name.Trim();
         }
 
-        public static string GetParameterName(ParameterInfo parameterInfo)
-        {
-            string name = DistributionManager.ToNormalCase(parameterInfo.Name);
-            name = name.Replace("Std ", "Std. ");
-            name = name.Replace("Standard", "Std.");
-            return name;
-        }
+        
 
-
-        public static bool IsInteger(ParameterInfo parameter)
-        {
-            return parameter.ParameterType == typeof(int);
-        }
-
+        /// <summary>
+        ///   Tries to get the valid range of a distribution's parameter.
+        /// </summary>
+        /// 
         public static bool TryGetRange(ParameterInfo parameter, out DoubleRange range)
         {
             range = new DoubleRange(0, 0);
@@ -144,6 +180,10 @@ namespace Workbench.Tools
             return true;
         }
 
+        /// <summary>
+        ///   Tries to get the default value of a distribution's parameter.
+        /// </summary>
+        /// 
         public static bool TryGetDefault(ParameterInfo parameter, out double value)
         {
             var attrb = parameter.GetCustomAttribute<DefaultValueAttribute>();
@@ -184,26 +224,30 @@ namespace Workbench.Tools
             return true;
         }
 
-        public static string ToNormalCase(string name)
+        /// <summary>
+        ///   Normalizes the name of a distribution, parameter or property from this
+        ///   distribution. The name  is returned in a normalized form, standardizing 
+        ///   certain terms such as "Standard" and "Std" to a single common term "Std.",
+        ///   for example.
+        /// </summary>
+        /// 
+        public static string Normalize(string name)
         {
-            var withSpaces = Regex.Replace(name, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1");
+            string withSpaces = Regex.Replace(name, @"(\B[A-Z]+?(?=[A-Z][^A-Z])|\B[A-Z]+?(?=[^A-Z]))", " $1");
 
-            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
-            TextInfo textInfo = cultureInfo.TextInfo;
+            name = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(withSpaces);
 
-            return textInfo.ToTitleCase(withSpaces);
-        }
-
-
-        public static string NormalizeTerms(string name)
-        {
             name = name.Replace("Standard", "Std.");
             name = name.Replace("Deviation", "Dev.");
 
             if (name.EndsWith("Dev"))
                 name += ".";
 
+            if (name.Contains("Std") && !name.Contains("Std."))
+                name = name.Replace("Std", "Std.");
+
             return name;
         }
+
     }
 }

@@ -40,5 +40,6 @@ namespace Workbench.ViewModels
         {
             Weight = 1;
         }
+
     }
 }

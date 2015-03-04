@@ -13,13 +13,13 @@ namespace Workbench.Views
     ///   a probability distribution: PDF, CDF, HF, etc.
     /// </summary>
     /// 
-    public partial class FunctionView
+    public partial class MeasuresView
     {
         /// <summary>
-        ///   Initializes a new instance of the <see cref="FunctionView"/> class.
+        ///   Initializes a new instance of the <see cref="MeasuresView"/> class.
         /// </summary>
         /// 
-        public FunctionView()
+        public MeasuresView()
         {
             InitializeComponent();
         }

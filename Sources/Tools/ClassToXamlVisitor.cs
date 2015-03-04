@@ -9,25 +9,23 @@ namespace Workbench.Tools
 {
     using NuDoq;
     using System;
-    using System.CodeDom.Compiler;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.IO;
     using System.Reflection;
     using System.Text;
     using System.Web;
     using Workbench.ViewModels;
 
     /// <summary>
-    ///   NuDoq's visitor implementation used to parse through
-    ///   classes XML documentation files and generate XAML code
-    ///   containing such documentation.
+    ///   NuDoq's visitor implementation used to parse through classes XML documentation
+    ///   files and generate XAML code containing such documentation. An object of this
+    ///   class should be given to a NuDoq.AssemblyMember's Visit method. Afterwards,
+    ///   the generated documentation will be available as XAML codes in this object's
+    ///   Text property.
     /// </summary>
     /// 
     public class ClassToXamlVisitor : Visitor
     {
-        public Dictionary<string, DocumentationViewModel> Texts { get; set; }
-
+        
         private string currentClassName;
         private DocumentationViewModel current;
 
@@ -36,11 +34,25 @@ namespace Workbench.Tools
         private bool insideTextBlock = false;
 
 
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="ClassToXamlVisitor"/> class.
+        /// </summary>
+        /// 
+        /// <param name="map">The member-id map given by the NuDoq parser.</param>
+        /// 
         public ClassToXamlVisitor(MemberIdMap map)
         {
             this.map = map;
             this.Texts = new Dictionary<string, DocumentationViewModel>();
         }
+
+
+        /// <summary>
+        ///   Gets the collection of XAML code generated for documented members.
+        /// </summary>
+        /// 
+        public Dictionary<string, DocumentationViewModel> Texts { get; private set; }
+
 
 
         /// <summary>
@@ -179,7 +191,7 @@ namespace Workbench.Tools
         /// 
         public override void VisitCode(Code code)
         {
-            current.ExampleCodes.Add(code.Content);
+            current.CodeBlocks.Add(code.Content);
 
             string[] lines = code.Content
                 .Split(new[] { Environment.NewLine }, StringSplitOptions.None);

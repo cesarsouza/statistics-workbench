@@ -16,15 +16,15 @@ namespace Unit_Tests
         {
             MainViewModel target = new MainViewModel();
 
-            Assert.AreEqual(1, target.Data.Count);
+            Assert.AreEqual(1, target.Estimate.Values.Count);
             Assert.IsTrue(target.Distributions.Count > 0);
         }
 
         [TestMethod]
         public void Paste_SuccessTest1()
         {
-            MainViewModel target = new MainViewModel();
-
+            var main = new MainViewModel();
+            var target = main.Estimate;
 
             string text = ""
              + "0.111\t2.222\n"
@@ -32,23 +32,24 @@ namespace Unit_Tests
              + "2.421\t3.141";
 
             Clipboard.SetText(text);
-            target.Paste_Executed(null, new RoutedEventArgs());
+            target.Paste_Executed(null);
 
-            Assert.AreEqual(4, target.Data.Count);
-            Assert.AreEqual(0, target.Data[0].Value);
-            Assert.AreEqual(1, target.Data[0].Weight);
-            Assert.AreEqual(0.111, target.Data[1].Value);
-            Assert.AreEqual(2.222, target.Data[1].Weight);
-            Assert.AreEqual(0.333, target.Data[2].Value);
-            Assert.AreEqual(4.111, target.Data[2].Weight);
-            Assert.AreEqual(2.421, target.Data[3].Value);
-            Assert.AreEqual(3.141, target.Data[3].Weight);
+            Assert.AreEqual(4, target.Values.Count);
+            Assert.AreEqual(0, target.Values[0].Value);
+            Assert.AreEqual(1, target.Values[0].Weight);
+            Assert.AreEqual(0.111, target.Values[1].Value);
+            Assert.AreEqual(2.222, target.Values[1].Weight);
+            Assert.AreEqual(0.333, target.Values[2].Value);
+            Assert.AreEqual(4.111, target.Values[2].Weight);
+            Assert.AreEqual(2.421, target.Values[3].Value);
+            Assert.AreEqual(3.141, target.Values[3].Weight);
         }
 
         [TestMethod]
         public void Paste_SuccessTest2()
         {
-            MainViewModel target = new MainViewModel();
+            var main = new MainViewModel();
+            var target = main.Estimate;
 
 
             string text = ""
@@ -57,15 +58,15 @@ namespace Unit_Tests
              + "2.421\t3.141";
 
             Clipboard.SetText(text);
-            target.Paste_Executed(null, new RoutedEventArgs());
+            target.Paste_Executed(null);
 
-            Assert.AreEqual(3, target.Data.Count);
-            Assert.AreEqual(0, target.Data[0].Value);
-            Assert.AreEqual(1, target.Data[0].Weight);
-            Assert.AreEqual(0.111, target.Data[1].Value);
-            Assert.AreEqual(2.222, target.Data[1].Weight);
-            Assert.AreEqual(2.421, target.Data[2].Value);
-            Assert.AreEqual(3.141, target.Data[2].Weight);
+            Assert.AreEqual(3, target.Values.Count);
+            Assert.AreEqual(0, target.Values[0].Value);
+            Assert.AreEqual(1, target.Values[0].Weight);
+            Assert.AreEqual(0.111, target.Values[1].Value);
+            Assert.AreEqual(2.222, target.Values[1].Weight);
+            Assert.AreEqual(2.421, target.Values[2].Value);
+            Assert.AreEqual(3.141, target.Values[2].Weight);
         }
     }
 }

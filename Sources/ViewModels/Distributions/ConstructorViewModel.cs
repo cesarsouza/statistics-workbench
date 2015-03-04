@@ -15,13 +15,17 @@ namespace Workbench.ViewModels
     /// <summary>
     ///   Describes a distribution's constructor, which can use or not a number
     ///   of parameters in order to instantiate a new probability distribution.
+    ///   After all distribution parameter's have been set, a new instance of
+    ///   the distribution can be created by calling this class' Activate()
+    ///   method.
     /// </summary>
     /// 
     public class ConstructorViewModel
     {
 
         /// <summary>
-        ///   Gets the constructor's reflection information.
+        ///   Gets the constructor's reflection information. This 
+        ///   is the real Model underlying this ViewModel class.
         /// </summary>
         /// 
         public ConstructorInfo Constructor { get; private set; }
@@ -48,7 +52,7 @@ namespace Workbench.ViewModels
 
 
         /// <summary>
-        ///   Creates a new distribution instance using the currenct selected
+        ///   Creates a new distribution instance using the current selected
         ///   values for this constructor's parameters. If there is any problem
         ///   creating the object, this method returns null.
         /// </summary>
@@ -103,9 +107,6 @@ namespace Workbench.ViewModels
 
             return true;
         }
-
-
-
 
     }
 }

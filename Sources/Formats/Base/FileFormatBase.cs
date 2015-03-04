@@ -11,20 +11,30 @@ namespace Workbench.Formats
     using System.Data;
     using System.IO;
 
-    public abstract class FileFormatBase : IFileFormat
+    /// <summary>
+    ///   Base class for base file formats supported by this application.
+    /// </summary>
+    public abstract class FileFormatBase
     {
+        /// <summary>
+        ///   Gets the file's default extension.
+        /// </summary>
+        /// 
         public abstract string Extension { get; }
+
+        /// <summary>
+        ///   Gets the format's description.
+        /// </summary>
+        /// 
         public abstract string Description { get; }
 
+        /// <summary>
+        ///   Gets the filter expression (e.g. *.txt) that
+        ///   should be used to filter filenames that belong
+        ///   to this format.
+        /// </summary>
+        /// 
         public string Filter { get { return String.Format("{0} ({1})|{1}", Description, Extension); } }
-
-        public abstract bool CanRead { get; }
-        public abstract bool CanWrite { get; }
-
-        public abstract DataTable Read(Stream stream);
-
-        public abstract void Write(DataTable table, Stream stream);
-
 
     }
 }

@@ -9,11 +9,10 @@ namespace Workbench.ViewModels
 {
     using AForge;
     using PropertyChanged;
-    using System.ComponentModel;
+    using System;
+    using System.Linq;
     using System.Reflection;
     using Workbench.Tools;
-    using System.Linq;
-    using System;
 
     /// <summary>
     ///   Describes a distribution's parameter value, such as the mean and
@@ -23,9 +22,16 @@ namespace Workbench.ViewModels
     [ImplementPropertyChanged]
     public class ParameterViewModel
     {
+        private double? value;
+
+
+
+        /// <summary>
+        ///   Occurs when the parameter's value changes.
+        /// </summary>
+        /// 
         public event EventHandler ValueChanged;
 
-        private double? value;
 
         /// <summary>
         ///   Gets the name of the parameter.
@@ -122,9 +128,27 @@ namespace Workbench.ViewModels
             return true;
         }
 
+        /// <summary>
+        ///   Attempts to synchronize the value of the parameter with the current property
+        ///   values for the distribution. If there is a property with the same name as the
+        ///   parameter, the parameter is updated to have the same value as the property.
+        /// </summary>
+        /// 
+        public void Sync()
+        {
+            var match = ParentConstructor.ParentDistribution
+                .Properties.Where(x => x.Name == this.Name).FirstOrDefault();
+
+            if (match != null && match.Value != null)
+                this.Value = match.Value;
+        }
+
+
+
+
         private ParameterViewModel(ParameterInfo info, ConstructorViewModel owner, DoubleRange range, double value)
         {
-            bool isInteger = DistributionManager.IsInteger(info);
+            bool isInteger = info.ParameterType == typeof(int);
 
             double min = range.Min;
             double max = range.Max;
@@ -143,21 +167,10 @@ namespace Workbench.ViewModels
             Max = max;
             Step = step;
             Value = value;
-            Name = DistributionManager.GetParameterName(info);
+            Name = DistributionManager.Normalize(info.Name);
             ParentConstructor = owner;
             ParameterInfo = info;
             IsDiscrete = isInteger;
-
-            Name = DistributionManager.NormalizeTerms(Name);
-        }
-
-        public void Sync()
-        {
-            var match = ParentConstructor.ParentDistribution
-                .Properties.Where(x => x.Name == this.Name).FirstOrDefault();
-
-            if (match != null && match.Value != null)
-                this.Value = match.Value;
         }
 
 

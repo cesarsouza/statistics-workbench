@@ -34,6 +34,10 @@ namespace Workbench.Framework
             commandBindings = new CommandBindingCollection();
         }
 
+        /// <summary>
+        ///   Checks whether the caller is running on the UI thread.
+        /// </summary>
+        /// 
         [Conditional("Debug")]
         [DebuggerStepThrough()]
         protected void VerifyCalledOnUIThread()
@@ -42,6 +46,10 @@ namespace Workbench.Framework
                 Debug.Fail("Must be called from the UI thread.");
         }
 
+        /// <summary>
+        ///   Checks if the current object contains a property with the given name.
+        /// </summary>
+        /// 
         [Conditional("Debug")]
         [DebuggerStepThrough()]
         protected void CheckPropertyName(string propertyName)
@@ -51,11 +59,19 @@ namespace Workbench.Framework
                 Debug.Fail(string.Format("Property name does not exist: {0}", propertyName));
         }
 
+        /// <summary>
+        ///   Gets the command bindings for this view model.
+        /// </summary>
+        /// 
         public CommandBindingCollection CommandBindings
         {
             get { return commandBindings; }
         }
 
+        /// <summary>
+        ///   Occurs when a property value changes.
+        /// </summary>
+        /// 
         public event PropertyChangedEventHandler PropertyChanged
         {
             add
@@ -70,6 +86,12 @@ namespace Workbench.Framework
             }
         }
 
+        /// <summary>
+        ///   Called when a property value changes.
+        /// </summary>
+        /// 
+        /// <param name="propertyName">Name of the property.</param>
+        /// 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             VerifyCalledOnUIThread();
