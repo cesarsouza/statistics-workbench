@@ -2,13 +2,13 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Workbench.ViewModels.ConstructorViewModel">
     <Position X="19.5" Y="3" Width="2" />
+    <Members>
+      <Property Name="Owner" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <HashCode>AIAAAEAAAAAAAABAAAAAQAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <HashCode>AIAAAECAAAAAAABAAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
       <FileName>ViewModels\Distributions\ConstructorViewModel.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="ParentDistribution" />
-    </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Parameters" />
     </ShowAsCollectionAssociation>
@@ -21,8 +21,8 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Constructor" />
-      <Property Name="Documentation" />
       <Property Name="Measures" />
+      <Property Name="Documentation" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Properties" />
@@ -52,12 +52,9 @@
       <Field Name="saveFormats" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAJQEAAwCCAQwgBAAAQSAAEAUAAQAAAAiAgtAAEACg=</HashCode>
+      <HashCode>AAAJQECAwCCAQwgBAAAQCAAEAUAAQAAAAiAgtAAEACg=</HashCode>
       <FileName>ViewModels\Estimation\EstimateViewModel.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Parent" />
-    </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Values" />
     </ShowAsCollectionAssociation>
@@ -92,18 +89,18 @@
   </Class>
   <Class Name="Workbench.ViewModels.MainViewModel">
     <Position X="11.75" Y="0.5" Width="2" />
-    <AssociationLine Name="Distributions" Type="Workbench.ViewModels.DistributionViewModel" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="13.656" Y="2.377" />
-        <Point X="13.656" Y="3.968" />
-        <Point X="15.25" Y="3.968" />
-      </Path>
-    </AssociationLine>
     <AssociationLine Name="Estimate" Type="Workbench.ViewModels.EstimateViewModel" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="13.016" Y="2.377" />
-        <Point X="13.016" Y="3.959" />
+        <Point X="12.25" Y="2.377" />
+        <Point X="12.25" Y="3.959" />
         <Point X="10.5" Y="3.959" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="SelectedDistribution" Type="Workbench.ViewModels.DistributionViewModel" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.656" Y="2.377" />
+        <Point X="13.656" Y="3.938" />
+        <Point X="15.25" Y="3.938" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -112,25 +109,24 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Estimate" />
+      <Property Name="SelectedDistribution" />
     </ShowAsAssociation>
-    <ShowAsCollectionAssociation>
-      <Property Name="Distributions" />
-    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Workbench.ViewModels.ParameterViewModel">
     <Position X="22.75" Y="3" Width="1.75" />
     <Members>
+      <Property Name="Owner" Hidden="true" />
       <Field Name="value" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>QIAAAAAAABAAAACAEAABAAQAAEAAACEAIEAgAAAAAAA=</HashCode>
+      <HashCode>AIAAAACAABAAAACAEAAAAAQAAEAQACAAIEAhAAAAAAA=</HashCode>
       <FileName>ViewModels\Distributions\ParameterViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Workbench.ViewModels.PropertyViewModel">
     <Position X="19.5" Y="5.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AIQAAAAAAAABAAAAAAAAQAQAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <HashCode>AIQAAACAAAAAAAAAAAAAAAQAAAAAAAAAAAAgAQAAAAA=</HashCode>
       <FileName>ViewModels\Distributions\PropertyViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>

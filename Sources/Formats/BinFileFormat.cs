@@ -19,28 +19,18 @@ namespace Workbench.Formats
     {
 
         /// <summary>
-        /// Gets the file's default extension.
+        ///   Initializes a new instance of the <see cref="BinFileFormat"/> class.
         /// </summary>
-        public override string Extension { get { return "*.bin"; } }
+        /// 
+        public BinFileFormat()
+            : base(extension: "*.bin", description: "Binary serialized DataTable", canRead: true, canWrite: true)
+        {
+        }
 
         /// <summary>
-        /// Gets the format's description.
+        ///   Reads the specified file or stream into a table.
         /// </summary>
-        public override string Description { get { return "Binary serialized DataTable"; } }
-
-        /// <summary>
-        /// Gets a value indicating whether this format can be read by this application.
-        /// </summary>
-        public bool CanRead { get { return true; } }
-
-        /// <summary>
-        /// Gets a value indicating whether this format can be written by this application.
-        /// </summary>
-        public bool CanWrite { get { return true; } }
-
-        /// <summary>
-        /// Reads the specified file or stream into a table.
-        /// </summary>
+        /// 
         public DataTable Read(Stream stream)
         {
             BinaryFormatter serializer = new BinaryFormatter();
@@ -48,13 +38,13 @@ namespace Workbench.Formats
         }
 
         /// <summary>
-        /// Writes the specified table into a file or stream.
+        ///   Writes the specified table into a file or stream.
         /// </summary>
+        /// 
         public void Write(DataTable table, Stream stream)
         {
             BinaryFormatter serializer = new BinaryFormatter();
             serializer.Serialize(stream, table);
         }
     }
-
 }

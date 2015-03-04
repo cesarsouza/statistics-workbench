@@ -46,15 +46,7 @@ namespace Workbench.ViewModels
         public double? Value
         {
             get { return value; }
-            set { OnValueChanged(value); }
-        }
-
-        private void OnValueChanged(double? value)
-        {
-            this.value = value;
-
-            if (ValueChanged != null)
-                ValueChanged(this, EventArgs.Empty);
+            set { onValueChanged(value); }
         }
 
         /// <summary>
@@ -87,7 +79,7 @@ namespace Workbench.ViewModels
         ///   Gets the constructor's reflection parameter information.
         /// </summary>
         /// 
-        public ParameterInfo ParameterInfo { get; private set; }
+        public ParameterInfo Parameter { get; private set; }
 
 
 
@@ -95,7 +87,7 @@ namespace Workbench.ViewModels
         ///   Gets the parent constructor to whom this property belongs.
         /// </summary>
         /// 
-        public ConstructorViewModel ParentConstructor { get; private set; }
+        public ConstructorViewModel Owner { get; private set; }
 
 
 
@@ -136,7 +128,7 @@ namespace Workbench.ViewModels
         /// 
         public void Sync()
         {
-            var match = ParentConstructor.ParentDistribution
+            var match = Owner.Owner
                 .Properties.Where(x => x.Name == this.Name).FirstOrDefault();
 
             if (match != null && match.Value != null)
@@ -168,11 +160,18 @@ namespace Workbench.ViewModels
             Step = step;
             Value = value;
             Name = DistributionManager.Normalize(info.Name);
-            ParentConstructor = owner;
-            ParameterInfo = info;
+            Owner = owner;
+            Parameter = info;
             IsDiscrete = isInteger;
         }
 
+        private void onValueChanged(double? value)
+        {
+            this.value = value;
+
+            if (ValueChanged != null)
+                ValueChanged(this, EventArgs.Empty);
+        }
 
     }
 }

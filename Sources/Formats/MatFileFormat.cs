@@ -19,32 +19,18 @@ namespace Workbench.Formats
     /// 
     public class MatFileFormat : FileFormatBase, IFileFormat
     {
-        /// <summary>
-        /// Gets the file's default extension.
-        /// </summary>
-        /// 
-        public override string Extension { get { return "*.mat"; } }
 
         /// <summary>
-        /// Gets the format's description.
+        ///   Initializes a new instance of the <see cref="MatFileFormat"/> class.
         /// </summary>
         /// 
-        public override string Description { get { return "MAT/Octave files"; } }
+        public MatFileFormat()
+            : base(extension: "*.mat", description: "MAT/Octave files", canRead: true, canWrite: false)
+        {
+        }
 
         /// <summary>
-        /// Gets a value indicating whether this format can be read by this application.
-        /// </summary>
-        /// 
-        public bool CanRead { get { return true; } }
-
-        /// <summary>
-        /// Gets a value indicating whether this format can be written by this application.
-        /// </summary>
-        /// 
-        public bool CanWrite { get { return false; } }
-
-        /// <summary>
-        /// Reads the specified file or stream into a table.
+        ///   Reads the specified file or stream into a table.
         /// </summary>
         /// 
         public DataTable Read(Stream stream)
@@ -55,7 +41,7 @@ namespace Workbench.Formats
         }
 
         /// <summary>
-        /// Writes the specified table into a file or stream.
+        ///   Writes the specified table into a file or stream.
         /// </summary>
         /// 
         public void Write(DataTable table, Stream stream)

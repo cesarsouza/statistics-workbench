@@ -4,6 +4,7 @@ using Workbench.ViewModels;
 using System.Windows;
 using System.Linq;
 using System.Windows.Input;
+using System.Threading;
 
 namespace Unit_Tests
 {
@@ -67,6 +68,31 @@ namespace Unit_Tests
             Assert.AreEqual(2.222, target.Values[1].Weight);
             Assert.AreEqual(2.421, target.Values[2].Value);
             Assert.AreEqual(3.141, target.Values[2].Weight);
+        }
+
+        [TestMethod]
+        public void Generate_NotSupportedTest()
+        {
+            var main = new MainViewModel();
+
+            // Select a Folded Normal distribution
+            int index = main.Distributions.IndexOf(
+                main.Distributions.Where(x => x.Name.Contains("Folded Normal")).First());
+
+            main.SelectedDistributionIndex = index;
+
+            SpinWait.SpinUntil(() => main.SelectedDistribution.IsInitialized);
+
+            Assert.AreEqual(1, main.Estimate.Values.Count);
+            Assert.IsTrue(String.IsNullOrEmpty(main.Estimate.Message));
+
+            // Generate samples
+            Assert.AreEqual(1000, main.Estimate.NumberOfSamplesToBeGenerated);
+            main.Estimate.GenerateCommand.Execute(null);
+
+            Assert.AreEqual(1000, main.Estimate.Values.Count);
+            Assert.IsFalse(main.Estimate.Owner.SelectedDistribution.IsFittable);
+            Assert.IsFalse(String.IsNullOrEmpty(main.Estimate.Message));
         }
     }
 }

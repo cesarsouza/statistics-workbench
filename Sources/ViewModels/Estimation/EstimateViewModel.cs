@@ -55,7 +55,7 @@ namespace Workbench.ViewModels
         ///   Gets a reference for the parent <see cref="MainViewModel"/>.
         /// </summary>
         /// 
-        public MainViewModel Parent { get; private set; }
+        public MainViewModel Owner { get; private set; }
 
         /// <summary>
         ///   Gets or sets a value indicating whether the sample editor is shown.
@@ -160,7 +160,7 @@ namespace Workbench.ViewModels
         /// 
         public EstimateViewModel(MainViewModel owner)
         {
-            this.Parent = owner;
+            this.Owner = owner;
 
             this.Values = new BindingList<SampleViewModel>();
             this.Values.ListChanged += data_ListChanged;
@@ -284,7 +284,7 @@ namespace Workbench.ViewModels
             if (IsWeightColumnVisible)
                 weights = Values.Select(x => x.Weight).ToArray();
 
-            var distribution = Parent.SelectedDistribution;
+            var distribution = Owner.SelectedDistribution;
 
             try
             {
@@ -387,16 +387,25 @@ namespace Workbench.ViewModels
         /// 
         public bool Estimate_CanExecute(object sender)
         {
-            return Values.Count > 0 && Parent.SelectedDistribution.IsInitialized;
+            if (Values.Count == 0)
+                return false;
+
+            var dist = Owner.SelectedDistribution;
+
+            if (!dist.IsInitialized)
+                return false;
+
+            return dist.IsFittable;
         }
 
 
 
         private void generate_Execute(object obj)
         {
+            IsEditorVisible = true;
             Message = String.Empty;
 
-            var distribution = Parent.SelectedDistribution;
+            var distribution = Owner.SelectedDistribution;
             var generate = distribution.Instance as ISampleableDistribution<double>;
 
             try
@@ -406,15 +415,17 @@ namespace Workbench.ViewModels
                 Values.Clear();
                 foreach (var d in values)
                     Values.Add(new SampleViewModel() { Value = d });
-
-                EstimateCommand.Execute(null);
             }
             catch
             {
                 Message = "Sample generation failed. Please check the chosen distribution parameters.";
+                return;
             }
 
-            IsEditorVisible = true;
+            EstimateCommand.Execute(null);
+
+            if (Message != String.Empty)
+                Message = "Samples have been generated, but the distribution's measures could not be updated: " + Message;
         }
 
         private void data_ListChanged(object sender, ListChangedEventArgs e)

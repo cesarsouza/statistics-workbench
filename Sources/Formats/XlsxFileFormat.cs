@@ -13,34 +13,25 @@ namespace Workbench.Formats
     using System.IO;
 
     /// <summary>
-    /// File format for data tables stored as Excel 2007 (xlsx) files.
+    ///   File format for data tables stored as Excel 2007 (xlsx) files.
     /// </summary>
+    /// 
     public class XlsxFileFormat : FileFormatBase, IFileFormat
     {
 
         /// <summary>
-        /// Gets the file's default extension.
+        ///   Initializes a new instance of the <see cref="XlsxFileFormat"/> class.
         /// </summary>
-        public override string Extension { get { return "*.xlsx"; } }
+        /// 
+        public XlsxFileFormat()
+            : base(extension: "*.xlsx", description: "Excel 2007+", canRead: true, canWrite: false)
+        {
+        }
 
         /// <summary>
-        /// Gets the format's description.
+        ///   Reads the specified file or stream into a table.
         /// </summary>
-        public override string Description { get { return "Excel worksheets"; } }
-
-        /// <summary>
-        /// Gets a value indicating whether this format can be read by this application.
-        /// </summary>
-        public bool CanRead { get { return true; } }
-
-        /// <summary>
-        /// Gets a value indicating whether this format can be written by this application.
-        /// </summary>
-        public bool CanWrite { get { return false; } }
-
-        /// <summary>
-        /// Reads the specified file or stream into a table.
-        /// </summary>
+        /// 
         public DataTable Read(Stream stream)
         {
             ExcelReader reader = new ExcelReader(stream, true, true);
@@ -48,12 +39,12 @@ namespace Workbench.Formats
         }
 
         /// <summary>
-        /// Writes the specified table into a file or stream.
+        ///   Writes the specified table into a file or stream.
         /// </summary>
+        /// 
         public void Write(DataTable table, Stream stream)
         {
             throw new NotSupportedException();
         }
     }
-
 }

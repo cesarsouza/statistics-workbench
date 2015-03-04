@@ -305,7 +305,6 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="StatisticsWorkbench.cd" />
     <None Include="Formats\Workbench.Formats.cd" />
     <None Include="Properties\packages.config" />
     <None Include="Properties\app.manifest" />
@@ -315,6 +314,9 @@
     </None>
     <AppDesigner Include="Properties\" />
     <None Include="StatisticsWorkbench.pfx" />
+    <None Include="ViewModels\Distributions\Workbench.Distributions.cd" />
+    <None Include="ViewModels\Documentation\Workbench.Documentation.cd" />
+    <None Include="ViewModels\Estimation\Workbench.Estimation.cd" />
     <None Include="ViewModels\Workbench.ViewModels.cd" />
     <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>

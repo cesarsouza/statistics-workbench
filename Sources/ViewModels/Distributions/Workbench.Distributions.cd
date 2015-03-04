@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Workbench.ViewModels.MainViewModel">
+    <Position X="0.5" Y="0.5" Width="2.25" />
+    <Members>
+      <Property Name="SelectedDistributionIndex" Hidden="true" />
+    </Members>
+    <AssociationLine Name="SelectedDistribution" Type="Workbench.ViewModels.DistributionViewModel" FixedToPoint="true">
+      <Path>
+        <Point X="0.938" Y="2.377" />
+        <Point X="0.938" Y="3" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAiAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>ViewModels\MainViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SelectedDistribution" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Workbench.ViewModels.DistributionViewModel">
+    <Position X="0.5" Y="3" Width="2.5" />
+    <Members>
+      <Method Name="distribution_OnParameterChanged" Hidden="true" />
+      <Property Name="Parameters" Hidden="true" />
+      <Method Name="update" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AMAAiEAAAAAAAAgEAAAAAAQAABAEACAAQYAADABGAAA=</HashCode>
+      <FileName>ViewModels\Distributions\DistributionViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Constructor" />
+      <Property Name="Instance" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Properties" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Workbench.ViewModels.ConstructorViewModel">
+    <Position X="4.25" Y="6.25" Width="2" />
+    <Members>
+      <Property Name="Owner" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AIAAAECAAAAAAABAAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\Distributions\ConstructorViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Owner" />
+      <Property Name="Constructor" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Parameters" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Workbench.ViewModels.ParameterViewModel">
+    <Position X="4.25" Y="8.25" Width="2" />
+    <Members>
+      <Method Name="onValueChanged" Hidden="true" />
+      <Property Name="Owner" Hidden="true" />
+      <Field Name="value" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AIAAAACAABAAAACAEAAAAAQAAEAQACAAIEAhAAAAAAA=</HashCode>
+      <FileName>ViewModels\Distributions\ParameterViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Owner" />
+      <Property Name="Parameter" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Workbench.ViewModels.PropertyViewModel">
+    <Position X="4.25" Y="3.75" Width="2" />
+    <Members>
+      <Property Name="Owner" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AIQAAACAAAAAAAAAAAAAAAQAAAAAAAAAAAAgAQAAAAA=</HashCode>
+      <FileName>ViewModels\Distributions\PropertyViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Property" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="System.Reflection.ParameterInfo" Collapsed="true">
+    <Position X="8" Y="9" Width="2.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="System.Reflection.ConstructorInfo" Collapsed="true">
+    <Position X="8" Y="7" Width="2.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="System.Reflection.PropertyInfo" Collapsed="true">
+    <Position X="8" Y="5.25" Width="2.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="Accord.Statistics.Distributions.IUnivariateDistribution">
+    <Position X="8" Y="0.5" Width="2.75" />
+    <Members>
+      <Method Name="GetRange" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

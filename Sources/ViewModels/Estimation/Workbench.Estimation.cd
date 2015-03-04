@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Workbench.ViewModels.EstimateViewModel">
+    <Position X="4.75" Y="3.5" Width="2.75" />
+    <Members>
+      <Method Name="data_ListChanged" Hidden="true" />
+      <Method Name="generate_Execute" Hidden="true" />
+      <Field Name="lastSaveFormat" Hidden="true" />
+      <Field Name="lastSavePath" Hidden="true" />
+      <Field Name="loadFormats" Hidden="true" />
+      <Method Name="save" Hidden="true" />
+      <Field Name="saveFormats" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAJQEAAwCCAQwgBAAAQSAAEAUAAQAAAAiAgtAAEACg=</HashCode>
+      <FileName>ViewModels\Estimation\EstimateViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="EstimateCommand" />
+      <Property Name="GenerateCommand" />
+      <Property Name="ImportCommand" />
+      <Property Name="NewCommand" />
+      <Property Name="OpenCommand" />
+      <Property Name="SaveCommand" />
+      <Property Name="Parent" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Values" />
+      <Property Name="Analysis" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Workbench.ViewModels.GoodnessOfFitViewModel">
+    <Position X="8.5" Y="3.5" Width="2" />
+    <Members>
+      <Method Name="suffix" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAQAAAAAAQAAAAAAAAAAAAABAAgAAA=</HashCode>
+      <FileName>ViewModels\Estimation\GoodnessOfFitViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Workbench.ViewModels.SampleViewModel">
+    <Position X="8.5" Y="6" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>ViewModels\Estimation\SampleViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Workbench.ViewModels.MainViewModel">
+    <Position X="5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAiAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>ViewModels\MainViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Estimate" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Workbench.RelayCommand">
+    <Position X="0.5" Y="4.25" Width="2.25" />
+    <Members>
+      <Field Name="canExecute" Hidden="true" />
+      <Field Name="execute" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAQAAEAEAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Framework\RelayCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

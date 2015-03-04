@@ -42,6 +42,12 @@ namespace Workbench.ViewModels
         public bool IsInitializing { get; private set; }
 
         /// <summary>
+        ///   Gets a value indicating whether this distribution can be estimated from sample data.
+        /// </summary>
+        /// 
+        public bool IsFittable { get; private set; }
+
+        /// <summary>
         ///   Gets the current active probability distribution, if any.
         /// </summary>
         /// 
@@ -254,6 +260,7 @@ namespace Workbench.ViewModels
 
             IsInitializing = false;
             IsInitialized = true;
+            IsFittable = instance is IFittableDistribution<double>;
         }
 
         private void update(IUnivariateDistribution instance)

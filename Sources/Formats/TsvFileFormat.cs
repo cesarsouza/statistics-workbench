@@ -19,38 +19,28 @@ namespace Workbench.Formats
     {
 
         /// <summary>
-        /// Gets the file's default extension.
+        ///   Initializes a new instance of the <see cref="TsvFileFormat"/> class.
         /// </summary>
-        public override string Extension { get { return "*.tsv"; } }
+        /// 
+        public TsvFileFormat()
+            : base(extension: "*.tsv", description: "Tab-separated values", canRead: true, canWrite: true)
+        {
+        }
 
         /// <summary>
-        /// Gets the format's description.
+        ///   Reads the specified file or stream into a table.
         /// </summary>
-        public override string Description { get { return "Tab-separated values"; } }
-
-        /// <summary>
-        /// Gets a value indicating whether this format can be read by this application.
-        /// </summary>
-        public bool CanRead { get { return true; } }
-
-        /// <summary>
-        /// Gets a value indicating whether this format can be written by this application.
-        /// </summary>
-        public bool CanWrite { get { return true; } }
-
-        /// <summary>
-        /// Reads the specified file or stream into a table.
-        /// </summary>
+        /// 
         public DataTable Read(Stream stream)
         {
             var reader = new CsvReader(new StreamReader(stream), true);
-
             return reader.ToTable();
         }
 
         /// <summary>
-        /// Writes the specified table into a file or stream.
+        ///   Writes the specified table into a file or stream.
         /// </summary>
+        /// 
         public void Write(DataTable table, Stream stream)
         {
             var writer = new CsvWriter(new StreamWriter(stream), '\t');

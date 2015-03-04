@@ -40,12 +40,12 @@ namespace Workbench.ViewModels
         ///   Gets the parent distribution to whom this constructor belongs.
         /// </summary>
         /// 
-        public DistributionViewModel ParentDistribution { get; private set; }
+        public DistributionViewModel Owner { get; private set; }
 
 
         private ConstructorViewModel(ConstructorInfo info, DistributionViewModel owner)
         {
-            this.ParentDistribution = owner;
+            this.Owner = owner;
             this.Constructor = info;
             this.Parameters = new ObservableCollection<ParameterViewModel>();
         }
@@ -65,9 +65,9 @@ namespace Workbench.ViewModels
             {
                 var parameters = new object[Parameters.Count];
                 foreach (ParameterViewModel p in Parameters)
-                    parameters[p.ParameterInfo.Position] = Convert.ChangeType(p.Value, p.ParameterInfo.ParameterType);
+                    parameters[p.Parameter.Position] = Convert.ChangeType(p.Value, p.Parameter.ParameterType);
 
-                distribution = (IUnivariateDistribution)Activator.CreateInstance(ParentDistribution.Type, parameters);
+                distribution = (IUnivariateDistribution)Activator.CreateInstance(Owner.Type, parameters);
             }
             catch (Exception ex)
             {

@@ -18,30 +18,19 @@ namespace Workbench.Formats
     /// 
     public class XlsFileFormat : FileFormatBase, IFileFormat
     {
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="XlsFileFormat"/> class.
+        /// </summary>
+        /// 
+        public XlsFileFormat()
+            : base(extension: "*.xls", description: "Excel 97-2003", canRead: true, canWrite: false)
+        {
+        }
 
         /// <summary>
-        /// Gets the file's default extension.
+        ///   Reads the specified file or stream into a table.
         /// </summary>
-        public override string Extension { get { return "*.xls"; } }
-
-        /// <summary>
-        /// Gets the format's description.
-        /// </summary>
-        public override string Description { get { return "Excel worksheets"; } }
-
-        /// <summary>
-        /// Gets a value indicating whether this format can be read by this application.
-        /// </summary>
-        public bool CanRead { get { return true; } }
-
-        /// <summary>
-        /// Gets a value indicating whether this format can be written by this application.
-        /// </summary>
-        public bool CanWrite { get { return false; } }
-
-        /// <summary>
-        /// Reads the specified file or stream into a table.
-        /// </summary>
+        /// 
         public DataTable Read(Stream stream)
         {
             ExcelReader reader = new ExcelReader(stream, false, true);
@@ -49,12 +38,12 @@ namespace Workbench.Formats
         }
 
         /// <summary>
-        /// Writes the specified table into a file or stream.
+        ///   Writes the specified table into a file or stream.
         /// </summary>
+        /// 
         public void Write(DataTable table, Stream stream)
         {
             throw new NotSupportedException();
         }
     }
-
 }

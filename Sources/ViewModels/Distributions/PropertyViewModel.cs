@@ -37,13 +37,13 @@ namespace Workbench.ViewModels
         ///   Gets the distribution parameter's reflection information.
         /// </summary>
         /// 
-        public PropertyInfo PropertyInfo { get; private set; }
+        public PropertyInfo Property { get; private set; }
 
         /// <summary>
         ///   Gets the parent distribution to whom this property belongs.
         /// </summary>
         /// 
-        public DistributionViewModel ParentDistribution { get; private set; }
+        public DistributionViewModel Owner { get; private set; }
 
 
 
@@ -81,9 +81,9 @@ namespace Workbench.ViewModels
         {
             try
             {
-                var instance = ParentDistribution.Instance;
+                var instance = Owner.Instance;
                 if (instance != null)
-                    Value = (double)PropertyInfo.GetValue(instance);
+                    Value = (double)Property.GetValue(instance);
             }
             catch
             {
@@ -94,8 +94,8 @@ namespace Workbench.ViewModels
 
         private PropertyViewModel(PropertyInfo prop, DistributionViewModel distribution)
         {
-            this.PropertyInfo = prop;
-            this.ParentDistribution = distribution;
+            this.Property = prop;
+            this.Owner = distribution;
             this.Name = DistributionManager.Normalize(prop.Name);
         }
 
