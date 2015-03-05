@@ -42,10 +42,9 @@ namespace Workbench.ViewModels
         ///   that is currently active in the application.
         /// </summary>
         /// 
-        public IUnivariateDistribution Instance
+        public void Update(IUnivariateDistribution instance)
         {
-            get { return instance; }
-            set { update(value); }
+            update(instance);
         }
 
 
@@ -117,12 +116,14 @@ namespace Workbench.ViewModels
         ///
         public PlotModel CreatePDF()
         {
+            this.updateRange();
+
             double[] y;
-            try { y = supportPoints.Apply(Instance.ProbabilityFunction); }
+            try { y = supportPoints.Apply(instance.ProbabilityFunction); }
             catch
             {
                 var general = GeneralContinuousDistribution
-                    .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
+                    .FromDistributionFunction(instance.Support, instance.DistributionFunction);
                 y = supportPoints.Apply(general.ProbabilityDensityFunction);
             }
 
@@ -136,11 +137,11 @@ namespace Workbench.ViewModels
         public PlotModel CreateLPDF()
         {
             double[] y;
-            try { y = supportPoints.Apply(Instance.LogProbabilityFunction); }
+            try { y = supportPoints.Apply(instance.LogProbabilityFunction); }
             catch
             {
                 var general = GeneralContinuousDistribution
-                    .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
+                    .FromDistributionFunction(instance.Support, instance.DistributionFunction);
                 y = supportPoints.Apply(general.LogProbabilityDensityFunction);
             }
 
@@ -156,11 +157,11 @@ namespace Workbench.ViewModels
             try
             {
                 double[] y;
-                try { y = probabilities.Apply(Instance.QuantileDensityFunction); }
+                try { y = probabilities.Apply(instance.QuantileDensityFunction); }
                 catch
                 {
                     var general = GeneralContinuousDistribution
-                        .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
+                        .FromDistributionFunction(instance.Support, instance.DistributionFunction);
                     y = probabilities.Apply(general.QuantileDensityFunction);
                 }
 
@@ -181,11 +182,11 @@ namespace Workbench.ViewModels
             try
             {
                 double[] y;
-                try { y = supportPoints.Apply(Instance.DistributionFunction); }
+                try { y = supportPoints.Apply(instance.DistributionFunction); }
                 catch
                 {
                     var general = GeneralContinuousDistribution
-                        .FromDensityFunction(Instance.Support, Instance.ProbabilityFunction);
+                        .FromDensityFunction(instance.Support, instance.ProbabilityFunction);
                     y = supportPoints.Apply(general.DistributionFunction);
                 }
 
@@ -204,11 +205,11 @@ namespace Workbench.ViewModels
         public PlotModel CreateCCDF()
         {
             double[] y;
-            try { y = supportPoints.Apply(Instance.ComplementaryDistributionFunction); }
+            try { y = supportPoints.Apply(instance.ComplementaryDistributionFunction); }
             catch
             {
                 var general = GeneralContinuousDistribution
-                    .FromDensityFunction(Instance.Support, Instance.ProbabilityFunction);
+                    .FromDensityFunction(instance.Support, instance.ProbabilityFunction);
                 y = supportPoints.Apply(general.ComplementaryDistributionFunction);
             }
 
@@ -222,19 +223,19 @@ namespace Workbench.ViewModels
         public PlotModel CreateCHF()
         {
             double[] y;
-            try { y = supportPoints.Apply(Instance.CumulativeHazardFunction); }
+            try { y = supportPoints.Apply(instance.CumulativeHazardFunction); }
             catch
             {
                 try
                 {
                     var general = GeneralContinuousDistribution
-                        .FromDensityFunction(Instance.Support, Instance.ProbabilityFunction);
+                        .FromDensityFunction(instance.Support, instance.ProbabilityFunction);
                     y = supportPoints.Apply(general.CumulativeHazardFunction);
                 }
                 catch
                 {
                     var general = GeneralContinuousDistribution
-                        .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
+                        .FromDistributionFunction(instance.Support, instance.DistributionFunction);
                     y = supportPoints.Apply(general.CumulativeHazardFunction);
                 }
             }
@@ -251,19 +252,19 @@ namespace Workbench.ViewModels
             try
             {
                 double[] y;
-                try { y = probabilities.Apply(Instance.InverseDistributionFunction); }
+                try { y = probabilities.Apply(instance.InverseDistributionFunction); }
                 catch
                 {
                     try
                     {
                         var general = GeneralContinuousDistribution
-                            .FromDensityFunction(Instance.Support, Instance.ProbabilityFunction);
+                            .FromDensityFunction(instance.Support, instance.ProbabilityFunction);
                         y = probabilities.Apply(general.InverseDistributionFunction);
                     }
                     catch
                     {
                         var general = GeneralContinuousDistribution
-                            .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
+                            .FromDistributionFunction(instance.Support, instance.DistributionFunction);
                         y = probabilities.Apply(general.InverseDistributionFunction);
                     }
                 }
@@ -285,19 +286,19 @@ namespace Workbench.ViewModels
             try
             {
                 double[] y;
-                try { y = supportPoints.Apply(Instance.HazardFunction); }
+                try { y = supportPoints.Apply(instance.HazardFunction); }
                 catch
                 {
                     try
                     {
                         var general = GeneralContinuousDistribution
-                            .FromDensityFunction(Instance.Support, Instance.ProbabilityFunction);
+                            .FromDensityFunction(instance.Support, instance.ProbabilityFunction);
                         y = supportPoints.Apply(general.HazardFunction);
                     }
                     catch
                     {
                         var general = GeneralContinuousDistribution
-                            .FromDistributionFunction(Instance.Support, Instance.DistributionFunction);
+                            .FromDistributionFunction(instance.Support, instance.DistributionFunction);
                         y = supportPoints.Apply(general.HazardFunction);
                     }
                 }
@@ -314,7 +315,7 @@ namespace Workbench.ViewModels
 
 
 
-        private PlotModel createBaseModel(DoubleRange range, string title, double[] x, double[] y)
+        private PlotModel createBaseModel(DoubleRange? range, string title, double[] x, double[] y)
         {
             var plotModel = new PlotModel();
             plotModel.Series.Clear();
@@ -323,8 +324,8 @@ namespace Workbench.ViewModels
             var dateAxis = new OxyPlot.Axes.LinearAxis()
             {
                 Position = AxisPosition.Bottom,
-                Minimum = range.Min,
-                Maximum = range.Max,
+                Minimum = range.Value.Min,
+                Maximum = range.Value.Max,
                 Key = "xAxis",
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
@@ -387,7 +388,7 @@ namespace Workbench.ViewModels
 
             plotModel.TitlePadding = 2;
 
-            var formattable = Instance as IFormattable;
+            var formattable = instance as IFormattable;
 
             if (formattable != null)
             {
@@ -395,7 +396,7 @@ namespace Workbench.ViewModels
             }
             else
             {
-                plotModel.Title = Instance.ToString();
+                plotModel.Title = instance.ToString();
             }
 
             plotModel.TitleFontSize = 15;
@@ -429,8 +430,8 @@ namespace Workbench.ViewModels
 
             try
             {
-                range = Instance.Support;
-                range = Instance.GetRange(0.99);
+                range = instance.Support;
+                range = instance.GetRange(0.99);
             }
             catch
             {

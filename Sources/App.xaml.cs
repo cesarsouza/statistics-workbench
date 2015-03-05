@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using Workbench.ViewModels;
 
 namespace Workbench
@@ -22,6 +23,13 @@ namespace Workbench
             };
 
             wnd.Show();
+        }
+
+        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            // OxyPlot sometimes throws bogus NullReference exceptions.
+            if (e.Exception.TargetSite.Name.Contains("GetNearestPoint"))
+                e.Handled = true;
         }
     }
 }

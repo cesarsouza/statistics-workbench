@@ -266,7 +266,7 @@ namespace Workbench.ViewModels
         private void update(IUnivariateDistribution instance)
         {
             this.Instance = instance;
-            this.Measures.Instance = instance;
+            this.Measures.Update(instance);
             this.DensityFunction = this.Measures.CreatePDF();
 
             foreach (var property in Properties)

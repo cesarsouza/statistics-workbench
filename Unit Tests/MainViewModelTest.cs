@@ -94,5 +94,35 @@ namespace Unit_Tests
             Assert.IsFalse(main.Estimate.Owner.SelectedDistribution.IsFittable);
             Assert.IsFalse(String.IsNullOrEmpty(main.Estimate.Message));
         }
+
+        [TestMethod]
+        public void Estimate_UpdateOnEditTest()
+        {
+            var main = new MainViewModel();
+
+            SpinWait.SpinUntil(() => main.SelectedDistribution.IsInitialized);
+
+            main.Estimate.IsUpdatedOnEdit = false;
+
+            main.Estimate.Values.Add(new SampleViewModel() { Value = 2 });
+            main.Estimate.Values.Add(new SampleViewModel() { Value = 3 });
+            main.Estimate.Values.Add(new SampleViewModel() { Value = 4 });
+            main.Estimate.Values.Add(new SampleViewModel() { Value = 5 });
+
+            Assert.AreEqual(0, main.SelectedDistribution.Instance.Mean);
+            Assert.AreEqual(1, main.SelectedDistribution.Instance.Variance);
+
+            main.Estimate.IsUpdatedOnEdit = true;
+
+            main.Estimate.NewCommand.Execute(null);
+            main.Estimate.Values.Add(new SampleViewModel() { Value = 1 });
+            main.Estimate.Values.Add(new SampleViewModel() { Value = 2 });
+            main.Estimate.Values.Add(new SampleViewModel() { Value = 3 });
+            main.Estimate.Values.Add(new SampleViewModel() { Value = 4 });
+            main.Estimate.Values.Add(new SampleViewModel() { Value = 5 });
+
+            Assert.AreEqual(2.5, main.SelectedDistribution.Instance.Mean);
+            Assert.AreEqual(3.5, main.SelectedDistribution.Instance.Variance);
+        }
     }
 }

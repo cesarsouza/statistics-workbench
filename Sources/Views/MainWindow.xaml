@@ -176,29 +176,27 @@
 
                             <Button Command="{Binding NewCommand, Mode=OneWay}" Tag="{StaticResource appbar_page_new}" ToolTip="New file" />
                             <Button Command="{Binding OpenCommand, Mode=OneWay}" Tag="{StaticResource appbar_folder_open}" ToolTip="Open file"  />
-                            <xctk:SplitButton Command="{Binding SaveCommand, Mode=OneWay}" ToolTip="Save" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Foreground="{x:Null}"  >
+                            <xctk:SplitButton Command="{Binding SaveCommand, Mode=OneWay}" ToolTip="Save" BorderBrush="White" Foreground="White" Background="White">
                                 <xctk:SplitButton.Content>
-                                    <Grid>
-                                        <Rectangle Width="16" Height="16">
-                                            <Rectangle.Fill>
-                                                <VisualBrush Visual="{StaticResource appbar_save}" />
-                                            </Rectangle.Fill>
-                                        </Rectangle>
-                                    </Grid>
+                                    <Rectangle Width="16" Height="16">
+                                        <Rectangle.Fill>
+                                            <VisualBrush Visual="{StaticResource appbar_save}" />
+                                        </Rectangle.Fill>
+                                    </Rectangle>
                                 </xctk:SplitButton.Content>
                                 <xctk:SplitButton.DropDownContent>
-                                    <Button Content="Save As ..." Command="{Binding SaveCommand, Mode=OneWay}" CommandParameter="SaveAs"/>
+                                    <Button Content="Save As ..." Command="{Binding SaveCommand, Mode=OneWay}" CommandParameter="SaveAs" BorderBrush="White" BorderThickness="0"/>
                                 </xctk:SplitButton.DropDownContent>
                             </xctk:SplitButton>
                             <Button Command="ApplicationCommands.Copy" CommandTarget="{Binding ElementName=dataGrid}" Tag="{StaticResource appbar_page_copy}" ToolTip="Copy from clipboard" />
                             <Button Command="ApplicationCommands.Paste" Tag="{StaticResource appbar_clipboard_paste}" ToolTip="Paste from clipboard" />
                             <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                            <CheckBox Name="cbWeights" IsChecked="{Binding UseWeightedSamples}">Weights</CheckBox>
+                            <CheckBox Name="cbWeights" IsChecked="{Binding IsWeightColumnVisible}">Weights</CheckBox>
                             <CheckBox Name="cbDetails">Details</CheckBox>
                             <Button Name="btnEstimate" Command="{Binding EstimateCommand, Mode=OneWay}" 
                                     DISABLED:Visibility="{Binding Path=IsEnabled, RelativeSource={RelativeSource Self}, Mode=OneWay, Converter={StaticResource BoolToVisibility}}"
                                     Content="Estimate!" Tag="{StaticResource appbar_man_suitcase_run}" ToolTip="Compute" />
-                            <controls:ToggleSwitch OnLabel="Estimate on edit" OffLabel="Don't update" IsChecked="{Binding IsContinuous, Mode=TwoWay}"
+                            <controls:ToggleSwitch OnLabel="Estimate on edit" OffLabel="Don't update" IsChecked="{Binding IsUpdatedOnEdit, Mode=TwoWay}"
                                     DISABLED:Visibility="{Binding IsEnabled, Converter={StaticResource BoolToVisibility}, ElementName=btnEstimate}"
                                     IsEnabled="{Binding IsEnabled, ElementName=btnEstimate}" FontSize="10" Width="150" Margin="10,0,0,0"/>
                         </StackPanel>
@@ -232,7 +230,7 @@
                                 <DataGridTextColumn Binding="{Binding ChiSquare, Mode=OneTime}" Header="Chi-Square" Visibility="{Binding IsChecked, Source={x:Reference cbDetails}, Converter={StaticResource BoolToVisibility}}" MinWidth="100"/>
                             </DataGrid.Columns>
                         </DataGrid>
-                        
+
                         <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Message}" Margin="15,15,15,15" FontSize="18" Foreground="#FFEB2323" TextWrapping="Wrap" />
                     </Grid>
                 </TabItem>
