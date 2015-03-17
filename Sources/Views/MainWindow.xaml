@@ -117,6 +117,38 @@
                                                 DataContext="{Binding Measures}"/>
                     </ContentControl>
                 </TabItem>
+                <TabItem Header="Analysis" DataContext="{Binding Analysis, Mode=OneWay}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="300" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <oxy:PlotView  Grid.Row="0" Model="{Binding DensityFunction, Mode=OneWay}" />
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="1">
+                            <Label Content="P(" FontSize="24" FontWeight="Bold"/>
+                            <xctk:DoubleUpDown FontSize="24" Watermark="0.0" Width="100" Value="{Binding LeftValue, Mode=TwoWay}" 
+                                           Minimum="{Binding Owner.SelectedDistribution.SupportMin}" 
+                                           Maximum="{Binding Owner.SelectedDistribution.SupportMax}" 
+                                           Increment="{Binding ValueStep}"
+                                           Foreground="#FF1364C4" TextAlignment="Center" 
+                                           MouseWheelActiveTrigger="MouseOver" BorderThickness="0" BorderBrush="{x:Null}" ShowButtonSpinner="False" />
+                            <ComboBox FontSize="24" FontWeight="Bold" ItemsSource="{Binding Comparisons}" SelectedIndex="{Binding ComparisonIndex, Mode=TwoWay}" BorderThickness="0" BorderBrush="{x:Null}" />
+                            <xctk:DoubleUpDown FontSize="24" Watermark="0.0" Width="100" Value="{Binding RightValue, Mode=TwoWay}" 
+                                               Visibility="{Binding RightValueVisible, Converter={StaticResource BoolToVisibility}}"
+                                           Minimum="{Binding Owner.SelectedDistribution.SupportMin}" 
+                                           Maximum="{Binding Owner.SelectedDistribution.SupportMax}" 
+                                          Increment="{Binding ValueStep}"
+                                               Foreground="#FF1364C4" TextAlignment="Center" 
+                                           MouseWheelActiveTrigger="MouseOver" BorderThickness="0" BorderBrush="{x:Null}" ShowButtonSpinner="False" />
+                            <Label Content=") = " FontSize="24" FontWeight="Bold" />
+                            <xctk:DoubleUpDown FontSize="24" Watermark="0.0" Width="100" Value="{Binding Probability, Mode=TwoWay}" 
+                                           Minimum="0" Maximum="1" Increment="0.1"
+                                               Foreground="#FF1364C4" TextAlignment="Center
+                                               " MouseWheelActiveTrigger="MouseOver" BorderBrush="{x:Null}" ShowButtonSpinner="False" />
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
                 <TabItem Header="Estimation" DataContext="{Binding Estimate}" IsSelected="{Binding IsEditorVisible}" 
                          local:AttachedProperties.CommandBindings="{Binding CommandBindings}">
                     <Grid>

@@ -39,7 +39,7 @@ namespace Workbench.Tools
         ///   this application by inspecting Accord.NET assemblies using reflection.
         /// </summary>
         /// 
-        public static DistributionViewModel[] GetDistributions()
+        public static DistributionViewModel[] GetDistributions(MainViewModel owner)
         {
             // This function iterates the Accord.Statistics assembly looking for
             // classes that are concrete (not abstract) and that implement the
@@ -63,7 +63,7 @@ namespace Workbench.Tools
             foreach (Type type in distributions)
             {
                 DistributionViewModel distribution;
-                if (DistributionViewModel.TryParse(type, doc, out distribution))
+                if (DistributionViewModel.TryParse(owner, type, doc, out distribution))
                     buildable.Add(distribution);
             }
 

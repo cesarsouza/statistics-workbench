@@ -96,6 +96,31 @@ namespace Unit_Tests
         }
 
         [TestMethod]
+        public void Gompertz()
+        {
+            var main = new MainViewModel();
+
+            // Select a Folded Normal distribution
+            int index = main.Distributions.IndexOf(
+                main.Distributions.Where(x => x.Name.Contains("Gompertz")).First());
+
+            main.SelectedDistributionIndex = index;
+
+            SpinWait.SpinUntil(() => main.SelectedDistribution.IsInitialized);
+
+            Assert.AreEqual(1, main.Estimate.Values.Count);
+            Assert.IsTrue(String.IsNullOrEmpty(main.Estimate.Message));
+
+            // Generate samples
+            Assert.AreEqual(1000, main.Estimate.NumberOfSamplesToBeGenerated);
+            main.Estimate.GenerateCommand.Execute(null);
+
+            Assert.AreEqual(1000, main.Estimate.Values.Count);
+            Assert.IsFalse(main.Estimate.Owner.SelectedDistribution.IsFittable);
+            Assert.IsFalse(String.IsNullOrEmpty(main.Estimate.Message));
+        }
+
+        [TestMethod]
         public void Estimate_UpdateOnEditTest()
         {
             var main = new MainViewModel();

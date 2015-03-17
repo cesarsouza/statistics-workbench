@@ -16,14 +16,14 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <oxy:PlotView VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="0" Grid.Row="0" Title="PDF" Model="{Binding DensityFunction}"/>
-        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="1" Grid.Row="0" Title="CDF" Model="{Binding DistributionFunction}"/>
-        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="0" Grid.Row="1" Title="Ln. PDF" Model="{Binding LogDensityFunction}"/>
-        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1"  Grid.Column="1" Grid.Row="1" Title="QDF" Model="{Binding InverseDistributionFunction}"/>
-        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1"  Grid.Column="0" Grid.Row="2" Title="HF" Model="{Binding HazardFunction}"/>
-        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="1" Grid.Row="2" Title="CHF"  Model="{Binding CumulativeHazardFunction}"/>
-        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1"  Grid.Column="0" Grid.Row="3" Title="QDF'" Model="{Binding QuantileDensityFunction}"/>
-        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="1" Grid.Row="3" Title="CCDF" Model="{Binding ComplementaryDistributionFunction}"/>
+        <oxy:PlotView VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="0" Grid.Row="0" Model="{Binding DensityFunction}"/>
+        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="1" Grid.Row="0" Model="{Binding DistributionFunction}"/>
+        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="0" Grid.Row="1" Model="{Binding LogDensityFunction}"/>
+        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1"  Grid.Column="1" Grid.Row="1" Model="{Binding InverseDistributionFunction}"/>
+        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1"  Grid.Column="0" Grid.Row="2" Model="{Binding HazardFunction}"/>
+        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="1" Grid.Row="2" Model="{Binding CumulativeHazardFunction}"/>
+        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1"  Grid.Column="0" Grid.Row="3" Model="{Binding QuantileDensityFunction}"/>
+        <oxy:PlotView VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="1" Grid.Row="3" Model="{Binding ComplementaryDistributionFunction}"/>
     </Grid>
 
 </UserControl>

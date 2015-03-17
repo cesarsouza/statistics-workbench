@@ -29,6 +29,8 @@ namespace Workbench.ViewModels
     [ImplementPropertyChanged]
     public class DistributionViewModel
     {
+        public MainViewModel Owner { get; private set; }
+
         /// <summary>
         ///   Gets a value indicating whether this instance is initialized.
         /// </summary>
@@ -52,6 +54,10 @@ namespace Workbench.ViewModels
         /// </summary>
         /// 
         public IUnivariateDistribution Instance { get; private set; }
+
+        public double SupportMax { get; private set; }
+
+        public double SupportMin { get; private set; }
 
         /// <summary>
         ///   Gets the parameters that can be set to create the distribution.
@@ -126,8 +132,9 @@ namespace Workbench.ViewModels
         ///   Initializes a new instance of the <see cref="DistributionViewModel"/> class.
         /// </summary>
         /// 
-        public DistributionViewModel()
+        public DistributionViewModel(MainViewModel owner)
         {
+            this.Owner = owner;
             this.Parameters = new ObservableCollection<ParameterViewModel>();
             this.Properties = new ObservableCollection<PropertyViewModel>();
             this.Measures = new MeasuresViewModel();
@@ -142,7 +149,7 @@ namespace Workbench.ViewModels
             if (!IsInitialized && !IsInitializing)
             {
                 IsInitializing = true;
-                Task.Factory.StartNew(() => this.update());
+                Task.Factory.StartNew(() => this.update(false));
             }
         }
 
@@ -162,16 +169,16 @@ namespace Workbench.ViewModels
                 Instance.Fit(sample, weights, Options);
             }
 
-            update(Instance);
+            update(Instance, estimating: true);
         }
 
 
         /// <summary>
         /// Attempts to create a new DistributionViewModel from a given type.
         /// </summary>
-        public static bool TryParse(Type type, Dictionary<string, DocumentationViewModel> doc, out DistributionViewModel distribution)
+        public static bool TryParse(MainViewModel owner, Type type, Dictionary<string, DocumentationViewModel> doc, out DistributionViewModel distribution)
         {
-            distribution = new DistributionViewModel();
+            distribution = new DistributionViewModel(owner);
 
             if (!typeof(IUnivariateDistribution).IsAssignableFrom(type))
                 return false;
@@ -248,35 +255,42 @@ namespace Workbench.ViewModels
 
         private void distribution_OnParameterChanged(object sender, EventArgs e)
         {
-            update(); // When a parameter has changed, we have to re-recreate the distribution.
+            update(false); // When a parameter has changed, we have to re-recreate the distribution.
         }
 
-        private void update()
+        private void update(bool estimating)
         {
             var instance = Constructor.Activate();
 
             if (instance != null)
-                update(instance);
+                update(instance, estimating);
 
             IsInitializing = false;
             IsInitialized = true;
             IsFittable = instance is IFittableDistribution<double>;
         }
 
-        private void update(IUnivariateDistribution instance)
+        private void update(IUnivariateDistribution instance, bool estimating)
         {
             this.Instance = instance;
+            this.SupportMax = Instance.Support.Max;
+            this.SupportMin = Instance.Support.Min;
             this.Measures.Update(instance);
             this.DensityFunction = this.Measures.CreatePDF();
 
             foreach (var property in Properties)
                 property.Update();
 
-            foreach (var param in Parameters)
+            Owner.Analysis.Update();
+
+            if (estimating)
             {
-                param.ValueChanged -= distribution_OnParameterChanged;
-                param.Sync();
-                param.ValueChanged += distribution_OnParameterChanged;
+                foreach (var param in Parameters)
+                {
+                    param.ValueChanged -= distribution_OnParameterChanged;
+                    param.Sync();
+                    param.ValueChanged += distribution_OnParameterChanged;
+                }
             }
         }
 

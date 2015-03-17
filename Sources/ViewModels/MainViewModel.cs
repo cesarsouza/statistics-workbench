@@ -51,6 +51,7 @@ namespace Workbench.ViewModels
         /// </summary>
         public EstimateViewModel Estimate { get; private set; }
 
+        public AnalysisViewModel Analysis { get ; private set; }
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="MainViewModel"/> class.
@@ -59,11 +60,12 @@ namespace Workbench.ViewModels
         public MainViewModel()
         {
             // Create ViewModels for each statistical distribution
-            var distributions = DistributionManager.GetDistributions();
+            var distributions = DistributionManager.GetDistributions(this);
             this.Distributions = new ObservableCollection<DistributionViewModel>(distributions);
             this.SelectedDistributionIndex = distributions.Find(x => x.Name == "Normal")[0];
 
             this.Estimate = new EstimateViewModel(this);
+            this.Analysis = new AnalysisViewModel(this);
         }
 
     }

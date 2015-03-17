@@ -36,6 +36,7 @@ namespace Workbench.ViewModels
         private double[] supportPoints;
         private double[] probabilities;
 
+        private double[] pdf;
 
         /// <summary>
         ///   Gets the current instance of the selected distribution
@@ -47,7 +48,11 @@ namespace Workbench.ViewModels
             update(instance);
         }
 
+        public DoubleRange Range { get { return range; } }
 
+        public double[] XAxis { get { return supportPoints; } }
+
+        public double[] YAxis { get { return pdf; } }
 
         /// <summary>
         ///   Data-bindable plot for the distribution's Distribution Function (CDF).
@@ -116,18 +121,17 @@ namespace Workbench.ViewModels
         ///
         public PlotModel CreatePDF()
         {
-            this.updateRange();
-
-            double[] y;
-            try { y = supportPoints.Apply(instance.ProbabilityFunction); }
+            try { pdf = supportPoints.Apply(instance.ProbabilityFunction); }
             catch
             {
                 var general = GeneralContinuousDistribution
                     .FromDistributionFunction(instance.Support, instance.DistributionFunction);
-                y = supportPoints.Apply(general.ProbabilityDensityFunction);
+                pdf = supportPoints.Apply(general.ProbabilityDensityFunction);
             }
 
-            return createBaseModel(range, "PDF", supportPoints, y);
+            correctDiscrete(pdf, 0);
+
+            return createBaseModel(range, "PDF", supportPoints, pdf);
         }
 
         /// <summary>
@@ -144,6 +148,8 @@ namespace Workbench.ViewModels
                     .FromDistributionFunction(instance.Support, instance.DistributionFunction);
                 y = supportPoints.Apply(general.LogProbabilityDensityFunction);
             }
+
+            correctDiscrete(y, Double.NegativeInfinity);
 
             return createBaseModel(range, "Log-PDF", supportPoints, y);
         }
@@ -190,6 +196,8 @@ namespace Workbench.ViewModels
                     y = supportPoints.Apply(general.DistributionFunction);
                 }
 
+                correctDiscrete(y, 0);
+
                 return createBaseModel(range, "CDF", supportPoints, y);
             }
             catch
@@ -212,6 +220,8 @@ namespace Workbench.ViewModels
                     .FromDensityFunction(instance.Support, instance.ProbabilityFunction);
                 y = supportPoints.Apply(general.ComplementaryDistributionFunction);
             }
+
+            correctDiscrete(y, 0);
 
             return createBaseModel(range, "CCDF", supportPoints, y);
         }
@@ -321,7 +331,7 @@ namespace Workbench.ViewModels
             plotModel.Series.Clear();
             plotModel.Axes.Clear();
 
-            var dateAxis = new OxyPlot.Axes.LinearAxis()
+            var xAxis = new OxyPlot.Axes.LinearAxis()
             {
                 Position = AxisPosition.Bottom,
                 Minimum = range.Value.Min,
@@ -332,7 +342,7 @@ namespace Workbench.ViewModels
                 IntervalLength = 80
             };
 
-            plotModel.Axes.Add(dateAxis);
+            plotModel.Axes.Add(xAxis);
 
             double ymin = y.FirstOrDefault(a => !Double.IsNaN(a) && !Double.IsInfinity(a));
             double ymax = ymin;
@@ -351,7 +361,7 @@ namespace Workbench.ViewModels
             double maxGrace = ymax * 0.1;
             double minGrace = ymin * 0.1;
 
-            var valueAxis = new LinearAxis()
+            var yAxis = new LinearAxis()
             {
                 Position = AxisPosition.Left,
                 Minimum = ymin - minGrace,
@@ -362,12 +372,12 @@ namespace Workbench.ViewModels
                 Title = title
             };
 
-            plotModel.Axes.Add(valueAxis);
+            plotModel.Axes.Add(yAxis);
 
             var lineSeries = new LineSeries
             {
-                YAxisKey = valueAxis.Key,
-                XAxisKey = dateAxis.Key,
+                YAxisKey = yAxis.Key,
+                XAxisKey = xAxis.Key,
                 StrokeThickness = 2,
                 MarkerSize = 3,
                 MarkerStroke = OxyColor.FromRgb(0, 0, 0),
@@ -408,6 +418,18 @@ namespace Workbench.ViewModels
             return plotModel;
         }
 
+        private void correctDiscrete(double[] y, double zero)
+        {
+            if (instance is UnivariateDiscreteDistribution)
+            {
+                for (int i = 0; i < supportPoints.Length; i++)
+                {
+                    if (!supportPoints[i].IsInteger(1e-5))
+                        y[i] = zero;
+                }
+            }
+        }
+
 
 
         private void update(IUnivariateDistribution instance)
@@ -426,7 +448,9 @@ namespace Workbench.ViewModels
 
         private void updateRange()
         {
-            DoubleRange range = new DoubleRange(0, 1);
+            double resolution = 100;
+
+            range = new DoubleRange(0, 1);
 
             try
             {
@@ -437,10 +461,28 @@ namespace Workbench.ViewModels
             {
             }
 
-            this.range = new DoubleRange(range.Min - 5, range.Max + 5);
+            if (range.Length == 0)
+                range = new DoubleRange(instance.Mean - 1, instance.Mean + 1);
+
+
+            double min = range.Min - Math.Abs(range.Length) * 0.1;
+            double max = range.Max + Math.Abs(range.Length) * 0.1;
+
+            this.range = new DoubleRange(min, max);
             this.unit = new DoubleRange(0, 1);
-            this.supportPoints = Matrix.Interval(range.Min, range.Max, (range.Length) / 1000.0);
-            this.probabilities = Matrix.Interval(0.0, 1.0, 1000);
+            this.probabilities = Matrix.Interval(0.0, 1.0, 1.0 / resolution);
+
+            this.supportPoints = Matrix.Interval(range.Min, range.Max, range.Length / resolution);
+
+            // make sure the support points include the important metrics
+            try { this.supportPoints = supportPoints.Concatenate(instance.Mean); }
+            catch { };
+            try { this.supportPoints = supportPoints.Concatenate(instance.Median); }
+            catch { };
+            try { this.supportPoints = supportPoints.Concatenate(instance.Mode); }
+            catch { };
+
+            Array.Sort(supportPoints);
         }
 
     }
