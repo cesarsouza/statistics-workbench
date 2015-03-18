@@ -48,10 +48,23 @@ namespace Workbench.ViewModels
             update(instance);
         }
 
+        /// <summary>
+        ///   Gets a suitable finite support interval for the distribution.
+        /// </summary>
+        /// 
         public DoubleRange Range { get { return range; } }
 
+        /// <summary>
+        ///   Gets a set of suitable input points in the distribution's domain.
+        /// </summary>
+        /// 
         public double[] XAxis { get { return supportPoints; } }
 
+        /// <summary>
+        ///   Gets the distribution probabilities (the output of the pdf)
+        ///   for the input points in <see cref="XAxis"/>.
+        /// </summary>
+        /// 
         public double[] YAxis { get { return pdf; } }
 
         /// <summary>

@@ -47,10 +47,15 @@ namespace Workbench.ViewModels
         }
 
         /// <summary>
-        /// Gets the ViewModel for estimating distributions.
+        ///   Gets the ViewModel for estimating distributions.
         /// </summary>
+        /// 
         public EstimateViewModel Estimate { get; private set; }
 
+        /// <summary>
+        ///   Gets the ViewModel for analyzing a distribution's density function.
+        /// </summary>
+        /// 
         public AnalysisViewModel Analysis { get ; private set; }
 
         /// <summary>

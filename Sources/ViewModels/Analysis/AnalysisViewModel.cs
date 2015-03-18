@@ -11,18 +11,33 @@ namespace Workbench.ViewModels
     using OxyPlot;
     using OxyPlot.Series;
     using PropertyChanged;
+    using System;
     using System.ComponentModel;
     using Workbench.Framework;
 
-
+    /// <summary>
+    ///   Shows details about a distribution's Probability Density Function. The user
+    ///   can interact with the distribution's PDF and ask for different visualizations
+    ///   given a range of inputs or probabilities.
+    /// </summary>
+    /// 
     [ImplementPropertyChanged]
     public class AnalysisViewModel : ViewModelBase
     {
+        /// <summary> Indicates X is between two values. </summary>
+        public const string Between = " < X < ";
 
-        private const string Between = "≤ X <";
-        private const string EqualTo = "= X";
-        private const string GreaterThan = "> X";
-        private const string LessThanOrEqualThan = "≤ X";
+        /// <summary> Indicates X is equal to a value. </summary>
+        public const string EqualTo = "X = ";
+
+        /// <summary> Indicates X is greater than a value. </summary>
+        public const string GreaterThan = "X > ";
+
+        /// <summary> Indicates X is less than a value. </summary>
+        public const string LessThan = "X < ";
+
+        /// <summary> Indicates X is outside a value. </summary>
+        public const string Outside = " < X ∪ X > ";
 
         private int selectedIndex;
         private double leftValue;
@@ -38,8 +53,11 @@ namespace Workbench.ViewModels
         public MainViewModel Owner { get; private set; }
 
 
-        public DistributionTail Tail { get; set; }
-
+        /// <summary>
+        ///   Gets or sets the left hand side of the probability range 
+        ///   specification, such as the 'A' in <c>p(A &lt; X &lt; B)</c>.
+        /// </summary>
+        /// 
         public double LeftValue
         {
             get { return leftValue; }
@@ -47,12 +65,20 @@ namespace Workbench.ViewModels
             {
                 if (leftValue != value)
                 {
+                    if (leftValue > rightValue)
+                        value = rightValue;
+
                     leftValue = value;
                     intervalChanged();
                 }
             }
         }
 
+        /// <summary>
+        ///   Gets or sets the right hand side of the probability range 
+        ///   specification, such as the 'B' in <c>p(A &lt; X &lt; B)</c>.
+        /// </summary>
+        /// 
         public double RightValue
         {
             get { return rightValue; }
@@ -61,18 +87,34 @@ namespace Workbench.ViewModels
                 if (rightValue != value)
                 {
                     if (rightValue < leftValue)
-                        value = leftValue;
+                        LeftValue = value;
+
                     rightValue = value;
                     intervalChanged();
                 }
             }
         }
 
-        public bool RightValueVisible
+        /// <summary>
+        ///   Gets whether the left hand side in the probability
+        ///   range definition must be visible. This should be the
+        ///   case only for between and outside, as in <c>a &lt; X &lt; b</c>
+        ///   and <c>a > X + X > b</c>, but not in <c>X > a</c> or <c>X &lt; b</c>.
+        /// </summary>
+        /// 
+        public bool LeftValueVisible
         {
-            get { return Comparisons[selectedIndex] == Between; }
+            get
+            {
+                return Comparisons[selectedIndex] == Between
+                    || Comparisons[selectedIndex] == Outside;
+            }
         }
 
+        /// <summary>
+        ///   Gets or sets the probability of the selected range.
+        /// </summary>
+        /// 
         public double Probability
         {
             get { return probability; }
@@ -86,8 +128,18 @@ namespace Workbench.ViewModels
             }
         }
 
+        /// <summary>
+        ///   Gets or sets the increment value for many controls that
+        ///   accept inserting input points for the distribution's PDF.
+        /// </summary>
+        /// 
         public double ValueStep { get; set; }
 
+        /// <summary>
+        ///   Gets or sets which comparison operation should be done in the
+        ///   probability calculation, such as '&lt;' in <c>p(X &lt; B)</c>.
+        /// </summary>
+        /// 
         public int ComparisonIndex
         {
             get { return selectedIndex; }
@@ -98,9 +150,16 @@ namespace Workbench.ViewModels
             }
         }
 
+        /// <summary>
+        ///   Gets the collection of possible comparisons that can be made.
+        /// </summary>
+        /// 
         public BindingList<string> Comparisons { get; private set; }
 
-
+        /// <summary>
+        ///   Gets the current plot for the distribution's probability density function.
+        /// </summary>
+        /// 
         public PlotModel DensityFunction { get; private set; }
 
 
@@ -114,7 +173,7 @@ namespace Workbench.ViewModels
 
             Comparisons = new BindingList<string>()
             {
-                LessThanOrEqualThan, Between, EqualTo, GreaterThan
+                LessThan, GreaterThan, EqualTo, Between, Outside
             };
 
             selectedIndex = 0;
@@ -133,23 +192,30 @@ namespace Workbench.ViewModels
 
                 switch (comparison)
                 {
-                    case LessThanOrEqualThan:
-                        Probability = instance.DistributionFunction(LeftValue);
+                    case LessThan:
+                        Probability = instance.DistributionFunction(RightValue);
                         break;
                     case GreaterThan:
-                        Probability = instance.ComplementaryDistributionFunction(LeftValue);
+                        Probability = instance.ComplementaryDistributionFunction(RightValue);
                         break;
                     case EqualTo:
-                        Probability = instance.ProbabilityFunction(LeftValue);
+                        Probability = instance.ProbabilityFunction(RightValue);
                         break;
                     case Between:
                         Probability = instance.DistributionFunction(LeftValue, RightValue);
+                        break;
+                    case Outside:
+                        Probability = 1 - instance.DistributionFunction(LeftValue, RightValue);
                         break;
                     default:
                         break;
                 }
 
                 Update();
+            }
+            catch
+            {
+                Probability = 0;
             }
             finally
             {
@@ -168,19 +234,20 @@ namespace Workbench.ViewModels
                 var instance = Owner.SelectedDistribution.Instance;
                 string comparison = Comparisons[selectedIndex];
 
+                LeftValue = 0;
                 RightValue = 0;
 
                 switch (comparison)
                 {
                     case Between:
-                    case LessThanOrEqualThan:
-                        LeftValue = instance.InverseDistributionFunction(Probability);
+                    case LessThan:
+                        RightValue = instance.InverseDistributionFunction(Probability);
                         break;
                     case GreaterThan:
-                        LeftValue = instance.InverseDistributionFunction(1.0 - Probability);
+                        RightValue = instance.InverseDistributionFunction(1.0 - Probability);
                         break;
                     case EqualTo:
-                        LeftValue = instance.QuantileDensityFunction(Probability);
+                        RightValue = instance.QuantileDensityFunction(Probability);
                         break;
                     default:
                         break;
@@ -188,12 +255,21 @@ namespace Workbench.ViewModels
 
                 Update();
             }
+            catch
+            {
+                RightValue = Double.NaN;
+                LeftValue = Double.NaN;
+            }
             finally
             {
                 automatic = false;
             }
         }
 
+        /// <summary>
+        ///   Updates the distribution's plot model.
+        /// </summary>
+        /// 
         public void Update()
         {
             var instance = Owner.SelectedDistribution.Instance;
@@ -213,42 +289,62 @@ namespace Workbench.ViewModels
                 area.YAxisKey = "yAxis";
                 area.MarkerType = MarkerType.Circle;
                 area.MarkerSize = 10;
-                area.Points.Add(new DataPoint(LeftValue, Probability));
+                area.Points.Add(new DataPoint(RightValue, Probability));
                 plot.Series.Add(area);
             }
             else
             {
-                var area = new AreaSeries();
-                area.XAxisKey = "xAxis";
-                area.YAxisKey = "yAxis";
-                area.Fill = OxyColor.FromRgb(250, 0, 0);
+                var left = new AreaSeries();
+                left.XAxisKey = "xAxis";
+                left.YAxisKey = "yAxis";
+                left.Fill = OxyColor.FromRgb(250, 0, 0);
+
+                var right = new AreaSeries();
+                right.XAxisKey = "xAxis";
+                right.YAxisKey = "yAxis";
+                right.Fill = OxyColor.FromRgb(250, 0, 0);
 
                 switch (comparison)
                 {
-                    case LessThanOrEqualThan:
+                    case LessThan:
                         for (int i = 0; i < x.Length; i++)
-                            if (x[i] <= LeftValue)
-                                area.Points.Add(new DataPoint(x[i], y[i]));
+                            if (x[i] <= RightValue)
+                                left.Points.Add(new DataPoint(x[i], y[i]));
                         break;
                     case GreaterThan:
                         for (int i = 0; i < x.Length; i++)
-                            if (x[i] > LeftValue)
-                                area.Points.Add(new DataPoint(x[i], y[i]));
+                            if (x[i] > RightValue)
+                                left.Points.Add(new DataPoint(x[i], y[i]));
                         break;
                     case Between:
                         for (int i = 0; i < x.Length; i++)
                             if (x[i] >= LeftValue && x[i] < RightValue)
-                                area.Points.Add(new DataPoint(x[i], y[i]));
+                                left.Points.Add(new DataPoint(x[i], y[i]));
+                        break;
+                    case Outside:
+                        for (int i = 0; i < x.Length; i++)
+                        {
+                            if (x[i] <= LeftValue)
+                                left.Points.Add(new DataPoint(x[i], y[i]));
+                            if (x[i] >= RightValue)
+                                right.Points.Add(new DataPoint(x[i], y[i]));
+                        }
                         break;
                     default:
                         break;
                 }
 
-                foreach (var point in area.Points)
-                    area.Points2.Add(new DataPoint(point.X, 0));
+                foreach (var point in left.Points)
+                    left.Points2.Add(new DataPoint(point.X, 0));
 
-                if (area.Points.Count > 0)
-                    plot.Series.Add(area);
+                foreach (var point in right.Points)
+                    right.Points2.Add(new DataPoint(point.X, 0));
+
+                if (left.Points.Count > 0)
+                    plot.Series.Add(left);
+
+                if (right.Points.Count > 0)
+                    plot.Series.Add(right);
             }
 
             DensityFunction = plot;

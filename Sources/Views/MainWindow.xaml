@@ -126,23 +126,23 @@
                         </Grid.RowDefinitions>
                         <oxy:PlotView  Grid.Row="0" Model="{Binding DensityFunction, Mode=OneWay}" />
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="1">
-                            <Label Content="P(" FontSize="24" FontWeight="Bold"/>
-                            <xctk:DoubleUpDown FontSize="24" Watermark="0.0" Width="100" Value="{Binding LeftValue, Mode=TwoWay}" 
+                            <Label Content="P(" FontSize="20" FontWeight="Bold"/>
+                            <xctk:DoubleUpDown FontSize="16" Watermark="0.0" Width="150" Value="{Binding LeftValue, Mode=TwoWay}" 
+                                               Visibility="{Binding LeftValueVisible, Converter={StaticResource BoolToVisibility}}"
                                            Minimum="{Binding Owner.SelectedDistribution.SupportMin}" 
                                            Maximum="{Binding Owner.SelectedDistribution.SupportMax}" 
                                            Increment="{Binding ValueStep}"
                                            Foreground="#FF1364C4" TextAlignment="Center" 
                                            MouseWheelActiveTrigger="MouseOver" BorderThickness="0" BorderBrush="{x:Null}" ShowButtonSpinner="False" />
-                            <ComboBox FontSize="24" FontWeight="Bold" ItemsSource="{Binding Comparisons}" SelectedIndex="{Binding ComparisonIndex, Mode=TwoWay}" BorderThickness="0" BorderBrush="{x:Null}" />
-                            <xctk:DoubleUpDown FontSize="24" Watermark="0.0" Width="100" Value="{Binding RightValue, Mode=TwoWay}" 
-                                               Visibility="{Binding RightValueVisible, Converter={StaticResource BoolToVisibility}}"
+                            <ComboBox FontSize="20" FontWeight="Bold" ItemsSource="{Binding Comparisons}" SelectedIndex="{Binding ComparisonIndex, Mode=TwoWay}" BorderThickness="0" BorderBrush="{x:Null}" />
+                            <xctk:DoubleUpDown FontSize="16" Watermark="0.0" Width="150" Value="{Binding RightValue, Mode=TwoWay}" 
                                            Minimum="{Binding Owner.SelectedDistribution.SupportMin}" 
                                            Maximum="{Binding Owner.SelectedDistribution.SupportMax}" 
                                           Increment="{Binding ValueStep}"
                                                Foreground="#FF1364C4" TextAlignment="Center" 
                                            MouseWheelActiveTrigger="MouseOver" BorderThickness="0" BorderBrush="{x:Null}" ShowButtonSpinner="False" />
-                            <Label Content=") = " FontSize="24" FontWeight="Bold" />
-                            <xctk:DoubleUpDown FontSize="24" Watermark="0.0" Width="100" Value="{Binding Probability, Mode=TwoWay}" 
+                            <Label Content=") = " FontSize="20" FontWeight="Bold" />
+                            <xctk:DoubleUpDown FontSize="16" Watermark="0.0" Width="150" Value="{Binding Probability, Mode=TwoWay}" 
                                            Minimum="0" Maximum="1" Increment="0.1"
                                                Foreground="#FF1364C4" TextAlignment="Center
                                                " MouseWheelActiveTrigger="MouseOver" BorderBrush="{x:Null}" ShowButtonSpinner="False" />

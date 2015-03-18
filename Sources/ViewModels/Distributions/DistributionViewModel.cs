@@ -29,6 +29,11 @@ namespace Workbench.ViewModels
     [ImplementPropertyChanged]
     public class DistributionViewModel
     {
+
+        /// <summary>
+        ///   Gets the parent view model.
+        /// </summary>
+        /// 
         public MainViewModel Owner { get; private set; }
 
         /// <summary>
@@ -55,8 +60,18 @@ namespace Workbench.ViewModels
         /// 
         public IUnivariateDistribution Instance { get; private set; }
 
+        /// <summary>
+        ///   Gets the maximum input point that can be feed into the
+        ///   distribution's functions such as the PDF or the CDF.
+        /// </summary>
+        /// 
         public double SupportMax { get; private set; }
 
+        /// <summary>
+        ///   Gets the minimum input point that can be feed into the
+        ///   distribution's functions such as the PDF or the CDF.
+        /// </summary>
+        /// 
         public double SupportMin { get; private set; }
 
         /// <summary>

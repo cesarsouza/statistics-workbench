@@ -100,13 +100,7 @@ namespace Unit_Tests
         {
             var main = new MainViewModel();
 
-            // Select a Folded Normal distribution
-            int index = main.Distributions.IndexOf(
-                main.Distributions.Where(x => x.Name.Contains("Gompertz")).First());
-
-            main.SelectedDistributionIndex = index;
-
-            SpinWait.SpinUntil(() => main.SelectedDistribution.IsInitialized);
+            main.SetDistribution("Gompertz");
 
             Assert.AreEqual(1, main.Estimate.Values.Count);
             Assert.IsTrue(String.IsNullOrEmpty(main.Estimate.Message));
@@ -119,6 +113,8 @@ namespace Unit_Tests
             Assert.IsFalse(main.Estimate.Owner.SelectedDistribution.IsFittable);
             Assert.IsFalse(String.IsNullOrEmpty(main.Estimate.Message));
         }
+
+
 
         [TestMethod]
         public void Estimate_UpdateOnEditTest()

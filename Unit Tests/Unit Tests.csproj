@@ -73,8 +73,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AnalysisViewModelTest.cs" />
     <Compile Include="MainViewModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
