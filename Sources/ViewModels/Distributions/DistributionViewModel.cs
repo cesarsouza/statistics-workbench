@@ -18,6 +18,7 @@ namespace Workbench.ViewModels
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
+    using Workbench.Framework;
     using Workbench.Tools;
 
     /// <summary>
@@ -27,8 +28,21 @@ namespace Workbench.ViewModels
     /// </summary>
     /// 
     [ImplementPropertyChanged]
-    public class DistributionViewModel
+    public class DistributionViewModel : ViewModelBase
     {
+
+        /// <summary>
+        ///   Occurs when the distribution is updated, such as after its
+        ///   parameters change or after it is re-estimated from the data.
+        /// </summary>
+        /// 
+        public event EventHandler Updated;
+
+        /// <summary>
+        ///   Occurs when all distribution's measures have been initiaized.
+        /// </summary>
+        /// 
+        public event EventHandler Initialized;
 
         /// <summary>
         ///   Gets the parent view model.
@@ -159,13 +173,15 @@ namespace Workbench.ViewModels
         ///   Asynchronously begin to initialize this instance. This method immediately returns.
         /// </summary>
         /// 
-        public void InitAsync()
+        public DistributionViewModel Activate()
         {
             if (!IsInitialized && !IsInitializing)
             {
                 IsInitializing = true;
                 Task.Factory.StartNew(() => this.update(false));
             }
+
+            return this;
         }
 
         /// <summary>
@@ -283,6 +299,9 @@ namespace Workbench.ViewModels
             IsInitializing = false;
             IsInitialized = true;
             IsFittable = instance is IFittableDistribution<double>;
+
+            if (Initialized != null)
+                Initialized(this, EventArgs.Empty);
         }
 
         private void update(IUnivariateDistribution instance, bool estimating)
@@ -296,8 +315,6 @@ namespace Workbench.ViewModels
             foreach (var property in Properties)
                 property.Update();
 
-            Owner.Analysis.Update();
-
             if (estimating)
             {
                 foreach (var param in Parameters)
@@ -307,6 +324,9 @@ namespace Workbench.ViewModels
                     param.ValueChanged += distribution_OnParameterChanged;
                 }
             }
+
+            if (IsInitialized && Updated != null)
+                Updated(this, EventArgs.Empty);
         }
 
     }

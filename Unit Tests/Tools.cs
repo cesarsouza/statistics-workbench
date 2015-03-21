@@ -13,8 +13,10 @@ namespace Unit_Tests
         public static void SetDistribution(this MainViewModel main, string distName)
         {
             // Select a Folded Normal distribution
-            int index = main.Distributions.IndexOf(
-                main.Distributions.Where(x => x.Name.Contains(distName)).First());
+            int index = main.Distributions.IndexOf(main.Distributions.
+                Where(x => x.Name.Contains(distName))
+                .OrderBy(x=>x.Name.Length)
+                .First());
 
             main.SelectedDistributionIndex = index;
 

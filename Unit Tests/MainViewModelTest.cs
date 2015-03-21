@@ -96,7 +96,7 @@ namespace Unit_Tests
         }
 
         [TestMethod]
-        public void Gompertz()
+        public void GompertzTest()
         {
             var main = new MainViewModel();
 
@@ -114,6 +114,24 @@ namespace Unit_Tests
             Assert.IsFalse(String.IsNullOrEmpty(main.Estimate.Message));
         }
 
+        [TestMethod]
+        public void TrapezoidalTest()
+        {
+            var main = new MainViewModel();
+
+            main.SetDistribution("Trapezoidal");
+
+            Assert.AreEqual(1, main.Estimate.Values.Count);
+            Assert.IsTrue(String.IsNullOrEmpty(main.Estimate.Message));
+
+            // Generate samples
+            Assert.AreEqual(1000, main.Estimate.NumberOfSamplesToBeGenerated);
+            main.Estimate.GenerateCommand.Execute(null);
+
+            Assert.AreEqual(1000, main.Estimate.Values.Count);
+            Assert.IsFalse(main.Estimate.Owner.SelectedDistribution.IsFittable);
+            Assert.IsFalse(String.IsNullOrEmpty(main.Estimate.Message));
+        }
 
 
         [TestMethod]

@@ -168,7 +168,7 @@ namespace Workbench.ViewModels
 
             this.Analysis = new ObservableCollection<GoodnessOfFitViewModel>();
 
-            this.NumberOfSamplesToBeGenerated = 1000;
+            this.NumberOfSamplesToBeGenerated = 100;
             this.IsUpdatedOnEdit = false;
 
             this.NewCommand = new RelayCommand(New_Execute);

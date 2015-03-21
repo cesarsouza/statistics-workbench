@@ -7,7 +7,7 @@
 
 namespace Workbench.ViewModels
 {
-    using Accord.Statistics.Testing;
+    using Accord.Statistics.Distributions.Univariate;
     using OxyPlot;
     using OxyPlot.Series;
     using PropertyChanged;
@@ -25,7 +25,7 @@ namespace Workbench.ViewModels
     public class AnalysisViewModel : ViewModelBase
     {
         /// <summary> Indicates X is between two values. </summary>
-        public const string Between = " < X < ";
+        public const string Between = " < X ≤ ";
 
         /// <summary> Indicates X is equal to a value. </summary>
         public const string EqualTo = "X = ";
@@ -34,7 +34,7 @@ namespace Workbench.ViewModels
         public const string GreaterThan = "X > ";
 
         /// <summary> Indicates X is less than a value. </summary>
-        public const string LessThan = "X < ";
+        public const string LessThan = "X ≤ ";
 
         /// <summary> Indicates X is outside a value. </summary>
         public const string Outside = " < X ∪ X > ";
@@ -43,14 +43,43 @@ namespace Workbench.ViewModels
         private double leftValue;
         private double rightValue;
         private double probability;
+        private DistributionViewModel distribution;
 
         private bool automatic;
+
 
         /// <summary>
         ///   Gets a reference for the parent <see cref="MainViewModel"/>.
         /// </summary>
         /// 
-        public MainViewModel Owner { get; private set; }
+        public DistributionViewModel SelectedDistribution
+        {
+            get { return distribution; }
+            set { OnDistributionChanged(value); }
+        }
+
+        private void OnDistributionChanged(DistributionViewModel value)
+        {
+            if (!value.IsInitialized)
+                throw new Exception();
+
+            if (distribution != null)
+                distribution.Updated -= distribution_DistributionUpdated;
+
+            distribution = value;
+            Probability = 0.5;
+            updateInterval();
+            updateChart();
+
+            distribution.Updated += distribution_DistributionUpdated;
+        }
+
+        void distribution_DistributionUpdated(object sender, EventArgs e)
+        {
+            updateInterval();
+            updateChart();
+        }
+
 
 
         /// <summary>
@@ -69,7 +98,7 @@ namespace Workbench.ViewModels
                         value = rightValue;
 
                     leftValue = value;
-                    intervalChanged();
+                    updateProbability();
                 }
             }
         }
@@ -90,7 +119,7 @@ namespace Workbench.ViewModels
                         LeftValue = value;
 
                     rightValue = value;
-                    intervalChanged();
+                    updateProbability();
                 }
             }
         }
@@ -123,7 +152,7 @@ namespace Workbench.ViewModels
                 if (probability != value)
                 {
                     probability = value;
-                    probabilityChanged();
+                    updateInterval();
                 }
             }
         }
@@ -146,7 +175,7 @@ namespace Workbench.ViewModels
             set
             {
                 selectedIndex = value;
-                intervalChanged();
+                updateProbability();
             }
         }
 
@@ -167,10 +196,8 @@ namespace Workbench.ViewModels
         ///   Initializes a new instance of the <see cref="MeasuresViewModel"/> class.
         /// </summary>
         /// 
-        public AnalysisViewModel(MainViewModel owner)
+        public AnalysisViewModel()
         {
-            this.Owner = owner;
-
             Comparisons = new BindingList<string>()
             {
                 LessThan, GreaterThan, EqualTo, Between, Outside
@@ -179,7 +206,9 @@ namespace Workbench.ViewModels
             selectedIndex = 0;
         }
 
-        private void intervalChanged()
+
+
+        private void updateProbability()
         {
             if (automatic)
                 return;
@@ -187,7 +216,7 @@ namespace Workbench.ViewModels
             try
             {
                 automatic = true;
-                var instance = Owner.SelectedDistribution.Instance;
+                var instance = SelectedDistribution.Instance;
                 string comparison = Comparisons[selectedIndex];
 
                 switch (comparison)
@@ -210,20 +239,19 @@ namespace Workbench.ViewModels
                     default:
                         break;
                 }
-
-                Update();
             }
             catch
             {
                 Probability = 0;
             }
-            finally
-            {
-                automatic = false;
-            }
+
+
+            updateChart();
+
+            automatic = false;
         }
 
-        private void probabilityChanged()
+        private void updateInterval()
         {
             if (automatic)
                 return;
@@ -231,7 +259,7 @@ namespace Workbench.ViewModels
             try
             {
                 automatic = true;
-                var instance = Owner.SelectedDistribution.Instance;
+                var instance = SelectedDistribution.Instance;
                 string comparison = Comparisons[selectedIndex];
 
                 LeftValue = 0;
@@ -253,101 +281,152 @@ namespace Workbench.ViewModels
                         break;
                 }
 
-                Update();
             }
             catch
             {
                 RightValue = Double.NaN;
                 LeftValue = Double.NaN;
             }
-            finally
-            {
-                automatic = false;
-            }
+
+            updateChart();
+
+            automatic = false;
         }
 
-        /// <summary>
-        ///   Updates the distribution's plot model.
-        /// </summary>
-        /// 
-        public void Update()
+        private void updateChart()
         {
-            var instance = Owner.SelectedDistribution.Instance;
-            var plot = Owner.SelectedDistribution.Measures.CreatePDF();
+            var instance = SelectedDistribution.Instance;
+            var plot = SelectedDistribution.Measures.CreatePDF();
 
-            ValueStep = Owner.SelectedDistribution.Measures.Range.Length / 100.0;
+            var colorTrue = OxyColor.FromRgb(250, 0, 0);
+            var colorFalse = OxyColor.FromRgb(200, 200, 200);
 
-            string comparison = Comparisons[selectedIndex];
+            if (Double.IsNaN(RightValue))
+                return;
 
-            var x = Owner.SelectedDistribution.Measures.XAxis;
-            var y = Owner.SelectedDistribution.Measures.YAxis;
 
-            if (comparison == EqualTo)
+            if (instance is UnivariateDiscreteDistribution)
             {
-                var area = new LineSeries();
-                area.XAxisKey = "xAxis";
-                area.YAxisKey = "yAxis";
-                area.MarkerType = MarkerType.Circle;
-                area.MarkerSize = 10;
-                area.Points.Add(new DataPoint(RightValue, Probability));
-                plot.Series.Add(area);
+                ValueStep = 1;
+
+                string comparison = Comparisons[selectedIndex];
+
+                var x = SelectedDistribution.Measures.XAxis;
+                var y = SelectedDistribution.Measures.YAxis;
+
+                var series = plot.Series[0] as ColumnSeries;
+
+                if (comparison == EqualTo)
+                {
+                    int index = Array.IndexOf(x, (int)RightValue);
+                    if (index >= 0)
+                        series.Items[index].Color = (index >= 0) ? colorTrue : colorFalse;
+                }
+                else
+                {
+                    switch (comparison)
+                    {
+                        case LessThan:
+                            for (int i = 0; i < x.Length; i++)
+                                series.Items[i].Color = (x[i] <= RightValue) ? colorTrue : colorFalse;
+                            break;
+                        case GreaterThan:
+                            for (int i = 0; i < x.Length; i++)
+                                series.Items[i].Color = (x[i] > RightValue) ? colorTrue : colorFalse;
+                            break;
+                        case Between:
+                            for (int i = 0; i < x.Length; i++)
+                                series.Items[i].Color = (x[i] > LeftValue && x[i] <= RightValue) ? colorTrue : colorFalse;
+                            break;
+                        case Outside:
+                            for (int i = 0; i < x.Length; i++)
+                                series.Items[i].Color = (x[i] <= LeftValue || x[i] > RightValue) ? colorTrue : colorFalse;
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
             else
             {
-                var left = new AreaSeries();
-                left.XAxisKey = "xAxis";
-                left.YAxisKey = "yAxis";
-                left.Fill = OxyColor.FromRgb(250, 0, 0);
+                ValueStep = SelectedDistribution.Measures.Range.Length / 100.0;
 
-                var right = new AreaSeries();
-                right.XAxisKey = "xAxis";
-                right.YAxisKey = "yAxis";
-                right.Fill = OxyColor.FromRgb(250, 0, 0);
+                string comparison = Comparisons[selectedIndex];
 
-                switch (comparison)
+                var x = SelectedDistribution.Measures.XAxis;
+                var y = SelectedDistribution.Measures.YAxis;
+
+                if (comparison == EqualTo)
                 {
-                    case LessThan:
-                        for (int i = 0; i < x.Length; i++)
-                            if (x[i] <= RightValue)
-                                left.Points.Add(new DataPoint(x[i], y[i]));
-                        break;
-                    case GreaterThan:
-                        for (int i = 0; i < x.Length; i++)
-                            if (x[i] > RightValue)
-                                left.Points.Add(new DataPoint(x[i], y[i]));
-                        break;
-                    case Between:
-                        for (int i = 0; i < x.Length; i++)
-                            if (x[i] >= LeftValue && x[i] < RightValue)
-                                left.Points.Add(new DataPoint(x[i], y[i]));
-                        break;
-                    case Outside:
-                        for (int i = 0; i < x.Length; i++)
-                        {
-                            if (x[i] <= LeftValue)
-                                left.Points.Add(new DataPoint(x[i], y[i]));
-                            if (x[i] >= RightValue)
-                                right.Points.Add(new DataPoint(x[i], y[i]));
-                        }
-                        break;
-                    default:
-                        break;
+                    var area = new LineSeries();
+                    area.XAxisKey = "xAxis";
+                    area.YAxisKey = "yAxis";
+                    area.MarkerType = MarkerType.Circle;
+                    area.MarkerSize = 10;
+                    area.Points.Add(new DataPoint(RightValue, Probability));
+                    plot.Series.Add(area);
                 }
+                else
+                {
+                    var left = new AreaSeries();
+                    left.XAxisKey = "xAxis";
+                    left.YAxisKey = "yAxis";
+                    left.Fill = colorTrue;
+                    left.Smooth = true;
 
-                foreach (var point in left.Points)
-                    left.Points2.Add(new DataPoint(point.X, 0));
+                    var right = new AreaSeries();
+                    right.XAxisKey = "xAxis";
+                    right.YAxisKey = "yAxis";
+                    right.Fill = colorTrue;
+                    right.Smooth = true;
 
-                foreach (var point in right.Points)
-                    right.Points2.Add(new DataPoint(point.X, 0));
+                    switch (comparison)
+                    {
+                        case LessThan:
+                            for (int i = 0; i < x.Length; i++)
+                                if (x[i] <= RightValue)
+                                    left.Points.Add(new DataPoint(x[i], y[i]));
+                            break;
+                        case GreaterThan:
+                            for (int i = 0; i < x.Length; i++)
+                                if (x[i] > RightValue)
+                                    left.Points.Add(new DataPoint(x[i], y[i]));
+                            break;
+                        case Between:
+                            for (int i = 0; i < x.Length; i++)
+                                if (x[i] >= LeftValue && x[i] < RightValue)
+                                    left.Points.Add(new DataPoint(x[i], y[i]));
+                            break;
+                        case Outside:
+                            for (int i = 0; i < x.Length; i++)
+                            {
+                                if (x[i] <= LeftValue)
+                                    left.Points.Add(new DataPoint(x[i], y[i]));
+                                if (x[i] >= RightValue)
+                                    right.Points.Add(new DataPoint(x[i], y[i]));
+                            }
+                            break;
+                        default:
+                            break;
+                    }
 
-                if (left.Points.Count > 0)
-                    plot.Series.Add(left);
+                    foreach (var point in left.Points)
+                        left.Points2.Add(new DataPoint(point.X, 0));
 
-                if (right.Points.Count > 0)
-                    plot.Series.Add(right);
+                    foreach (var point in right.Points)
+                        right.Points2.Add(new DataPoint(point.X, 0));
+
+                    if (left.Points.Count > 0)
+                        plot.Series.Add(left);
+
+                    if (right.Points.Count > 0)
+                        plot.Series.Add(right);
+                }
             }
 
-            DensityFunction = plot;
+            this.DensityFunction = plot;
         }
+
+
     }
 }

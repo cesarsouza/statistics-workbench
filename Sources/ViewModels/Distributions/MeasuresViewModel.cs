@@ -142,9 +142,7 @@ namespace Workbench.ViewModels
                 pdf = supportPoints.Apply(general.ProbabilityDensityFunction);
             }
 
-            correctDiscrete(pdf, 0);
-
-            return createBaseModel(range, "PDF", supportPoints, pdf);
+            return createBaseModel(range, "PDF", supportPoints, pdf, instance is UnivariateDiscreteDistribution);
         }
 
         /// <summary>
@@ -162,9 +160,7 @@ namespace Workbench.ViewModels
                 y = supportPoints.Apply(general.LogProbabilityDensityFunction);
             }
 
-            correctDiscrete(y, Double.NegativeInfinity);
-
-            return createBaseModel(range, "Log-PDF", supportPoints, y);
+            return createBaseModel(range, "Log-PDF", supportPoints, y, instance is UnivariateDiscreteDistribution);
         }
 
         /// <summary>
@@ -184,7 +180,7 @@ namespace Workbench.ViewModels
                     y = probabilities.Apply(general.QuantileDensityFunction);
                 }
 
-                return createBaseModel(unit, "IPDF", probabilities, y);
+                return createBaseModel(unit, "IPDF", probabilities, y, false);
             }
             catch
             {
@@ -209,9 +205,7 @@ namespace Workbench.ViewModels
                     y = supportPoints.Apply(general.DistributionFunction);
                 }
 
-                correctDiscrete(y, 0);
-
-                return createBaseModel(range, "CDF", supportPoints, y);
+                return createBaseModel(range, "CDF", supportPoints, y, instance is UnivariateDiscreteDistribution);
             }
             catch
             {
@@ -234,9 +228,7 @@ namespace Workbench.ViewModels
                 y = supportPoints.Apply(general.ComplementaryDistributionFunction);
             }
 
-            correctDiscrete(y, 0);
-
-            return createBaseModel(range, "CCDF", supportPoints, y);
+            return createBaseModel(range, "CCDF", supportPoints, y, instance is UnivariateDiscreteDistribution);
         }
 
         /// <summary>
@@ -263,7 +255,7 @@ namespace Workbench.ViewModels
                 }
             }
 
-            return createBaseModel(range, "CHF", supportPoints, y);
+            return createBaseModel(range, "CHF", supportPoints, y, instance is UnivariateDiscreteDistribution);
         }
 
         /// <summary>
@@ -292,7 +284,7 @@ namespace Workbench.ViewModels
                     }
                 }
 
-                return createBaseModel(unit, "QDF", probabilities, y);
+                return createBaseModel(unit, "QDF", probabilities, y, false);
             }
             catch
             {
@@ -326,7 +318,7 @@ namespace Workbench.ViewModels
                     }
                 }
 
-                return createBaseModel(range, "HF", supportPoints, y);
+                return createBaseModel(range, "HF", supportPoints, y, instance is UnivariateDiscreteDistribution);
             }
             catch
             {
@@ -338,29 +330,16 @@ namespace Workbench.ViewModels
 
 
 
-        private PlotModel createBaseModel(DoubleRange? range, string title, double[] x, double[] y)
+        private PlotModel createBaseModel(DoubleRange? range, string title, double[] x, double[] y, bool discrete)
         {
             var plotModel = new PlotModel();
             plotModel.Series.Clear();
             plotModel.Axes.Clear();
 
-            var xAxis = new OxyPlot.Axes.LinearAxis()
-            {
-                Position = AxisPosition.Bottom,
-                Minimum = range.Value.Min,
-                Maximum = range.Value.Max,
-                Key = "xAxis",
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineStyle = LineStyle.Dot,
-                IntervalLength = 80
-            };
-
-            plotModel.Axes.Add(xAxis);
-
             double ymin = y.FirstOrDefault(a => !Double.IsNaN(a) && !Double.IsInfinity(a));
             double ymax = ymin;
 
-            for (int i = 0; i < x.Length; i++)
+            for (int i = 0; i < y.Length; i++)
             {
                 if (Double.IsNaN(y[i]) || Double.IsInfinity(y[i]))
                     continue;
@@ -374,45 +353,98 @@ namespace Workbench.ViewModels
             double maxGrace = ymax * 0.1;
             double minGrace = ymin * 0.1;
 
-            var yAxis = new LinearAxis()
+
+            if (!discrete)
             {
-                Position = AxisPosition.Left,
-                Minimum = ymin - minGrace,
-                Maximum = ymax + maxGrace,
-                Key = "yAxis",
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineStyle = LineStyle.Dot,
-                Title = title
-            };
+                var xAxis = new OxyPlot.Axes.LinearAxis()
+                {
+                    Position = AxisPosition.Bottom,
+                    Minimum = range.Value.Min,
+                    Maximum = range.Value.Max,
+                    Key = "xAxis",
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    IntervalLength = 80
+                };
 
-            plotModel.Axes.Add(yAxis);
+                var yAxis = new LinearAxis()
+                {
+                    Position = AxisPosition.Left,
+                    Minimum = ymin - minGrace,
+                    Maximum = ymax + maxGrace,
+                    Key = "yAxis",
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    Title = title
+                };
 
-            var lineSeries = new LineSeries
+                plotModel.Axes.Add(xAxis);
+                plotModel.Axes.Add(yAxis);
+
+                var lineSeries = new LineSeries
+                {
+                    YAxisKey = yAxis.Key,
+                    XAxisKey = xAxis.Key,
+                    StrokeThickness = 2,
+                    MarkerSize = 3,
+                    MarkerStroke = OxyColor.FromRgb(0, 0, 0),
+                    MarkerType = MarkerType.None,
+                    Smooth = true,
+                };
+
+                for (int i = 0; i < x.Length; i++)
+                {
+                    if (Double.IsNaN(y[i]) || Double.IsInfinity(y[i]))
+                        continue;
+
+                    lineSeries.Points.Add(new DataPoint(x[i], y[i]));
+                }
+
+                plotModel.Series.Add(lineSeries);
+            }
+            else
             {
-                YAxisKey = yAxis.Key,
-                XAxisKey = xAxis.Key,
-                StrokeThickness = 2,
-                MarkerSize = 3,
-                MarkerStroke = OxyColor.FromRgb(0, 0, 0),
-                MarkerType = MarkerType.None,
-                CanTrackerInterpolatePoints = true,
-                Smooth = true,
-            };
+                var xAxis = new OxyPlot.Axes.CategoryAxis()
+                {
+                    Position = AxisPosition.Bottom,
+                    Key = "xAxis",
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                };
 
+                var yAxis = new LinearAxis()
+                {
+                    Position = AxisPosition.Left,
+                    Minimum = ymin - minGrace,
+                    Maximum = ymax + maxGrace,
+                    Key = "yAxis",
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    Title = title
+                };
 
+                plotModel.Axes.Add(xAxis);
+                plotModel.Axes.Add(yAxis);
 
-            for (int i = 0; i < x.Length; i++)
-            {
-                if (Double.IsNaN(y[i]) || Double.IsInfinity(y[i]))
-                    continue;
+                var boxSeries = new ColumnSeries
+                {
+                    YAxisKey = yAxis.Key,
+                    XAxisKey = xAxis.Key,
+                    StrokeThickness = 2,
+                    ColumnWidth = 1,
+                };
 
-                lineSeries.Points.Add(new DataPoint(x[i], y[i]));
+                for (int i = 0; i < x.Length; i++)
+                {
+                    xAxis.Labels.Add(x[i].ToString("G2"));
+                    var item = new ColumnItem(y[i]);
+                    boxSeries.Items.Add(item);
+                }
+
+                plotModel.Series.Add(boxSeries);
             }
 
-            plotModel.TitlePadding = 2;
-
             var formattable = instance as IFormattable;
-
             if (formattable != null)
             {
                 plotModel.Title = formattable.ToString("G3", CultureInfo.CurrentUICulture);
@@ -422,25 +454,13 @@ namespace Workbench.ViewModels
                 plotModel.Title = instance.ToString();
             }
 
+            plotModel.TitlePadding = 2;
             plotModel.TitleFontSize = 15;
             plotModel.TitleFontWeight = 1;
             plotModel.TitlePadding = 2;
 
-            plotModel.Series.Add(lineSeries);
 
             return plotModel;
-        }
-
-        private void correctDiscrete(double[] y, double zero)
-        {
-            if (instance is UnivariateDiscreteDistribution)
-            {
-                for (int i = 0; i < supportPoints.Length; i++)
-                {
-                    if (!supportPoints[i].IsInteger(1e-5))
-                        y[i] = zero;
-                }
-            }
         }
 
 
@@ -461,8 +481,6 @@ namespace Workbench.ViewModels
 
         private void updateRange()
         {
-            double resolution = 100;
-
             range = new DoubleRange(0, 1);
 
             try
@@ -477,25 +495,42 @@ namespace Workbench.ViewModels
             if (range.Length == 0)
                 range = new DoubleRange(instance.Mean - 1, instance.Mean + 1);
 
-
-            double min = range.Min - Math.Abs(range.Length) * 0.1;
-            double max = range.Max + Math.Abs(range.Length) * 0.1;
-
-            this.range = new DoubleRange(min, max);
+            double resolution = 100;
             this.unit = new DoubleRange(0, 1);
             this.probabilities = Matrix.Interval(0.0, 1.0, 1.0 / resolution);
 
-            this.supportPoints = Matrix.Interval(range.Min, range.Max, range.Length / resolution);
+            if (instance is UnivariateDiscreteDistribution)
+            {
+                this.supportPoints = Matrix.Interval(range.Min, range.Max, 1.0);
+            }
+            else
+            {
+                double min = range.Min - Math.Abs(range.Length) * 0.1;
+                double max = range.Max + Math.Abs(range.Length) * 0.1;
 
-            // make sure the support points include the important metrics
-            try { this.supportPoints = supportPoints.Concatenate(instance.Mean); }
-            catch { };
-            try { this.supportPoints = supportPoints.Concatenate(instance.Median); }
-            catch { };
-            try { this.supportPoints = supportPoints.Concatenate(instance.Mode); }
-            catch { };
+                this.range = new DoubleRange(min, max);
 
-            Array.Sort(supportPoints);
+                this.supportPoints = Matrix.Interval(range.Min, range.Max, range.Length / resolution);
+
+                // make sure the support points include the important metrics
+
+                concatenate(() => instance.Mean);
+                concatenate(() => instance.Median);
+                concatenate(() => instance.Mode);
+                Array.Sort(supportPoints);
+            }
+
+        }
+
+        private void concatenate(Func<double> property)
+        {
+            try
+            {
+                double value = property();
+                if (!Double.IsNaN(value) && !Double.IsInfinity(value))
+                    this.supportPoints = supportPoints.Concatenate(value);
+            }
+            catch { };
         }
 
     }

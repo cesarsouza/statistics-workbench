@@ -5,6 +5,9 @@ using System.Windows;
 using System.Linq;
 using System.Windows.Input;
 using System.Threading;
+using OxyPlot;
+using OxyPlot.Series;
+using Accord.Statistics.Distributions.Univariate;
 
 namespace Unit_Tests
 {
@@ -19,6 +22,8 @@ namespace Unit_Tests
         {
             var main = new MainViewModel();
             main.SetDistribution("Normal");
+
+            Assert.IsTrue(main.SelectedDistribution.Instance is NormalDistribution);
 
             AnalysisViewModel target = main.Analysis;
             Assert.IsFalse(target.LeftValueVisible);
@@ -192,6 +197,111 @@ namespace Unit_Tests
             target.Probability = Double.NaN;
             target.ComparisonIndex = target.Comparisons.IndexOf(comparison);
             target.Probability = probability;
+        }
+
+
+
+        [TestMethod]
+        public void ConstructorTest_DiscreteColors()
+        {
+            var main = new MainViewModel();
+
+            main.SetDistribution("Binomial");
+            main.GetParameter("Trials").Value = 9;
+            main.GetParameter("Probability").Value = 0.5;
+
+            var target = main.Analysis;
+            Assert.AreEqual(main.SelectedDistribution, target.SelectedDistribution);
+
+            var red = OxyColor.FromRgb(250, 0, 0);
+            PlotModel plot; 
+            ColumnSeries series;
+
+            compute(target, 0, AnalysisViewModel.LessThan, 3);
+            plot = target.DensityFunction;
+            series = plot.Series[0] as ColumnSeries;
+            Assert.AreEqual(1, plot.Series.Count);
+            Assert.AreEqual(8, series.Items.Count);
+
+            Assert.AreEqual(red, series.Items[0].Color);
+            Assert.AreEqual(red, series.Items[1].Color);
+            Assert.AreEqual(red, series.Items[2].Color);
+            Assert.AreNotEqual(red, series.Items[3].Color);
+            Assert.AreNotEqual(red, series.Items[4].Color);
+            Assert.AreNotEqual(red, series.Items[5].Color);
+            Assert.AreNotEqual(red, series.Items[6].Color);
+            Assert.AreNotEqual(red, series.Items[7].Color);
+
+            compute(target, 0, AnalysisViewModel.LessThan, 4);
+            plot = target.DensityFunction;
+            series = plot.Series[0] as ColumnSeries;
+            Assert.AreEqual(1, plot.Series.Count);
+            Assert.AreEqual(8, series.Items.Count);
+
+            Assert.AreEqual(red, series.Items[0].Color);
+            Assert.AreEqual(red, series.Items[1].Color);
+            Assert.AreEqual(red, series.Items[2].Color);
+            Assert.AreEqual(red, series.Items[3].Color);
+            Assert.AreNotEqual(red, series.Items[4].Color);
+            Assert.AreNotEqual(red, series.Items[5].Color);
+            Assert.AreNotEqual(red, series.Items[6].Color);
+            Assert.AreNotEqual(red, series.Items[7].Color);
+
+            compute(target, 0, AnalysisViewModel.LessThan, 5);
+            plot = target.DensityFunction;
+            series = plot.Series[0] as ColumnSeries;
+            Assert.AreEqual(1, plot.Series.Count);
+            Assert.AreEqual(8, series.Items.Count);
+
+            Assert.AreEqual(red, series.Items[0].Color);
+            Assert.AreEqual(red, series.Items[1].Color);
+            Assert.AreEqual(red, series.Items[2].Color);
+            Assert.AreEqual(red, series.Items[3].Color);
+            Assert.AreEqual(red, series.Items[4].Color);
+            Assert.AreNotEqual(red, series.Items[5].Color);
+            Assert.AreNotEqual(red, series.Items[6].Color);
+            Assert.AreNotEqual(red, series.Items[7].Color);
+        }
+
+        [TestMethod]
+        public void ConstructorTest_NoncentralT()
+        {
+            var main = new MainViewModel();
+
+            main.SetDistribution("Noncentral T");
+            Assert.AreEqual(1, main.GetParameter("Degrees Of Freedom").Value);
+            Assert.AreEqual(0, main.GetParameter("Noncentrality").Value);
+
+            var target = main.Analysis;
+            var red = OxyColor.FromRgb(250, 0, 0);
+            var plot = target.DensityFunction;
+            var line = plot.Series[0] as LineSeries;
+            var area = plot.Series[1] as AreaSeries;
+
+            Assert.IsNotNull(line);
+            Assert.IsNotNull(area);
+        }
+
+        [TestMethod]
+        public void ConstructorTest_Rebind()
+        {
+            var main = new MainViewModel();
+
+            main.SetDistribution("Binomial");
+            main.GetParameter("Trials").Value = 2000;
+            main.GetParameter("Probability").Value = 0.063;
+
+            Assert.IsTrue(main.SelectedDistribution.Instance is BinomialDistribution);
+
+            var target = main.Analysis;
+            compute(target, 0, AnalysisViewModel.LessThan, 2);
+            compute(target, 0, AnalysisViewModel.LessThan, 53);
+
+            main.SetDistribution("Normal");
+            target = main.Analysis;
+            Assert.AreEqual(target.SelectedDistribution, main.SelectedDistribution);
+
+            Assert.IsTrue(main.SelectedDistribution.Instance is NormalDistribution);
         }
 
     }

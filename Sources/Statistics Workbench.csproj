@@ -251,6 +251,9 @@
     <Compile Include="Views\DocumentationView.xaml.cs">
       <DependentUpon>DocumentationView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AnalysisView.xaml.cs">
+      <DependentUpon>AnalysisView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MeasuresView.xaml.cs">
       <DependentUpon>MeasuresView.xaml</DependentUpon>
     </Compile>
@@ -281,6 +284,10 @@
     <Page Include="Views\DocumentationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AnalysisView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MeasuresView.xaml">
       <SubType>Designer</SubType>
