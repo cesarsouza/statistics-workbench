@@ -215,8 +215,12 @@ namespace Workbench.ViewModels
             {
                 FileName = "Sample",
                 DefaultExt = ".csv",
-                Filter = saveFormats.GetFilterString(false)
+                Filter = saveFormats.GetFilterString(false),
+                InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources\\Samples\\")
             };
+
+            if (!String.IsNullOrEmpty(lastSavePath))
+                dlg.InitialDirectory = lastSavePath;
 
             // Show save file dialog box
             var result = dlg.ShowDialog();
@@ -241,8 +245,13 @@ namespace Workbench.ViewModels
             {
                 FileName = "Sample",
                 DefaultExt = ".csv",
-                Filter = loadFormats.GetFilterString(true)
+                Filter = loadFormats.GetFilterString(true),
+                FilterIndex = loadFormats.IndexOf("*.csv") + 1,
+                InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources\\Samples\\")
             };
+
+            if (!String.IsNullOrEmpty(lastSavePath))
+                dlg.InitialDirectory = lastSavePath;
 
             // Show open file dialog box
             var result = dlg.ShowDialog();

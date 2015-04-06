@@ -6,7 +6,7 @@
       xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       x:Class="Workbench.Views.AnalysisView" 
-      mc:Ignorable="d" Height="300" Width="400">
+      mc:Ignorable="d" Height="600" Width="700">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     </UserControl.Resources>

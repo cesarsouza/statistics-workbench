@@ -10,6 +10,7 @@ namespace Workbench.Formats
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
 
     /// <summary>
     ///   File format collection.
@@ -43,9 +44,23 @@ namespace Workbench.Formats
                 filters.Add(format.Filter);
 
             if (includeAllFiles)
-                filters.Add("All files (*.*)|(*.*)");
+                filters.Add("All files (*.*)|*.*");
 
             return String.Join("|", filters);
+        }
+
+        /// <summary>
+        ///   Searches the collection for the first format that has the
+        ///   specified extension and returns its index in the collection.
+        /// </summary>
+        /// 
+        /// <param name="extension">The extension to be searched.</param>
+        /// 
+        /// <returns>The index of the item in the collection, or -1 if not found.</returns>
+        /// 
+        public int IndexOf(string extension)
+        {
+            return IndexOf(this.Where(x => x.Extension == extension).FirstOrDefault());
         }
     }
 }

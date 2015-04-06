@@ -322,6 +322,12 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="Resources\Samples\Sample.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Samples\Sample.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StatisticsWorkbench.pfx" />
     <None Include="ViewModels\Distributions\Workbench.Distributions.cd" />
     <None Include="ViewModels\Documentation\Workbench.Documentation.cd" />
