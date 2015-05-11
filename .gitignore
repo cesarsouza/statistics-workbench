@@ -1,8 +1,9 @@
 /Binaries
 /Sources/obj
-/Packages
+
 /packages
+/Sources/Resources/Template/packages
 
 *.suo
 *.user
-
+*.GhostDoc.xml
