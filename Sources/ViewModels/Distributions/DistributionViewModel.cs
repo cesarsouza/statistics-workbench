@@ -211,10 +211,12 @@ namespace Workbench.ViewModels
         {
             distribution = new DistributionViewModel(owner);
 
-            if (!typeof(IUnivariateDistribution).IsAssignableFrom(type))
+            if (!typeof(IUnivariateDistribution).IsAssignableFrom(type) || !doc.ContainsKey(type.Name))
                 return false;
 
+
             string name = DistributionManager.GetDistributionName(type);
+
 
             // Extract all properties with return value of double
             //
