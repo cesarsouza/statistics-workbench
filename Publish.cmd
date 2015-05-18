@@ -9,7 +9,7 @@ echo and pack the binaries and sources of the Statistics Workbench.
 echo. 
 
 :: Configuration
-set version=1.0.0.0
+set version=1.0.0.1
 
 :: Executables
 set devenv="C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe"
