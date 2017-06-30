@@ -21,7 +21,6 @@ namespace Workbench.ViewModels
     ///   given a range of inputs or probabilities.
     /// </summary>
     /// 
-    [ImplementPropertyChanged]
     public class AnalysisViewModel : ViewModelBase
     {
         /// <summary> Indicates X is between two values. </summary>

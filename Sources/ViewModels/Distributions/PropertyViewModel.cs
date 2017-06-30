@@ -17,7 +17,6 @@ namespace Workbench.ViewModels
     ///   such as its Mean, Median or Variance.
     /// </summary>
     /// 
-    [ImplementPropertyChanged]
     public class PropertyViewModel
     {
 

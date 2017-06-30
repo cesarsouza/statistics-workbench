@@ -221,7 +221,7 @@ namespace Unit_Tests
             plot = target.DensityFunction;
             series = plot.Series[0] as ColumnSeries;
             Assert.AreEqual(1, plot.Series.Count);
-            Assert.AreEqual(8, series.Items.Count);
+            Assert.AreEqual(7, series.Items.Count);
 
             Assert.AreEqual(red, series.Items[0].Color);
             Assert.AreEqual(red, series.Items[1].Color);
@@ -230,13 +230,12 @@ namespace Unit_Tests
             Assert.AreNotEqual(red, series.Items[4].Color);
             Assert.AreNotEqual(red, series.Items[5].Color);
             Assert.AreNotEqual(red, series.Items[6].Color);
-            Assert.AreNotEqual(red, series.Items[7].Color);
 
             compute(target, 0, AnalysisViewModel.LessThan, 4);
             plot = target.DensityFunction;
             series = plot.Series[0] as ColumnSeries;
             Assert.AreEqual(1, plot.Series.Count);
-            Assert.AreEqual(8, series.Items.Count);
+            Assert.AreEqual(7, series.Items.Count);
 
             Assert.AreEqual(red, series.Items[0].Color);
             Assert.AreEqual(red, series.Items[1].Color);
@@ -245,7 +244,6 @@ namespace Unit_Tests
             Assert.AreNotEqual(red, series.Items[4].Color);
             Assert.AreNotEqual(red, series.Items[5].Color);
             Assert.AreNotEqual(red, series.Items[6].Color);
-            Assert.AreNotEqual(red, series.Items[7].Color);
 
             compute(target, 0, AnalysisViewModel.LessThan, 5);
             plot = target.DensityFunction;
@@ -260,7 +258,6 @@ namespace Unit_Tests
             Assert.AreEqual(red, series.Items[4].Color);
             Assert.AreNotEqual(red, series.Items[5].Color);
             Assert.AreNotEqual(red, series.Items[6].Color);
-            Assert.AreNotEqual(red, series.Items[7].Color);
         }
 
         [TestMethod]

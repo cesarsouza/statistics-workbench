@@ -87,10 +87,10 @@ namespace Unit_Tests
             Assert.IsTrue(String.IsNullOrEmpty(main.Estimate.Message));
 
             // Generate samples
-            Assert.AreEqual(1000, main.Estimate.NumberOfSamplesToBeGenerated);
+            Assert.AreEqual(100, main.Estimate.NumberOfSamplesToBeGenerated);
             main.Estimate.GenerateCommand.Execute(null);
 
-            Assert.AreEqual(1000, main.Estimate.Values.Count);
+            Assert.AreEqual(100, main.Estimate.Values.Count);
             Assert.IsFalse(main.Estimate.Owner.SelectedDistribution.IsFittable);
             Assert.IsFalse(String.IsNullOrEmpty(main.Estimate.Message));
         }
@@ -106,10 +106,10 @@ namespace Unit_Tests
             Assert.IsTrue(String.IsNullOrEmpty(main.Estimate.Message));
 
             // Generate samples
-            Assert.AreEqual(1000, main.Estimate.NumberOfSamplesToBeGenerated);
+            Assert.AreEqual(100, main.Estimate.NumberOfSamplesToBeGenerated);
             main.Estimate.GenerateCommand.Execute(null);
 
-            Assert.AreEqual(1000, main.Estimate.Values.Count);
+            Assert.AreEqual(100, main.Estimate.Values.Count);
             Assert.IsFalse(main.Estimate.Owner.SelectedDistribution.IsFittable);
             Assert.IsFalse(String.IsNullOrEmpty(main.Estimate.Message));
         }
@@ -125,10 +125,10 @@ namespace Unit_Tests
             Assert.IsTrue(String.IsNullOrEmpty(main.Estimate.Message));
 
             // Generate samples
-            Assert.AreEqual(1000, main.Estimate.NumberOfSamplesToBeGenerated);
+            Assert.AreEqual(100, main.Estimate.NumberOfSamplesToBeGenerated);
             main.Estimate.GenerateCommand.Execute(null);
 
-            Assert.AreEqual(1000, main.Estimate.Values.Count);
+            Assert.AreEqual(100, main.Estimate.Values.Count);
             Assert.IsFalse(main.Estimate.Owner.SelectedDistribution.IsFittable);
             Assert.IsFalse(String.IsNullOrEmpty(main.Estimate.Message));
         }
@@ -162,6 +162,34 @@ namespace Unit_Tests
 
             Assert.AreEqual(2.5, main.SelectedDistribution.Instance.Mean);
             Assert.AreEqual(3.5, main.SelectedDistribution.Instance.Variance);
+        }
+
+        [TestMethod]
+        public void Documentation_Test()
+        {
+            var main = new MainViewModel();
+            SpinWait.SpinUntil(() => main.SelectedDistribution.IsInitialized);
+            Assert.AreEqual("Normal", main.SelectedDistribution.Name);
+
+            main.SetDistribution("Gamma");
+            SpinWait.SpinUntil(() => main.SelectedDistribution.IsInitialized);
+            Assert.AreEqual("Gamma", main.SelectedDistribution.Name);
+
+            var doc = main.SelectedDistribution.Documentation;
+
+            Assert.AreEqual("Gamma", doc.Name);
+
+            Assert.AreEqual(3459, doc.Remarks.Length);
+            Assert.AreEqual(2, doc.SeeAlso.Count);
+
+            string expectedSummary = @"<StackPanel>
+<TextBlock>
+Gamma distribution.</TextBlock>
+</StackPanel>
+";
+
+            Assert.AreEqual(expectedSummary, doc.Summary);
+            Assert.AreEqual(1, doc.Example.Length);
         }
     }
 }

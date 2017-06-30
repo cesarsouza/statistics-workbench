@@ -18,7 +18,6 @@ namespace Workbench.ViewModels
     ///   distribution list in the Estimate window.
     /// </summary>
     /// 
-    [ImplementPropertyChanged]
     public class GoodnessOfFitViewModel
     {
         /// <summary>

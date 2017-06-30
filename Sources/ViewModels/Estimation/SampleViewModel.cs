@@ -15,7 +15,6 @@ namespace Workbench.ViewModels
     ///   in the Estimation tab of the application.
     /// </summary>
     /// 
-    [ImplementPropertyChanged]
     public class SampleViewModel
     {
         /// <summary>

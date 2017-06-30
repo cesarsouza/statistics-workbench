@@ -30,7 +30,6 @@ namespace Workbench.ViewModels
     ///   Distribution estimation (fitting) view model.
     /// </summary>
     /// 
-    [ImplementPropertyChanged]
     public class EstimateViewModel : ViewModelBase
     {
         FormatCollection saveFormats = new FormatCollection
@@ -41,7 +40,7 @@ namespace Workbench.ViewModels
 
         FormatCollection loadFormats = new FormatCollection
         {
-            new XlsxFileFormat(), 
+            new XlsxFileFormat(),
             new XlsFileFormat(), new CsvFileFormat(), new TsvFileFormat(),
             new XmlFileFormat(), new BinFileFormat(), new MatFileFormat()
         };
@@ -263,7 +262,7 @@ namespace Workbench.ViewModels
 
                 DataTable table = fmt.Read(new FileStream(dlg.FileName, FileMode.Open));
 
-                double[][] values = table.ToArray();
+                double[][] values = table.ToJagged();
 
                 Values.Clear();
                 foreach (double[] row in values)
@@ -314,14 +313,12 @@ namespace Workbench.ViewModels
                 }
             }
 
-            var analysis = new DistributionAnalysis(values);
+            var analysis = new DistributionAnalysis();
 
-            analysis.Compute();
+            var gof = analysis.Learn(values);
 
             var fit = System.Linq.Enumerable
-                .Select<KeyValuePair<string, GoodnessOfFit>, GoodnessOfFit>(
-                analysis.GoodnessOfFit,
-                x => x.Value).ToArray();
+                .Select<KeyValuePair<string, GoodnessOfFit>, GoodnessOfFit>(gof, x => x.Value).ToArray();
 
             this.Analysis.Clear();
             foreach (GoodnessOfFit c in fit.OrderBy(x => x.ChiSquareRank))
@@ -419,7 +416,7 @@ namespace Workbench.ViewModels
 
             try
             {
-                double[] values = generate.Generate(NumberOfSamplesToBeGenerated);
+                double[] values = generate.Generate(samples: NumberOfSamplesToBeGenerated);
 
                 Values.Clear();
                 foreach (var d in values)

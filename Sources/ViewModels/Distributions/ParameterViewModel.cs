@@ -7,6 +7,7 @@
 
 namespace Workbench.ViewModels
 {
+    using Accord;
     using AForge;
     using PropertyChanged;
     using System;
@@ -19,7 +20,6 @@ namespace Workbench.ViewModels
     ///   standard deviation values needed to create a Normal distribution.
     /// </summary>
     /// 
-    [ImplementPropertyChanged]
     public class ParameterViewModel
     {
         private double? value;

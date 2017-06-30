@@ -18,7 +18,6 @@ namespace Workbench.ViewModels
     ///   Main view model associated with the main application window.
     /// </summary>
     /// 
-    [ImplementPropertyChanged]
     public class MainViewModel : ViewModelBase
     {
         private int selectedIndex = 0;

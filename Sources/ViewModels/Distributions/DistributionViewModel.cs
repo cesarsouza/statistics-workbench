@@ -27,7 +27,6 @@ namespace Workbench.ViewModels
     ///   can select the distribution parameter's and instantiate or estimate it.
     /// </summary>
     /// 
-    [ImplementPropertyChanged]
     public class DistributionViewModel : ViewModelBase
     {
 

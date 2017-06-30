@@ -10,6 +10,7 @@ using Accord.Statistics.Distributions.Multivariate;
 using Accord.Statistics.Analysis;
 using Accord.Statistics.Distributions.Fitting;
 using Accord.MachineLearning;
+using System.Globalization;
 
 namespace Unit_Tests
 {
@@ -23,7 +24,7 @@ namespace Unit_Tests
             var normal = new NormalDistribution(2, 5);
 
             // Generate 1000000 samples from it
-            double[] samples = normal.Generate(1000000);
+            double[] samples = normal.Generate(10000000);
 
             // Try to estimate a new Normal distribution from the 
             // generated samples to check if they indeed match
@@ -31,7 +32,7 @@ namespace Unit_Tests
 
             string result = actual.ToString("N2"); // N(x; μ = 2.01, σ² = 25.03)
 
-            Assert.AreEqual("N(x; μ = 2.01, σ² = 25.03)", result);
+            Assert.AreEqual("N(x; μ = 2.00, σ² = 25.00)", result);
         }
 
         [TestMethod]
@@ -60,10 +61,10 @@ namespace Unit_Tests
             double[] mu = { 2.0, 6.0 };
 
             // covariance
-            double[,] cov = 
+            double[,] cov =
             {
                 { 2, 1 },
-                { 1, 5 } 
+                { 1, 5 }
             };
 
             // Create a multivariate Normal distribution
@@ -92,25 +93,25 @@ namespace Unit_Tests
             // Let's pretend we don't know from which distribution
             // those sample come from, and create an analysis object
             // to check it for us:
-            var analysis = new DistributionAnalysis(samples);
+            var analysis = new DistributionAnalysis();
 
             // Compute the analysis
-            analysis.Compute();
+            var gof = analysis.Learn(samples);
 
             // Get the most likely distribution
-            var mostLikely = analysis.GoodnessOfFit[0];
+            var mostLikely = gof[0];
 
             // The result should be Poisson(x; λ = 0.420961)
-            var result = mostLikely.Distribution.ToString();
+            var result = (mostLikely.Distribution as IFormattable).ToString("N3", CultureInfo.InvariantCulture);
 
-            Assert.AreEqual("Poisson(x; λ = 0.420961)", result);
+            Assert.AreEqual("Poisson(x; λ = 0.422)", result);
         }
 
         [TestMethod]
         public void MixtureDistributionExample()
         {
-            var samples1 = new NormalDistribution(mean: -2, stdDev: 1).Generate(100000);
-            var samples2 = new NormalDistribution(mean: +4, stdDev: 1).Generate(100000);
+            var samples1 = new NormalDistribution(mean: -2, stdDev: 1).Generate(10000000);
+            var samples2 = new NormalDistribution(mean: +4, stdDev: 1).Generate(10000000);
 
             // Mix the samples from both distributions
             var samples = samples1.Concatenate(samples2);
@@ -126,8 +127,8 @@ namespace Unit_Tests
             var a = mixture.Components[0].ToString("N2"); // N(x; μ = -2.00, σ² = 1.00)
             var b = mixture.Components[1].ToString("N2"); // N(x; μ =  4.00, σ² = 1.02)
 
-            Assert.AreEqual("N(x; μ = -2.00, σ² = 1.00)", a);
-            Assert.AreEqual("N(x; μ = 4.00, σ² = 1.02)", b);
+            Assert.AreEqual("N(x; μ = -2.00, σ² = 0.99)", a);
+            Assert.AreEqual("N(x; μ = 4.00, σ² = 1.01)", b);
         }
 
         [TestMethod]
@@ -137,7 +138,7 @@ namespace Unit_Tests
             double[][] samples =
             {
                 new double[] { 0, 1 },
-                new double[] { 1, 2 }, 
+                new double[] { 1, 2 },
                 new double[] { 1, 1 },
                 new double[] { 0, 7 },
                 new double[] { 1, 1 },
@@ -155,14 +156,16 @@ namespace Unit_Tests
             var gmm = new GaussianMixtureModel(components: 2);
 
             // Compute the model (estimate)
-            double error = gmm.Compute(samples);
+            var clusters = gmm.Learn(samples);
+
+            double error = gmm.LogLikelihood;
 
             // Classify a single sample
-            int c0 = gmm.Gaussians.Nearest(samples[0]);
-            int c1 = gmm.Gaussians.Nearest(samples[1]);
+            int c0 = clusters.Decide(samples[0]);
+            int c1 = clusters.Decide(samples[1]);
 
-            int c7 = gmm.Gaussians.Nearest(samples[7]);
-            int c8 = gmm.Gaussians.Nearest(samples[8]);
+            int c7 = clusters.Decide(samples[7]);
+            int c8 = clusters.Decide(samples[8]);
 
             Assert.AreEqual(c0, c1);
             Assert.AreEqual(c7, c8);
@@ -184,7 +187,7 @@ namespace Unit_Tests
             double[][] samples =
             {
                 new double[] { 0, 1 },
-                new double[] { 1, 2 }, 
+                new double[] { 1, 2 },
                 new double[] { 1, 1 },
                 new double[] { 0, 7 },
                 new double[] { 1, 1 },

@@ -10,6 +10,8 @@ namespace Workbench.Tools
     using NuDoq;
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Net;
     using System.Reflection;
     using System.Text;
     using System.Web;
@@ -25,7 +27,7 @@ namespace Workbench.Tools
     /// 
     public class ClassToXamlVisitor : Visitor
     {
-        
+
         private string currentClassName;
         private DocumentationViewModel current;
 
@@ -193,15 +195,57 @@ namespace Workbench.Tools
         {
             current.CodeBlocks.Add(code.Content);
 
-            string[] lines = code.Content
-                .Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
-            builder.Append("<ContentControl xml:space=\"preserve\" Tag=\"Code\">");
+            if (code.Source == null)
+            {
+                string[] lines = code.Content.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
-            foreach (var line in lines)
-                builder.AppendLine(encode(line));
+                builder.Append("<ContentControl xml:space=\"preserve\" Tag=\"Code\">");
+                foreach (var line in lines)
+                    builder.AppendLine(encode(line));
+                builder.AppendLine("</ContentControl>");
+                return;
+            }
 
-            builder.AppendLine("</ContentControl>");
+            string source = code.Source;
+            string region = code.Region;
+            string baseAddress = "https://raw.githubusercontent.com/accord-net/framework/development/";
+            string sourceCode;
+
+            try
+            {
+                // Download the source file from the Accord.NET GitHub website
+                using (var client = new WebClient())
+                {
+                    string sourceAddress = baseAddress + source;
+                    Stream stream = client.OpenRead(sourceAddress);
+                    TextReader reader = new StreamReader(stream);
+                    sourceCode = reader.ReadToEnd();
+                }
+
+                string startMark = "#region " + region;
+                string endMark = "#endregion";
+
+                int startIndex = sourceCode.IndexOf(startMark) + startMark.Length;
+                int endIndex = sourceCode.IndexOf(endMark, startIndex) - endMark.Length;
+                string exampleCode = sourceCode.Substring(startIndex, endIndex - startIndex);
+
+                // Remove indentation
+                string trimmedCode = exampleCode.TrimStart();
+                int whitespace = exampleCode.Length - trimmedCode.Length - 2; // 2 because assuming \r\n
+                string indentMarker = "\r\n" + new String(' ', whitespace);
+                exampleCode = exampleCode.Replace(indentMarker, "\r\n").Trim();
+
+                builder.Append("<ContentControl xml:space=\"preserve\" Tag=\"Code\">");
+                builder.Append(encode(exampleCode));
+                builder.AppendLine("</ContentControl>");
+            }
+            catch 
+            {
+                builder.Append("<ContentControl xml:space=\"preserve\" Tag=\"Code\">");
+                builder.Append(encode("The documentation could not be found online."));
+                builder.AppendLine("</ContentControl>");
+            }
         }
 
         /// <summary>

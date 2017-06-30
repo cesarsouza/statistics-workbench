@@ -7,6 +7,7 @@
 
 namespace Workbench.ViewModels
 {
+    using Accord;
     using Accord.Math;
     using Accord.Statistics.Distributions;
     using Accord.Statistics.Distributions.Univariate;
@@ -25,7 +26,6 @@ namespace Workbench.ViewModels
     ///   such as its PDF, CDF, HF, and more.
     /// </summary>
     /// 
-    [ImplementPropertyChanged]
     public class MeasuresViewModel
     {
 
@@ -197,12 +197,12 @@ namespace Workbench.ViewModels
             try
             {
                 double[] y;
-                try { y = supportPoints.Apply(instance.DistributionFunction); }
+                try { y = supportPoints.Apply((x) => instance.DistributionFunction(x)); }
                 catch
                 {
                     var general = GeneralContinuousDistribution
                         .FromDensityFunction(instance.Support, instance.ProbabilityFunction);
-                    y = supportPoints.Apply(general.DistributionFunction);
+                    y = supportPoints.Apply((x) => general.DistributionFunction(x));
                 }
 
                 return createBaseModel(range, "CDF", supportPoints, y, instance is UnivariateDiscreteDistribution);
@@ -497,11 +497,11 @@ namespace Workbench.ViewModels
 
             double resolution = 100;
             this.unit = new DoubleRange(0, 1);
-            this.probabilities = Matrix.Interval(0.0, 1.0, 1.0 / resolution);
+            this.probabilities = Vector.Range(0.0, 1.0, 1.0 / resolution);
 
             if (instance is UnivariateDiscreteDistribution)
             {
-                this.supportPoints = Matrix.Interval(range.Min, range.Max, 1.0);
+                this.supportPoints = Vector.Range(range.Min, range.Max, 1.0);
             }
             else
             {
@@ -510,7 +510,7 @@ namespace Workbench.ViewModels
 
                 this.range = new DoubleRange(min, max);
 
-                this.supportPoints = Matrix.Interval(range.Min, range.Max, range.Length / resolution);
+                this.supportPoints = Vector.Range(range.Min, range.Max, range.Length / resolution);
 
                 // make sure the support points include the important metrics
 
