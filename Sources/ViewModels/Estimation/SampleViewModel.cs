@@ -7,8 +7,6 @@
 
 namespace Workbench.ViewModels
 {
-    using PropertyChanged;
-
     /// <summary>
     ///   View Model for a single row in the table of samples that should 
     ///   be used to fit a distribution. Those are displayed in a DataGrid 

@@ -8,8 +8,6 @@
 namespace Workbench.ViewModels
 {
     using Accord;
-    using AForge;
-    using PropertyChanged;
     using System;
     using System.Linq;
     using System.Reflection;

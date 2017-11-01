@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:oxy="http://oxyplot.org/wpf"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       x:Class="Workbench.Views.AnalysisView" 
       mc:Ignorable="d" Height="600" Width="700">
     <UserControl.Resources>
@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <oxy:PlotView  Grid.Row="0" Model="{Binding DensityFunction, Mode=OneWay}" />
+        <oxy:PlotView Grid.Row="0" Model="{Binding DensityFunction, Mode=OneWay}" />
         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Grid.Row="1">
             <Label Content="P(" FontSize="20" FontWeight="Bold"/>
             <xctk:DoubleUpDown FontSize="16" Watermark="0.0" Width="150" Value="{Binding LeftValue, Mode=TwoWay}" 

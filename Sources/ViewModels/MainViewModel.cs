@@ -8,7 +8,6 @@
 namespace Workbench.ViewModels
 {
     using Accord.Math;
-    using PropertyChanged;
     using System;
     using System.Collections.ObjectModel;
     using Workbench.Framework;

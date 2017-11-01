@@ -10,7 +10,6 @@ namespace Workbench.ViewModels
     using Accord.Statistics.Distributions.Univariate;
     using OxyPlot;
     using OxyPlot.Series;
-    using PropertyChanged;
     using System;
     using System.ComponentModel;
     using Workbench.Framework;

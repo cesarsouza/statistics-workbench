@@ -11,7 +11,6 @@ namespace Workbench.ViewModels
     using Accord.Statistics.Distributions;
     using Accord.Statistics.Distributions.Fitting;
     using OxyPlot;
-    using PropertyChanged;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

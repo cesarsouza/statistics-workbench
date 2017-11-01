@@ -11,11 +11,9 @@ namespace Workbench.ViewModels
     using Accord.Math;
     using Accord.Statistics.Distributions;
     using Accord.Statistics.Distributions.Univariate;
-    using AForge;
     using OxyPlot;
     using OxyPlot.Axes;
     using OxyPlot.Series;
-    using PropertyChanged;
     using System;
     using System.Globalization;
     using System.Linq;

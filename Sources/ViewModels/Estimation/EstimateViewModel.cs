@@ -12,7 +12,6 @@ namespace Workbench.ViewModels
     using Accord.Statistics.Analysis;
     using Accord.Statistics.Distributions;
     using Microsoft.Win32;
-    using PropertyChanged;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

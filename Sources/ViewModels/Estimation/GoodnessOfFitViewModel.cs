@@ -8,7 +8,6 @@
 namespace Workbench.ViewModels
 {
     using Accord.Statistics.Analysis;
-    using PropertyChanged;
     using Workbench.Tools;
 
     /// <summary>
