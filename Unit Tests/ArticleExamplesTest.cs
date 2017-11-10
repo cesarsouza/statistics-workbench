@@ -104,7 +104,7 @@ namespace Unit_Tests
             // The result should be Poisson(x; λ = 0.420961)
             var result = (mostLikely.Distribution as IFormattable).ToString("N3", CultureInfo.InvariantCulture);
 
-            Assert.AreEqual("Poisson(x; λ = 0.422)", result);
+            Assert.AreEqual("Poisson(x; λ = 0.420)", result);
         }
 
         [TestMethod]
